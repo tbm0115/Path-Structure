@@ -2,10 +2,10 @@
 
 The **Path Structure Maintenance** application can be used to ensure a specific folder/file structure is implemented and maintained. Functions include:
 
- - Auditing the *default path*, *specified path*, and a *specified file* for a valid Path Structure
- - Formatting a specified file per the Path Structure
- - Creating a clipboard entry of the proper filename syntax for a specified Path Structure file type
- - Moving files by file type to a specified Path Structure folder.
+ * Auditing the *default path*, *specified path*, and a *specified file* for a valid Path Structure
+ * Formatting a specified file per the Path Structure
+ * Creating a clipboard entry of the proper filename syntax for a specified Path Structure file type
+ * Moving files by file type to a specified Path Structure folder.
 
 #How to use
 
@@ -13,19 +13,19 @@ The **Path Structure Maintenance** application can be used to ensure a specific 
 
 First, create a **Path Structure** format file in XML using the following rules:
 
- - The root node must be `<Structure>`
+ 1. The root node must be `<Structure>`
  ..* `<Structure>` must contain a `defaultPath` attribute specifying the default root path that the Path Structure should focus on.
  ..* `<Structure>` must contain a `path` attribute specifying the syntax of the direct descendant folder names of `defaultPath`
- - Optionally, `<Variables>` may be added to the root.
+ 1. Optionally, `<Variables>` may be added to the root.
  ..* `<Variable>` nodes can be added to `<Variables>` to allow the application to parse the folder/file path to extract the specified index and ..*use the value.
  ..* `<Variable>` must contain a `name` attribute specifying the replacement reference of the variable. Note that the reference name must be enclosed in `{}`.
  ..* The inner text of `<Variable>` must be the ze..*based index of the folder name to be extracted based on `defaultPath` of `<Structure>`
  ..* For example: `<Variable name='{CustomerName}'>2</Variable>` will set the variable `{CustomerName}` to `tbm0115` with the given path of `\\server\Customers\tbm0115\`
- - `<Folder>` may be added to both the root and other `<Folder>` nodes
+ 1. `<Folder>` may be added to both the root and other `<Folder>` nodes
  ..* `<Folder>` must contain a `name` attribute specifying the short description of the folder.
  ..* `name` may reference a `<Variable>` by its `name`.
  ..* `<Folder>` must contain a `description` attribute specifying the long description of the folder.
- - `<File>` may be added to both the root and `<Folder>` nodes
+ 1. `<File>` may be added to both the root and `<Folder>` nodes
  ..* `<File>` must contain a `name` attribute specifying the short description of the file.
  ..* `name` may reference a `<Variable>` by its `name`.
  ..* `<File>` must contain a `description` attribute specifying the long description of the file.
@@ -54,20 +54,20 @@ For example:
 
 In order to use the application properly
 
- - Open the EXE in **Administrator Mode**
+ 1. Open the EXE in **Administrator Mode**
  ..* From the main form, navigate to the *Settings* menu item.
- - Click **Browse...** to specify the location of the Path Structure XML file.
- - The program will require to restart to save the changes
+ 1. Click **Browse...** to specify the location of the Path Structure XML file.
+ 1. The program will require to restart to save the changes
 
 ##Windows Context Menu
 
 The Path Structure application has the option to add specific functions to the Windows Explorer context menu. To do so:
 
- - Open the EXE in **Administrator Mode**
+ 1. Open the EXE in **Administrator Mode**
  ..* From the main form, navigate to the *Settings* menu item.
- - Check/Uncheck the context items you wish to use/not use on the current machine.
- - If a context menu exists already, it is recommended to click the *Remove Windows Context Menu* button to ensure unwanted items are no longer available
- - Click the *Add/Update Windows Context Menu* button to add all checked context items
+ 1. Check/Uncheck the context items you wish to use/not use on the current machine.
+ 1. If a context menu exists already, it is recommended to click the *Remove Windows Context Menu* button to ensure unwanted items are no longer available
+ 1. Click the *Add/Update Windows Context Menu* button to add all checked context items
 
 With the above steps completed, the context menu should be immediately available under the context menu item of **Path Structure**.
 
