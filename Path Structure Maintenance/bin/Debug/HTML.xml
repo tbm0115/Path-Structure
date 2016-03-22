@@ -1,0 +1,415 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+HTML
+</name>
+</assembly>
+<members>
+<member name="M:HTML.HTMLParser.pTable.Convert_Table_DataTable(System.String)">
+	<summary>
+ Returns a basic DataTable. Column headers are based on the HTML table header tags.
+ </summary>
+	<param name="Markup">Raw HTML table markup</param>
+	<returns>DataTable</returns>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLParser.pTable.Convert_Table_XML(System.String)">
+	<summary>
+ Returns a basic format XML Document. Each row is labeled based on its index and each child element is labeled based 
+ on its column header
+ </summary>
+	<param name="Markup">Raw HTML table markup</param>
+	<returns>XML.XMLDocument</returns>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLParser.pTable.Get_TableRows(System.String)">
+	<summary>
+ Returns an array of HTML Table Rows.
+ </summary>
+	<param name="Markup">Raw HTML table markup.</param>
+	<returns>HTMLWriter.HTMLTable.HTMLTableRow(s)</returns>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLParser.pTable.Get_RowColumns(HTML.HTMLWriter.HTMLTable.HTMLTableRow)">
+	<summary>
+ Returns an array of strings, each containing cell contents of the provided HTML Table Row.
+ </summary>
+	<param name="Row">HTMLWriter.HTMLTable.HTMLTableRow Object</param>
+	<returns>String Array</returns>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLParser.pTable">
+	<summary>
+ Represents a series of HTML Table parsing methods.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:HTML.ParsingFuncs.StripHTMLMarkup(System.String)">
+	<summary>
+ Removes any HTML tags with Start and End Tags
+ </summary>
+	<param name="Markup"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:HTML.ParsingFuncs.HasMarkup(System.String)">
+	<summary>
+ Determines whether the provided HTML markup contains an HTML tag with both Start and End tags or it contains only a Start tag.
+ </summary>
+	<param name="Markup"></param>
+	<returns>-1: Only Start tag
+ 0: No HTML markup
+ 1: Both Start and End tags</returns>
+	<remarks></remarks>
+</member><member name="M:HTML.ParsingFuncs.PeakTag(System.String)">
+	<summary>
+ Returns the name of the next potential tag. Returns empty string if improper search.
+ </summary>
+	<param name="Markup">Raw HTML Markup to search</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.SafeMode">
+	<summary>
+ Get/Set the condition of whether the HTMLWriter class should find and replace any invalid characteristics. Note that most HTML tags should be safe.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.#ctor(System.Boolean)">
+	<summary>
+ Creates a new instance of an HTML Document
+ </summary>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLForm.Markup">
+	<summary>
+ Get/Set the HTML Markup for the current instance of an HTML Form.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.HTMLForm.#ctor(System.String,HTML.AttributeList)">
+	<summary>
+ Creates a new instance of the HTML Form object.
+ </summary>
+	<param name="TEXT">The FieldSet Legend. Otherwise recognized as the label for the form.</param>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.HTMLForm.CreateFormText(System.String,System.String,HTML.AttributeList,HTML.AttributeList)">
+	<summary>
+ Adds a new TextBox element to the current instance of an HTML Form.
+ </summary>
+	<param name="Label">Label text value</param>
+	<param name="Value">TextBox text value</param>
+	<param name="LabelAttributes">AttributeList for the Label</param>
+	<param name="TextAttributes">AttributeList for the TextBox</param>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLForm">
+	<summary>
+ Represents an instance of a series of TextBox controls bound within the FieldSet HTML Element.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLHeader">
+	<summary>
+ Represents an instance of an HTML Header element.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLParagraph">
+	<summary>
+ Represent an instance of an HTML Paragraph element.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLTable.Markup">
+	<summary>
+ Get/Set the HTML markup for the current instance of an HTML Table directly.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.HTMLTable.#ctor(HTML.AttributeList)">
+	<summary>
+ Creates a new instance of an HTML Table. A table consists of HTML Table Rows and their columns.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLTable.HTMLTableRow.Cells">
+	<summary>
+ Get/Set the HTML markup for the current instance of an HTML Table Row directly.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.HTMLTable.HTMLTableRow.#ctor(HTML.AttributeList)">
+	<summary>
+ Creates a new instance of an HTML Table Row. A table row helps provide substance to the content of the table.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLTable.HTMLTableRow">
+	<summary>
+ Represents the instance of an HTML Table Row.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLTable.HTMLTableCell">
+	<summary>
+ Represents the instance of an HTML Table Cell
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLTable">
+	<summary>
+ Represents an instance of an HTML Table element.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLImageMap.ShapeType">
+	<summary>
+ Represents the type of shape each map area takes shape to.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.Markup">
+	<summary>
+ Get the raw HTML markup that the current instance of an HTML Image Map represents.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.Map">
+	<summary>
+ Get the raw HTML markup that the current instance of an HTML Image Map has of a map.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.ImageURL">
+	<summary>
+ Get/Set the location of the image. HTTP, File, etc.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.ImageWidth">
+	<summary>
+ Get/Set the width of the HTML Image element.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.ImageHeight">
+	<summary>
+ Get/Set the height of the HTML Image element.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.HTMLImageMap.#ctor(System.Int32,System.Int32,System.String,System.String,HTML.AttributeList)">
+	<summary>
+ Creates a new instance of an HTML Image Map.
+ </summary>
+	<param name="Width">Width of the HTML Image element.</param>
+	<param name="Height">Height of the HTML Image element.</param>
+	<param name="ImageUrl">Location of the image. HTTP, File, etc.</param>
+	<param name="Map"></param>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.HTMLMapArea.MapArea">
+	<summary>
+ Get the raw HTML markup for the current instance of an HTML Map Area.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.HTMLMapArea.HREF">
+	<summary>
+ Get/Set the target link.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.HTMLMapArea.OnClickEventName">
+	<summary>
+ Get/Set the name of a Client-Side function to be run as the OnClick event. JavaScript, VBScript, etc.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.HTMLMapArea.Target">
+	<summary>
+ Set the target link type.
+ </summary>
+	<value>Blank: Opens a new window or tab.
+ Self: Redirects the current window.
+ Parent: Opens in the parent frame.
+ Top: Opens in the full body of the current window.
+ Frame: Opens in the specified iFrame HTML element. The iFrame ID property must be set.</value>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.HTMLMapArea.TargetFrame">
+	<summary>
+ Get/Set the iFrame ID to be used in the TargetType of Frame.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.HTMLMapArea.Shape">
+	<summary>
+ Set the Shape Type of the current instance of an HTML Map Area.
+ </summary>
+	<value></value>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLImageMap.HTMLMapArea.Coordinates">
+	<summary>
+ Get the coordinates that represent the current instance of an HTML Map Area.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLImageMap.HTMLMapArea">
+	<summary>
+ Represents an instance of an HTML Map Area. This sets the bounds of the specified hyperlink onto its associated HTML Image
+ element.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.HTMLImageMap.AddMapArea(HTML.HTMLWriter.HTMLImageMap.HTMLMapArea,System.String)">
+	<summary>
+ Adds a new instance of an HTML Map Area to the Map element of the current instance of an HTML Image Map.
+ </summary>
+	<param name="Area">HTML Map Area object.</param>
+	<param name="MapName">Only applies to first addition of an HTML Map Area, this sets the name of the HTML Image Map.
+ This name is used when applying coordinates to an HTML Image element.</param>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.HTMLImageMap.AddMapArea(System.String,System.String)">
+	<summary>
+ Adds a new instance of an HTML Map Area to the Map element of the current instance of an HTML Image Map.
+ </summary>
+	<param name="Area">Raw HTML Markup for a Map Area.</param>
+	<param name="MapName">Only applies to the first addition of an HTML Map Area, this sets the name of the HTML Image Map.
+ This name is used when applying coordinates to an HTML Image element.</param>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLImageMap">
+	<summary>
+ Represents an instance of an HTML Image with an HTML Image Map
+ </summary>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLList.Markup">
+	<summary>
+ Get the raw HTML markup for the current instance of an HTML List.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLList.ListType">
+	<summary>
+ Represents the type of list.
+ Ordered: Numbered list. Automatically increments the "bullets"
+ Unordered: Simple bulleted list represented by images. CSS can change the images.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLList.ThisListType">
+	<summary>
+ Get/Set the type for the current instance of an HTML List.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLList">
+	<summary>
+ Represents an instance of an HTML List. Consists of either bulleted or numbered lists.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.HTMLImage.#ctor(System.String,HTML.AttributeList)">
+	<summary>
+ Creates a new instance of the HTML Header object. 
+ This object serves as a Heading or Label in the layout of the HTML Document.
+ </summary>
+	<param name="Source"></param>
+	<param name="Attributes"></param>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLImage">
+	<summary>
+ Represents an instance of an HTML Image.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLCanvas">
+	<summary>
+ Represents an instance of an HTML Canvas
+ </summary>
+	<remarks></remarks>
+</member><member name="P:HTML.HTMLWriter.HTMLAnchor.Markup">
+	<summary>
+ Get/Set the HTML markup for the current instance of an HTML Anchor directly.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLAnchor">
+	<summary>
+ Represents an instance of an HTML Anchor
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLInput">
+	<summary>
+ Represents an instance of an HTML Input
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLLabel">
+	<summary>
+ Represents an instance of an HTML Label
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLSelect">
+	<summary>
+ Represents an instance of an HTML Select
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLProgress">
+	<summary>
+ Represents an instance of an HTML Progress
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLMeter">
+	<summary>
+ Represents an instance of an HTML Meter
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLVideo">
+	<summary>
+ Represents an instance of an HTML Video
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLAudio">
+	<summary>
+ Represents an instance of an HTML Audio
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLDiv">
+	<summary>
+ Represents an instance of an HTML Div
+ </summary>
+	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLSpan">
+	<summary>
+ Represents an instance of an HTML Span
+ </summary>
+	<remarks></remarks>
+</member><member name="M:HTML.SharedFunctions.ReplaceBadChars(System.String)">
+	<summary>
+ Searches for reserved words for HTML and replaces the carrots with appropriate meta characters.
+ </summary>
+	<param name="InputLine">Incoming inner text.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:HTML.Quick_Tags.ToTop_Anchor">
+	<summary>
+ Represents the HTML Markup for a generic "To Top" link. This markup is styled to hover in the upper right corner of the page.
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:HTML.Quick_Tags.Overlay">
+	<summary>
+ Represents the HTML Markup for a generic "Overlay" control consisting of two Divs, two Anchors, and any other specified HTML Markup
+ </summary>
+	<remarks></remarks>
+</member><member name="P:HTML.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:HTML.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:HTML.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+</members>
+</doc>
