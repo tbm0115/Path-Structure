@@ -331,10 +331,12 @@ Public Class Main
     For Each cust As String In IO.Directory.GetDirectories(defaultPath)
       statProgress.Value = (curIndex / totCustomers) * 100
       '' If parsed Customer is invalid in E2, then continue by skipping
-      If Not IsValidCustomerCode(cust.Remove(0, cust.LastIndexOf("\") + 1)) Then
-        auditRpt.Report("Skipped '" & cust & "' as the Customer Code could not be found in the E2 database.", PathStructure.AuditReport.StatusCode.ErrorStatus)
-        rtb.AppendText("Skipping '" & cust & "' because could not be found in E2" & vbCrLf)
-        Continue For
+      If My.Settings.blnERPCheck Then
+        If Not IsValidCustomerCode(cust.Remove(0, cust.LastIndexOf("\") + 1)) Then
+          auditRpt.Report("Skipped '" & cust & "' as the Customer Code could not be found in the E2 database.", PathStructure.AuditReport.StatusCode.ErrorStatus)
+          rtb.AppendText("Skipping '" & cust & "' because could not be found in E2" & vbCrLf)
+          Continue For
+        End If
       End If
 
       For Each part As String In IO.Directory.GetDirectories(cust)

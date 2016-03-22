@@ -137,6 +137,31 @@ Namespace My
                 Me("blnTransferByExtension") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\server\SHARE\Systems Database\Acc"& _ 
+            "ess Database\IrongateApplications.mdb")>  _
+        Public Property ERPConnection() As String
+            Get
+                Return CType(Me("ERPConnection"),String)
+            End Get
+            Set
+                Me("ERPConnection") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property blnERPCheck() As Boolean
+            Get
+                Return CType(Me("blnERPCheck"),Boolean)
+            End Get
+            Set
+                Me("blnERPCheck") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

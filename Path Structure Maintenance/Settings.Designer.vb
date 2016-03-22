@@ -31,12 +31,15 @@ Partial Class Settings
     Me.CheckBox3 = New System.Windows.Forms.CheckBox()
     Me.CheckBox2 = New System.Windows.Forms.CheckBox()
     Me.CheckBox1 = New System.Windows.Forms.CheckBox()
+    Me.Label1 = New System.Windows.Forms.Label()
+    Me.txtPathStructure = New System.Windows.Forms.TextBox()
+    Me.btnBrowse = New System.Windows.Forms.Button()
     Me.GroupBox1.SuspendLayout()
     Me.SuspendLayout()
     '
     'btnAddContextMenu
     '
-    Me.btnAddContextMenu.Location = New System.Drawing.Point(12, 267)
+    Me.btnAddContextMenu.Location = New System.Drawing.Point(12, 342)
     Me.btnAddContextMenu.Name = "btnAddContextMenu"
     Me.btnAddContextMenu.Size = New System.Drawing.Size(216, 66)
     Me.btnAddContextMenu.TabIndex = 0
@@ -45,7 +48,7 @@ Partial Class Settings
     '
     'btnRemoveContextMenu
     '
-    Me.btnRemoveContextMenu.Location = New System.Drawing.Point(234, 267)
+    Me.btnRemoveContextMenu.Location = New System.Drawing.Point(234, 342)
     Me.btnRemoveContextMenu.Name = "btnRemoveContextMenu"
     Me.btnRemoveContextMenu.Size = New System.Drawing.Size(216, 66)
     Me.btnRemoveContextMenu.TabIndex = 1
@@ -60,7 +63,7 @@ Partial Class Settings
     Me.GroupBox1.Controls.Add(Me.CheckBox3)
     Me.GroupBox1.Controls.Add(Me.CheckBox2)
     Me.GroupBox1.Controls.Add(Me.CheckBox1)
-    Me.GroupBox1.Location = New System.Drawing.Point(13, 13)
+    Me.GroupBox1.Location = New System.Drawing.Point(13, 88)
     Me.GroupBox1.Name = "GroupBox1"
     Me.GroupBox1.Size = New System.Drawing.Size(440, 248)
     Me.GroupBox1.TabIndex = 2
@@ -95,6 +98,7 @@ Partial Class Settings
     '
     Me.CheckBox4.AutoSize = True
     Me.CheckBox4.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnAudit
+    Me.CheckBox4.CheckState = System.Windows.Forms.CheckState.Checked
     Me.CheckBox4.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnAudit", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
     Me.CheckBox4.Location = New System.Drawing.Point(7, 135)
     Me.CheckBox4.Name = "CheckBox4"
@@ -131,6 +135,7 @@ Partial Class Settings
     '
     Me.CheckBox1.AutoSize = True
     Me.CheckBox1.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnAddAll
+    Me.CheckBox1.CheckState = System.Windows.Forms.CheckState.Checked
     Me.CheckBox1.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnAddAll", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
     Me.CheckBox1.Location = New System.Drawing.Point(7, 30)
     Me.CheckBox1.Name = "CheckBox1"
@@ -139,11 +144,42 @@ Partial Class Settings
     Me.CheckBox1.Text = "Add All Main Folders"
     Me.CheckBox1.UseVisualStyleBackColor = True
     '
+    'Label1
+    '
+    Me.Label1.AutoSize = True
+    Me.Label1.Location = New System.Drawing.Point(13, 13)
+    Me.Label1.Name = "Label1"
+    Me.Label1.Size = New System.Drawing.Size(142, 25)
+    Me.Label1.TabIndex = 3
+    Me.Label1.Text = "Path Structure:"
+    '
+    'txtPathStructure
+    '
+    Me.txtPathStructure.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.Path_Structure_Maintenance.My.MySettings.Default, "SettingsPath", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.txtPathStructure.Location = New System.Drawing.Point(12, 41)
+    Me.txtPathStructure.Name = "txtPathStructure"
+    Me.txtPathStructure.ReadOnly = True
+    Me.txtPathStructure.Size = New System.Drawing.Size(324, 30)
+    Me.txtPathStructure.TabIndex = 4
+    Me.txtPathStructure.Text = Global.Path_Structure_Maintenance.My.MySettings.Default.SettingsPath
+    '
+    'btnBrowse
+    '
+    Me.btnBrowse.Location = New System.Drawing.Point(342, 41)
+    Me.btnBrowse.Name = "btnBrowse"
+    Me.btnBrowse.Size = New System.Drawing.Size(108, 30)
+    Me.btnBrowse.TabIndex = 5
+    Me.btnBrowse.Text = "Browse..."
+    Me.btnBrowse.UseVisualStyleBackColor = True
+    '
     'Settings
     '
     Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 25.0!)
     Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-    Me.ClientSize = New System.Drawing.Size(465, 345)
+    Me.ClientSize = New System.Drawing.Size(465, 414)
+    Me.Controls.Add(Me.btnBrowse)
+    Me.Controls.Add(Me.txtPathStructure)
+    Me.Controls.Add(Me.Label1)
     Me.Controls.Add(Me.GroupBox1)
     Me.Controls.Add(Me.btnRemoveContextMenu)
     Me.Controls.Add(Me.btnAddContextMenu)
@@ -154,6 +190,7 @@ Partial Class Settings
     Me.GroupBox1.ResumeLayout(False)
     Me.GroupBox1.PerformLayout()
     Me.ResumeLayout(False)
+    Me.PerformLayout()
 
   End Sub
   Friend WithEvents btnAddContextMenu As System.Windows.Forms.Button
@@ -165,4 +202,7 @@ Partial Class Settings
   Friend WithEvents CheckBox4 As System.Windows.Forms.CheckBox
   Friend WithEvents CheckBox5 As System.Windows.Forms.CheckBox
   Friend WithEvents chkTransfer As System.Windows.Forms.CheckBox
+  Friend WithEvents Label1 As System.Windows.Forms.Label
+  Friend WithEvents txtPathStructure As System.Windows.Forms.TextBox
+  Friend WithEvents btnBrowse As System.Windows.Forms.Button
 End Class

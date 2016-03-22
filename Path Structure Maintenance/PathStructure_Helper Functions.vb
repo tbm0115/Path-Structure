@@ -46,11 +46,11 @@ Module PathStructure_Helper_Functions
         StrBldr.Append(sFilePath.Substring(2))
         Return StrBldr.ToString
       Else
-        Return ""
+        Return sFilePath
         'MsgBox("Cannot Retrieve UNC path" & vbCrLf & "Must Use Mapped Drive of SQLServer", MsgBoxStyle.Critical)
       End If
     Else
-      Return ""
+      Return sFilePath
       'MsgBox("Cannot Use Local Drive" & vbCrLf & "Must Use Mapped Drive of SQLServer", MsgBoxStyle.Critical)
     End If
   End Function
@@ -232,7 +232,7 @@ Module PathStructure_Helper_Functions
 
   Public Function IsValidCustomerCode(ByVal CustCode As String) As Boolean
     Dim blnFound As Boolean = False
-    Using Cnn As New OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\server\SHARE\Systems Database\Access Database\IrongateApplications.mdb;")
+    Using Cnn As New OleDbConnection(My.Settings.ERPConnection)
       Cnn.Open()
       Using Cmd As New OleDbCommand("SELECT CustCode,User_Text3 FROM dbo_Estim WHERE CustCode=" & Chr(34) & CustCode & Chr(34) & " OR User_Text3=" & Chr(34) & CustCode & Chr(34), Cnn)
         For Each Rcd As IDataRecord In Cmd.ExecuteReader
