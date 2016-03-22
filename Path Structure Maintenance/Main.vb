@@ -9,13 +9,13 @@ Public Class Main
     Dim myXML As New XmlDocument
     myXML.Load(My.Settings.SettingsPath)
     defaultPath = myXML.SelectSingleNode("Structure").Attributes("defaultPath").Value
-    Dim custCode As String
-    Dim partNo As String
+    Dim custCode As String = ""
+    Dim partNo As String = ""
 
     If Environment.GetCommandLineArgs.Length > 0 Then
       Dim args As String() = Environment.GetCommandLineArgs
       Dim dg As DialogResult
-      Dim strTemp As String
+      Dim strTemp As String = ""
       For Each arg As String In args
         Log("Command Line Argument: '" & arg & "'")
       Next
