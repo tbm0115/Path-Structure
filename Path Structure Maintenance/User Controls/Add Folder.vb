@@ -112,7 +112,7 @@ Public Class Add_Folder
       MessageBox.Show("You must select a file type option!", "Invalid Option", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       Exit Sub
     End If
-    IO.Directory.CreateDirectory(txtPreview.Text)
+    IO.Directory.CreateDirectory(_CurrentPath.ReplaceVariables(txtPreview.Text))
     _CurrentPath.LogData(txtPreview.Text, "Create Folder")
     Application.Exit()
   End Sub

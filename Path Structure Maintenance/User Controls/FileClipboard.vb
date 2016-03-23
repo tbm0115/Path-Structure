@@ -101,13 +101,6 @@ Public Class FileClipboard
     fileName = _CurrentPath.GetURIfromXPath(FindXPath(nod)) & fileName
     txtPreview.Text = fileName
 
-    'If _CurrentPath.Type = PathStructure.PathType.File Then
-    '  txtPreview.Text = _CurrentPath.FileInfo.DirectoryName & "\" & fileName
-    'ElseIf _CurrentPath.Type = PathStructure.PathType.Folder Then
-    '  txtPreview.Text = _CurrentPath.FolderInfo.FullName & fileName
-    'Else
-    '  txtPreview.Text = fileName
-    'End If
   End Sub
 
   Private Sub Variable_Changed(ByVal sender As System.Object, ByVal e As System.EventArgs)
@@ -116,16 +109,8 @@ Public Class FileClipboard
       vals.Add(pnl.Controls(1).Tag, pnl.Controls(1).Text)
     Next
     txtPreview.Text = fileName
-    'If _CurrentPath.Type = PathStructure.PathType.File Then
-    '  txtPreview.Text = _CurrentPath.FileInfo.DirectoryName & "\" & fileName
-    'ElseIf _CurrentPath.Type = PathStructure.PathType.Folder Then
-    '  txtPreview.Text = _CurrentPath.FolderInfo.FullName & fileName
-    'Else
-    '  txtPreview.Text = fileName
-    'End If
-    For Each Val As KeyValuePair(Of String, String) In vals
-      txtPreview.Text = txtPreview.Text.Replace("{" & Val.Key & "}", Val.Value)
-    Next
+
+    txtPreview.Text = _CurrentPath.ReplaceVariables(txtPreview.Text)
   End Sub
 
   Private Sub btnAccept_Click(sender As Object, e As EventArgs) Handles btnAccept.Click

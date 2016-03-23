@@ -115,9 +115,8 @@ Public Class Format_Item
       vals.Add(pnl.Controls(1).Tag, pnl.Controls(1).Text)
     Next
     txtPreview.Text = fileName
-    For Each Val As KeyValuePair(Of String, String) In vals
-      txtPreview.Text = txtPreview.Text.Replace("{" & Val.Key & "}", Val.Value)
-    Next
+    
+    txtPreview.Text = _CurrentPath.ReplaceVariables(txtPreview.Text)
   End Sub
 
   Private Sub btnAccept_Click(sender As Object, e As EventArgs) Handles btnAccept.Click

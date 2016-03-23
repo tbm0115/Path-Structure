@@ -24,37 +24,37 @@ Public Class Main
           Case "-add"
             If args.Length >= 3 Then
               If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
-                statCurrentPath.Text = args(2)
+                statCurrentPath.Text = GetUNCPath(args(2))
                 Log("Add Command Received")
-                Dim fi As New Add_Folder(args(2))
+                Dim fi As New Add_Folder(GetUNCPath(args(2)))
                 fi.Dock = DockStyle.Fill
 
                 pnlContainer.Controls.Add(fi)
                 'AddFolder(args(2), args(?))
               Else
-                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & args(2) & "'")
+                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(args(2)) & "'")
                 MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
               End If
             End If
           Case "-addall"
             If args.Length >= 3 Then
               If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
-                statCurrentPath.Text = args(2)
+                statCurrentPath.Text = GetUNCPath(args(2))
                 dg = MessageBox.Show("Are you sure you wish to create all main folders in the selected directory?", "Verify", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                 If dg = Windows.Forms.DialogResult.Yes Then
                   Log("Add All Command Received")
-                  Dim c As New PathStructure(args(2))
+                  Dim c As New PathStructure(GetUNCPath(args(2)))
                   For Each fold As XmlElement In myXML.SelectNodes("//Folder")
                     If Not fold.Attributes("name").Value.Contains("{") And Not fold.Attributes("name").Value.Contains("}") Then
-                      If Not IO.Directory.Exists(c.GetURIfromXPath(FindXPath(fold))) Then
-                        IO.Directory.CreateDirectory(c.GetURIfromXPath(FindXPath(fold)))
+                      If Not IO.Directory.Exists(c.ReplaceVariables(c.GetURIfromXPath(FindXPath(fold)))) Then
+                        IO.Directory.CreateDirectory(c.ReplaceVariables(c.GetURIfromXPath(FindXPath(fold))))
                       End If
                       'AddFolder(args(2), fold.Attributes("name").Value)
                     End If
                   Next
                 End If
               Else
-                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & args(2) & "'")
+                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(args(2)) & "'")
                 MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
               End If
               Application.Exit()
@@ -62,25 +62,25 @@ Public Class Main
           Case "-format"
             If args.Length >= 3 Then
               If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
-                statCurrentPath.Text = args(2)
+                statCurrentPath.Text = GetUNCPath(args(2))
                 Log("Format Command Received")
-                Dim fi As New Format_Item(args(2))
+                Dim fi As New Format_Item(GetUNCPath(args(2)))
                 fi.Dock = DockStyle.Fill
 
                 pnlContainer.Controls.Add(fi)
                 'FormatFile(args(2), args(?))
               Else
-                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & args(2) & "'")
+                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(args(2)) & "'")
                 MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
               End If
             End If
           Case "-audit"
             If args.Length >= 3 Then
               If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
-                statCurrentPath.Text = args(2)
+                statCurrentPath.Text = GetUNCPath(args(2))
                 Log("Audit Command Received")
 
-                Dim pt As New PathStructure(args(2))
+                Dim pt As New PathStructure(GetUNCPath(args(2)))
                 Dim bads As New List(Of String)
 
                 '' If audit report exists, then delete it
@@ -102,21 +102,21 @@ Public Class Main
                 pt.LogData(pt.StartPath & "\Audit Report.html", "Generic Audit")
                 Application.Exit()
               Else
-                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & args(2) & "'")
+                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(args(2)) & "'")
               End If
             End If
           Case "-clipboard"
             If args.Length >= 3 Then
               If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
-                statCurrentPath.Text = args(2)
+                statCurrentPath.Text = GetUNCPath(args(2))
                 Log("Clipboard Command Received")
-                Dim fi As New FileClipboard(args(2))
+                Dim fi As New FileClipboard(GetUNCPath(args(2)))
                 fi.Dock = DockStyle.Fill
 
                 pnlContainer.Controls.Add(fi)
                 'FormatFile(args(2), args(?))
               Else
-                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & args(2) & "'")
+                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(args(2)) & "'")
                 MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
               End If
             End If
@@ -131,7 +131,26 @@ Public Class Main
                 pnlContainer.Controls.Add(fi)
                 'FormatFile(args(2), args(?))
               Else
-                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & args(2) & "'")
+                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(args(2)) & "'")
+                MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                Application.Exit()
+              End If
+            End If
+          Case "-preview"
+            If args.Length >= 3 Then
+              If GetUNCPath(args(2)).StartsWith(defaultPath) Then
+                statCurrentPath.Text = GetUNCPath(args(2))
+                Log("Preview Command Received")
+
+                '' Load preview control
+                Me.WindowState = FormWindowState.Maximized
+                Application.DoEvents()
+                Dim prev As New Preview(GetUNCPath(args(2)))
+                prev.Dock = DockStyle.Fill
+                pnlContainer.Controls.Add(prev)
+                prev.lstFolders.Focus()
+              Else
+                Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(args(2)) & "'")
                 MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                 Application.Exit()
               End If
@@ -139,6 +158,7 @@ Public Class Main
         End Select
       End If
     End If
+
   End Sub
 
   Private Sub mnuSettings_Click(sender As Object, e As EventArgs) Handles mnuSettings.Click
@@ -165,11 +185,11 @@ Public Class Main
     opn.ShowDialog()
     If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
       If GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) Then
-        Debug.WriteLine("Adding folders for '" & opn.CurrentDirectory & "'")
+        Debug.WriteLine("Adding folders for '" & GetUNCPath(opn.CurrentDirectory) & "'")
         Dim myXML As New XmlDocument
         myXML.Load(My.Settings.SettingsPath)
         Log("Add All Command Received")
-        Dim c As New PathStructure(opn.CurrentDirectory)
+        Dim c As New PathStructure(GetUNCPath(opn.CurrentDirectory))
         For Each fold As XmlElement In myXML.SelectNodes("//Folder")
           If Not fold.Attributes("name").Value.Contains("{") And Not fold.Attributes("name").Value.Contains("}") Then
             If Not IO.Directory.Exists(c.ReplaceVariables(c.GetURIfromXPath(FindXPath(fold)))) Then
@@ -179,7 +199,7 @@ Public Class Main
           End If
         Next
       Else
-        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & opn.CurrentDirectory & "'")
+        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(opn.CurrentDirectory) & "'")
         MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       End If
     End If
@@ -195,13 +215,13 @@ Public Class Main
     If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
       If GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) And Not GetUNCPath(opn.CurrentDirectory) = defaultPath Then
         Log("Add Command Received")
-        Dim fi As New Add_Folder(opn.CurrentDirectory)
+        Dim fi As New Add_Folder(GetUNCPath(opn.CurrentDirectory))
         fi.Dock = DockStyle.Fill
 
         pnlContainer.Controls.Add(fi)
         'AddFolder(args(2), args(?))
       Else
-        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & opn.CurrentDirectory & "'")
+        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(opn.CurrentDirectory) & "'")
         MessageBox.Show("You must select a folder within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       End If
     End If
@@ -217,13 +237,13 @@ Public Class Main
     If IO.File.Exists(opn.FileName) Then
       If GetUNCPath(opn.FileName).StartsWith(defaultPath) Then
         Log("Format Command Received")
-        Dim fi As New Format_Item(opn.FileName)
+        Dim fi As New Format_Item(GetUNCPath(opn.FileName))
         fi.Dock = DockStyle.Fill
 
         pnlContainer.Controls.Add(fi)
         'FormatFile(args(2), args(?))
       Else
-        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & opn.FileName & "'")
+        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(opn.FileName) & "'")
         MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       End If
     End If
@@ -238,7 +258,7 @@ Public Class Main
     opn.ShowDialog()
     If IO.File.Exists(opn.FileName) Then
       If GetUNCPath(opn.FileName).StartsWith(defaultPath) Then
-        Dim pt As New PathStructure(opn.FileName)
+        Dim pt As New PathStructure(GetUNCPath(opn.FileName))
         Dim bads As New List(Of String)
 
         '' If audit report exists, then delete it
@@ -259,7 +279,7 @@ Public Class Main
 
         pt.LogData(pt.StartPath & "\Audit Report.html", "Generic Audit")
       Else
-        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & opn.FileName & "'")
+        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(opn.FileName) & "'")
         MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       End If
     End If
@@ -273,7 +293,7 @@ Public Class Main
     opn.ShowDialog()
     If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
       If GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) And Not GetUNCPath(opn.CurrentDirectory) = defaultPath Then
-        Dim pt As New PathStructure(opn.CurrentDirectory)
+        Dim pt As New PathStructure(GetUNCPath(opn.CurrentDirectory))
         Dim bads As New List(Of String)
 
         '' If audit report exists, then delete it
@@ -294,7 +314,7 @@ Public Class Main
 
         pt.LogData(pt.StartPath & "\Audit Report.html", "Generic Audit")
       Else
-        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & opn.CurrentDirectory & "'")
+        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(opn.CurrentDirectory) & "'")
         MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       End If
     End If
@@ -332,7 +352,9 @@ Public Class Main
       statProgress.Value = (curIndex / totCustomers) * 100
       '' If parsed Customer is invalid in E2, then continue by skipping
       If My.Settings.blnERPCheck Then
-        If Not IsValidCustomerCode(cust.Remove(0, cust.LastIndexOf("\") + 1)) Then
+        Dim c As New PathStructure(cust)
+
+        If Not IsValidERP(c.Variables) Then
           auditRpt.Report("Skipped '" & cust & "' as the Customer Code could not be found in the E2 database.", PathStructure.AuditReport.StatusCode.ErrorStatus)
           rtb.AppendText("Skipping '" & cust & "' because could not be found in E2" & vbCrLf)
           Continue For
@@ -422,13 +444,13 @@ Public Class Main
     If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
       If GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) Then
         Log("Clipboard Command Received")
-        Dim fi As New FileClipboard(opn.CurrentDirectory)
+        Dim fi As New FileClipboard(GetUNCPath(opn.CurrentDirectory))
         fi.Dock = DockStyle.Fill
 
         pnlContainer.Controls.Add(fi)
         'FormatFile(args(2), args(?))
       Else
-        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & opn.CurrentDirectory & "'")
+        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(opn.CurrentDirectory) & "'")
         MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       End If
     End If
@@ -444,13 +466,36 @@ Public Class Main
     If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
       If GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) Then
         Log("Transfer_Files_By_Extension Command Received")
-        Dim fi As New Transfer_FilesByExtension(opn.CurrentDirectory)
+        Dim fi As New Transfer_FilesByExtension(GetUNCPath(opn.CurrentDirectory))
         fi.Dock = DockStyle.Fill
 
         pnlContainer.Controls.Add(fi)
         'FormatFile(args(2), args(?))
       Else
-        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & opn.CurrentDirectory & "'")
+        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(opn.CurrentDirectory) & "'")
+        MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+      End If
+    End If
+  End Sub
+
+  Private Sub mnuToolsPreview_Click(sender As Object, e As EventArgs) Handles mnuToolsPreview.Click
+    Dim opn As New SelectFolderDialog
+    opn.Title = "Select a folder to search for preview:"
+    If IO.Directory.Exists(defaultPath) Then
+      opn.InitialDirectory = defaultPath
+    End If
+    opn.ShowDialog()
+    If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
+      If GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) Then
+        Log("Preview Command Received")
+        Dim fi As New Preview(GetUNCPath(opn.CurrentDirectory))
+        fi.Dock = DockStyle.Fill
+
+        pnlContainer.Controls.Add(fi)
+        fi.lstFolders.Focus()
+        'FormatFile(args(2), args(?))
+      Else
+        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(opn.CurrentDirectory) & "'")
         MessageBox.Show("You must be within the default path of '" & defaultPath & "'!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       End If
     End If

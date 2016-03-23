@@ -6,7 +6,22 @@ PathStructureMaintenance
 </name>
 </assembly>
 <members>
-<member name="P:Path_Structure_Maintenance.My.Resources.Resources.ResourceManager">
+<member name="M:Path_Structure_Maintenance.PathStructure.IsNameStructured(System.String,System.Collections.Generic.List{System.String}@)">
+	<summary>
+ Determines whether the current path is part of the Path Structure format.
+ </summary>
+	<param name="MainStructureName">Sets the default search location within the Path Structure.</param>
+	<param name="Candidates">A reference to a list that will be filled with the XPath to any valid Path Structure nodes.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:Path_Structure_Maintenance.PathStructure.IsLocationValid(System.Xml.XmlElement)">
+	<summary>
+ Determines if the current path is valid according to the provided Path Structure node.
+ </summary>
+	<param name="Folder">The Path Structure node to check against the current path.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:Path_Structure_Maintenance.My.Resources.Resources.ResourceManager">
 	<summary>
   Returns the cached ResourceManager instance used by this class.
 </summary>
@@ -18,21 +33,18 @@ PathStructureMaintenance
 </member><member name="P:Path_Structure_Maintenance.My.Resources.Resources.DrawGraph">
 	<summary>
   Looks up a localized string similar to function DrawPoints(arr, color) {
-	var clr = "black";
-	if (color != undefined) { clr = color; }
-	var canv = document.getElementById("canvGraph");
-	var ctx = canv.getContext('2d');
-
-	ctx.strokeStyle = clr;
-
-	var ratioX, ratioY;
-	ratioX = canv.width / arr.length;
-	ratioY = canv.height / Math.max.apply(null, arr);
-	console.log("RatioX: ", ratioX);
-	console.log("RatioY: ", ratioY);
-	console.log("SampleX: ", (1 + (1 - ratioX)));
-	var i = 0;
-	for (var len = arr.length, n = 0; n &lt; len; n += (1 + (1  [rest of string was truncated]";.
+    var stats = GetStandardDeviation(arr);
+    var clr = "black";
+    if (color != undefined) { clr = color; }
+    var canv = document.getElementById("canvGraph");
+    var ctx = canv.getContext('2d');
+    ctx.save();
+    ctx.strokeStyle = clr;
+    ctx.fillStyle = clr;
+    var ratioX, ratioY, sampleX, maxValue, minValue;
+    for (var len = arr.length, n = 0; n &lt; len; n++) {
+        // Verify that the value is within the standard deviation
+        if (arr[n] &lt; (st [rest of string was truncated]";.
 </summary>
 </member><member name="T:Path_Structure_Maintenance.My.Resources.Resources">
 	<summary>

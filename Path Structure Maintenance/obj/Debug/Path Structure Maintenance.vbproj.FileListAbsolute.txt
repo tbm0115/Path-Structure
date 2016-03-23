@@ -23,3 +23,25 @@ C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\
 C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path Structure Maintenance.exe
 C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path Structure Maintenance.xml
 C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path Structure Maintenance.pdb
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\Path Structure Maintenance.exe
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\Path Structure Maintenance.pdb
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\Path Structure Maintenance.xml
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\HTML.pdb
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\HTML.xml
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\Interop.AcroPDFLib.dll
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\AxInterop.AcroPDFLib.dll
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path Structure Maintenance.vbprojResolveAssemblyReference.cache
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Interop.AcroPDFLib.dll
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\AxInterop.AcroPDFLib.dll
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path Structure Maintenance.vbproj.ResolveComReference.cache
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Generic_Dialog.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.SelectFolderDialog.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Main.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Resources.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Settings.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Add_Folder.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.FileClipboard.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Format_Item.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Preview.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Transfer_FilesByExtension.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path Structure Maintenance.vbproj.GenerateResource.Cache

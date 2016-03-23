@@ -11,8 +11,9 @@
     <AssemblyName>Path Structure Maintenance</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -23,6 +24,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>Path Structure Maintenance.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,6 +35,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>Path Structure Maintenance.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -146,6 +149,12 @@
     <Compile Include="User Controls\FormatItem.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="User Controls\Preview.Designer.vb">
+      <DependentUpon>Preview.vb</DependentUpon>
+    </Compile>
+    <Compile Include="User Controls\Preview.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="User Controls\Transfer_FilesByExtension.Designer.vb">
       <DependentUpon>Transfer_FilesByExtension.vb</DependentUpon>
     </Compile>
@@ -181,6 +190,9 @@
     <EmbeddedResource Include="User Controls\FormatItem.resx">
       <DependentUpon>FormatItem.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="User Controls\Preview.resx">
+      <DependentUpon>Preview.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="User Controls\Transfer_FilesByExtension.resx">
       <DependentUpon>Transfer_FilesByExtension.vb</DependentUpon>
     </EmbeddedResource>
@@ -200,6 +212,25 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\DrawGraph.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AcroPDFLib">
+      <Guid>{05BFD3F1-6319-4F30-B752-C7A22889BCC4}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="AxAcroPDFLib">
+      <Guid>{05BFD3F1-6319-4F30-B752-C7A22889BCC4}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

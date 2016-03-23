@@ -25,21 +25,22 @@ Partial Class Settings
     Me.btnAddContextMenu = New System.Windows.Forms.Button()
     Me.btnRemoveContextMenu = New System.Windows.Forms.Button()
     Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+    Me.Label1 = New System.Windows.Forms.Label()
+    Me.btnBrowse = New System.Windows.Forms.Button()
+    Me.txtPathStructure = New System.Windows.Forms.TextBox()
     Me.chkTransfer = New System.Windows.Forms.CheckBox()
     Me.CheckBox5 = New System.Windows.Forms.CheckBox()
     Me.CheckBox4 = New System.Windows.Forms.CheckBox()
     Me.CheckBox3 = New System.Windows.Forms.CheckBox()
     Me.CheckBox2 = New System.Windows.Forms.CheckBox()
     Me.CheckBox1 = New System.Windows.Forms.CheckBox()
-    Me.Label1 = New System.Windows.Forms.Label()
-    Me.txtPathStructure = New System.Windows.Forms.TextBox()
-    Me.btnBrowse = New System.Windows.Forms.Button()
+    Me.CheckBox6 = New System.Windows.Forms.CheckBox()
     Me.GroupBox1.SuspendLayout()
     Me.SuspendLayout()
     '
     'btnAddContextMenu
     '
-    Me.btnAddContextMenu.Location = New System.Drawing.Point(12, 342)
+    Me.btnAddContextMenu.Location = New System.Drawing.Point(13, 425)
     Me.btnAddContextMenu.Name = "btnAddContextMenu"
     Me.btnAddContextMenu.Size = New System.Drawing.Size(216, 66)
     Me.btnAddContextMenu.TabIndex = 0
@@ -48,7 +49,7 @@ Partial Class Settings
     '
     'btnRemoveContextMenu
     '
-    Me.btnRemoveContextMenu.Location = New System.Drawing.Point(234, 342)
+    Me.btnRemoveContextMenu.Location = New System.Drawing.Point(235, 425)
     Me.btnRemoveContextMenu.Name = "btnRemoveContextMenu"
     Me.btnRemoveContextMenu.Size = New System.Drawing.Size(216, 66)
     Me.btnRemoveContextMenu.TabIndex = 1
@@ -57,6 +58,7 @@ Partial Class Settings
     '
     'GroupBox1
     '
+    Me.GroupBox1.Controls.Add(Me.CheckBox6)
     Me.GroupBox1.Controls.Add(Me.chkTransfer)
     Me.GroupBox1.Controls.Add(Me.CheckBox5)
     Me.GroupBox1.Controls.Add(Me.CheckBox4)
@@ -65,10 +67,38 @@ Partial Class Settings
     Me.GroupBox1.Controls.Add(Me.CheckBox1)
     Me.GroupBox1.Location = New System.Drawing.Point(13, 88)
     Me.GroupBox1.Name = "GroupBox1"
-    Me.GroupBox1.Size = New System.Drawing.Size(440, 248)
+    Me.GroupBox1.Size = New System.Drawing.Size(440, 281)
     Me.GroupBox1.TabIndex = 2
     Me.GroupBox1.TabStop = False
     Me.GroupBox1.Text = "Context Menu Options"
+    '
+    'Label1
+    '
+    Me.Label1.AutoSize = True
+    Me.Label1.Location = New System.Drawing.Point(13, 13)
+    Me.Label1.Name = "Label1"
+    Me.Label1.Size = New System.Drawing.Size(142, 25)
+    Me.Label1.TabIndex = 3
+    Me.Label1.Text = "Path Structure:"
+    '
+    'btnBrowse
+    '
+    Me.btnBrowse.Location = New System.Drawing.Point(342, 41)
+    Me.btnBrowse.Name = "btnBrowse"
+    Me.btnBrowse.Size = New System.Drawing.Size(108, 30)
+    Me.btnBrowse.TabIndex = 5
+    Me.btnBrowse.Text = "Browse..."
+    Me.btnBrowse.UseVisualStyleBackColor = True
+    '
+    'txtPathStructure
+    '
+    Me.txtPathStructure.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.Path_Structure_Maintenance.My.MySettings.Default, "SettingsPath", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.txtPathStructure.Location = New System.Drawing.Point(12, 41)
+    Me.txtPathStructure.Name = "txtPathStructure"
+    Me.txtPathStructure.ReadOnly = True
+    Me.txtPathStructure.Size = New System.Drawing.Size(324, 30)
+    Me.txtPathStructure.TabIndex = 4
+    Me.txtPathStructure.Text = Global.Path_Structure_Maintenance.My.MySettings.Default.SettingsPath
     '
     'chkTransfer
     '
@@ -144,39 +174,23 @@ Partial Class Settings
     Me.CheckBox1.Text = "Add All Main Folders"
     Me.CheckBox1.UseVisualStyleBackColor = True
     '
-    'Label1
+    'CheckBox6
     '
-    Me.Label1.AutoSize = True
-    Me.Label1.Location = New System.Drawing.Point(13, 13)
-    Me.Label1.Name = "Label1"
-    Me.Label1.Size = New System.Drawing.Size(142, 25)
-    Me.Label1.TabIndex = 3
-    Me.Label1.Text = "Path Structure:"
-    '
-    'txtPathStructure
-    '
-    Me.txtPathStructure.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.Path_Structure_Maintenance.My.MySettings.Default, "SettingsPath", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-    Me.txtPathStructure.Location = New System.Drawing.Point(12, 41)
-    Me.txtPathStructure.Name = "txtPathStructure"
-    Me.txtPathStructure.ReadOnly = True
-    Me.txtPathStructure.Size = New System.Drawing.Size(324, 30)
-    Me.txtPathStructure.TabIndex = 4
-    Me.txtPathStructure.Text = Global.Path_Structure_Maintenance.My.MySettings.Default.SettingsPath
-    '
-    'btnBrowse
-    '
-    Me.btnBrowse.Location = New System.Drawing.Point(342, 41)
-    Me.btnBrowse.Name = "btnBrowse"
-    Me.btnBrowse.Size = New System.Drawing.Size(108, 30)
-    Me.btnBrowse.TabIndex = 5
-    Me.btnBrowse.Text = "Browse..."
-    Me.btnBrowse.UseVisualStyleBackColor = True
+    Me.CheckBox6.AutoSize = True
+    Me.CheckBox6.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnPreview
+    Me.CheckBox6.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnPreview", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.CheckBox6.Location = New System.Drawing.Point(7, 240)
+    Me.CheckBox6.Name = "CheckBox6"
+    Me.CheckBox6.Size = New System.Drawing.Size(241, 29)
+    Me.CheckBox6.TabIndex = 6
+    Me.CheckBox6.Text = "Preview File/Information"
+    Me.CheckBox6.UseVisualStyleBackColor = True
     '
     'Settings
     '
     Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 25.0!)
     Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-    Me.ClientSize = New System.Drawing.Size(465, 414)
+    Me.ClientSize = New System.Drawing.Size(465, 503)
     Me.Controls.Add(Me.btnBrowse)
     Me.Controls.Add(Me.txtPathStructure)
     Me.Controls.Add(Me.Label1)
@@ -205,4 +219,5 @@ Partial Class Settings
   Friend WithEvents Label1 As System.Windows.Forms.Label
   Friend WithEvents txtPathStructure As System.Windows.Forms.TextBox
   Friend WithEvents btnBrowse As System.Windows.Forms.Button
+  Friend WithEvents CheckBox6 As System.Windows.Forms.CheckBox
 End Class

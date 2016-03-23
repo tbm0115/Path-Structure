@@ -162,6 +162,30 @@ Namespace My
                 Me("blnERPCheck") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("dbo_Estim")>  _
+        Public Property ERPTable() As String
+            Get
+                Return CType(Me("ERPTable"),String)
+            End Get
+            Set
+                Me("ERPTable") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+        Public Property blnPreview() As Boolean
+            Get
+                Return CType(Me("blnPreview"),Boolean)
+            End Get
+            Set
+                Me("blnPreview") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

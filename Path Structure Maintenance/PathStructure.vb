@@ -140,6 +140,13 @@ Public Class PathStructure
     Return False
   End Function
 
+  ''' <summary>
+  ''' Determines whether the current path is part of the Path Structure format.
+  ''' </summary>
+  ''' <param name="MainStructureName">Sets the default search location within the Path Structure.</param>
+  ''' <param name="Candidates">A reference to a list that will be filled with the XPath to any valid Path Structure nodes.</param>
+  ''' <returns></returns>
+  ''' <remarks></remarks>
   Public Function IsNameStructured(Optional ByVal MainStructureName As String = "", Optional ByRef Candidates As List(Of String) = Nothing) As Boolean
     Dim strTemp As String
     Dim searchXPath As String
@@ -233,8 +240,19 @@ Public Class PathStructure
       Throw New ArgumentException("Couldn't determine path type", "Invalid Path Type")
     End If
 
+    If _path = _startPath Then
+      Candidates.Add("//Structure")
+      blnFound = True
+    End If
+
     Return blnFound
   End Function
+  ''' <summary>
+  ''' Determines if the current path is valid according to the provided Path Structure node.
+  ''' </summary>
+  ''' <param name="Folder">The Path Structure node to check against the current path.</param>
+  ''' <returns></returns>
+  ''' <remarks></remarks>
   Public Overloads Function IsLocationValid(ByVal Folder As XmlElement) As Boolean
     Dim pattern As String = GetURIfromXPath(FindXPath(Folder)) & "(.*?)"
     If pattern.Contains("\") Then pattern = pattern.Replace("\", "\\")

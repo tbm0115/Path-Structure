@@ -22,19 +22,19 @@ Public Class Settings
         '' Add main values
         regmenu.SetValue("MUIVerb", "Path Structure")
         regmenu.SetValue("icon", "%windir%\system32\imageres.dll,153")
-        regmenu.SetValue("SubCommands", "PathStructure.Open;" & IIf(My.Settings.blnAddAll Or My.Settings.blnAddSingle, "PathStructure.Add;", "") & IIf(My.Settings.blnFormat, "PathStructure.Format;", "") & IIf(My.Settings.blnAudit, "PathStructure.Audit;", "") & IIf(My.Settings.blnClipboard, "PathStructure.Clipboard;", "") & IIf(My.Settings.blnTransferByExtension, "PathStructure.TransferByExtension;", ""))
+        regmenu.SetValue("SubCommands", "PathStructure.Open;" & IIf(My.Settings.blnAddAll Or My.Settings.blnAddSingle, "PathStructure.Add;", "") & IIf(My.Settings.blnFormat, "PathStructure.Format;", "") & IIf(My.Settings.blnAudit, "PathStructure.Audit;", "") & IIf(My.Settings.blnClipboard, "PathStructure.Clipboard;", "") & IIf(My.Settings.blnTransferByExtension, "PathStructure.TransferByExtension;", "") & IIf(My.Settings.blnPreview, "PathStructure.Preview;", ""))
 
         ''Create 'Add' submenu
         If My.Settings.blnAddAll Or My.Settings.blnAddSingle Then
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.Add")
-          regmenu.SetValue("MUIVerb", "Add")
+          regmenu.SetValue("MUIVerb", "Create")
           regmenu.SetValue("SubCommands", "PathStructure.Add.All;PathStructure.Add.Single;")
         End If
 
         If My.Settings.blnAddAll Then
           Log(vbTab & "Adding 'Add All'")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.Add.All")
-          regmenu.SetValue("MUIVerb", "Add All main folders")
+          regmenu.SetValue("MUIVerb", "Create All main folders")
           regmenu.SetValue("icon", "%windir%\system32\shell32.dll,278")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.Add.All\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -addall " & Chr(34) & "%1" & Chr(34))
@@ -43,7 +43,7 @@ Public Class Settings
         If My.Settings.blnAddSingle Then
           Log(vbTab & "Adding 'Add Single'")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.Add.Single")
-          regmenu.SetValue("MUIVerb", "Add a Folder...")
+          regmenu.SetValue("MUIVerb", "Create a Folder...")
           regmenu.SetValue("icon", "%windir%\system32\shell32.dll,278")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.Add.Single\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -add " & Chr(34) & "%1" & Chr(34))
@@ -52,7 +52,7 @@ Public Class Settings
         If My.Settings.blnFormat Then
           Log(vbTab & "Adding 'Format' commands")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.Format")
-          regmenu.SetValue("MUIVerb", "Format selected file...")
+          regmenu.SetValue("MUIVerb", "Rename selected file...")
           regmenu.SetValue("icon", "%windir%\system32\comres.dll,6")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.Format\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -format " & Chr(34) & "%1" & Chr(34))
@@ -69,7 +69,7 @@ Public Class Settings
 
         Log(vbTab & "Adding 'Open' commands")
         regmenu = view32.CreateSubKey(regCommand & "PathStructure.Open")
-        regmenu.SetValue("MUIVerb", "Open PathStructure Application")
+        regmenu.SetValue("MUIVerb", "Open Path Structure Application")
         regmenu.SetValue("icon", "%windir%\system32\shell32.dll,2")
         regcmd = view32.CreateSubKey(regCommand & "PathStructure.Open\\command")
         regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34))
@@ -77,7 +77,7 @@ Public Class Settings
         If My.Settings.blnClipboard Then
           Log(vbTab & "Adding 'Clipboard' commands")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.Clipboard")
-          regmenu.SetValue("MUIVerb", "Create Path to Clipboard")
+          regmenu.SetValue("MUIVerb", "Generate Path to Clipboard...")
           regmenu.SetValue("icon", "%windir%\system32\ieframe.dll,110")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.Clipboard\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -clipboard " & Chr(34) & "%1" & Chr(34))
@@ -86,10 +86,19 @@ Public Class Settings
         If My.Settings.blnTransferByExtension Then
           Log(vbTab & "Adding 'TransferByFileExtension' commands")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.TransferByExtension")
-          regmenu.SetValue("MUIVerb", "Transfer Files by Extension")
+          regmenu.SetValue("MUIVerb", "Transfer Files by Extension...")
           regmenu.SetValue("icon", "%windir%\system32\wpdshext.dll,4")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.TransferByExtension\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -transfer " & Chr(34) & "%1" & Chr(34))
+        End If
+
+        If My.Settings.blnPreview Then
+          Log(vbTab & "Adding 'Preview' commands")
+          regmenu = view32.CreateSubKey(regCommand & "PathStructure.Preview")
+          regmenu.SetValue("MUIVerb", "Preview Document(s)...")
+          regmenu.SetValue("icon", "%windir%\system32\wpdshext.dll,4")
+          regcmd = view32.CreateSubKey(regCommand & "PathStructure.Preview\\command")
+          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -preview " & Chr(34) & "%1" & Chr(34))
         End If
 
       Catch ex As Exception
@@ -188,6 +197,15 @@ Public Class Settings
           Log("Deleted 'TransferByExtension' registry entry")
         Else
           Log("Could not open main 'TransferByExtension' registry entry")
+        End If
+
+        reg = view32.OpenSubKey(regCommand & "PathStructure.Preview")
+        If Not IsNothing(reg) Then
+          reg.Close()
+          view32.DeleteSubKeyTree(regCommand & "PathStructure.Preview")
+          Log("Deleted 'Preview' registry entry")
+        Else
+          Log("Could not open main 'Preview' registry entry")
         End If
       Catch ex As Exception
         Log("An error occurred..." & vbLf & vbTab & ex.Message)

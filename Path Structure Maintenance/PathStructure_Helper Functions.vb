@@ -230,20 +230,39 @@ Module PathStructure_Helper_Functions
     Return -1
   End Function
 
-  Public Function IsValidCustomerCode(ByVal CustCode As String) As Boolean
-    Dim blnFound As Boolean = False
-    Using Cnn As New OleDbConnection(My.Settings.ERPConnection)
-      Cnn.Open()
-      Using Cmd As New OleDbCommand("SELECT CustCode,User_Text3 FROM dbo_Estim WHERE CustCode=" & Chr(34) & CustCode & Chr(34) & " OR User_Text3=" & Chr(34) & CustCode & Chr(34), Cnn)
-        For Each Rcd As IDataRecord In Cmd.ExecuteReader
-          If Rcd.Item("CustCode") = CustCode Or Rcd.Item("User_Text3").ToString = CustCode Then
-            blnFound = True
-            Exit For
-          End If
+  Public Function IsValidERP(ByVal Values As SortedList(Of String, String)) As Boolean
+    Try
+      Dim blnFound As Boolean = False
+      Using Cnn As New OleDbConnection(My.Settings.ERPConnection)
+        Cnn.Open()
+        Dim fields As String = String.Join(",", Values.Keys)
+        If fields.EndsWith(",") Then fields = fields.Remove(fields.Length - 1)
+        Dim cond As String = ""
+        For Each Val As KeyValuePair(Of String, String) In Values
+          cond += Val.Key & "=" & Chr(34) & Val.Value & Chr(34) & " AND "
         Next
+        If cond.EndsWith(" AND ") Then cond = cond.Remove(cond.LastIndexOf(" AND "))
+        Using Cmd As New OleDbCommand("SELECT " & fields & " FROM " & My.Settings.ERPTable & " WHERE " & cond, Cnn)
+          For Each Rcd As IDataRecord In Cmd.ExecuteReader
+            '' Iterate through each list of values to look for
+            For Each val As KeyValuePair(Of String, String) In Values
+              '' Verify that the value key exists in the RecordSet
+              If Not IsNothing(Rcd.Item(val.Key)) Then
+                '' Verify that the RecordSet value equals the expected value
+                If Rcd.Item(val.Key) = val.Value Then
+                  blnFound = True
+                  Exit For
+                End If
+              End If
+            Next
+            If blnFound Then Exit For
+          Next
+        End Using
+        Cnn.Close()
       End Using
-      Cnn.Close()
-    End Using
-    Return blnFound
+      Return blnFound
+    Catch ex As Exception
+      Return True
+    End Try
   End Function
 End Module

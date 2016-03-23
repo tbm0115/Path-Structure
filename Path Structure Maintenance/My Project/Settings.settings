@@ -29,5 +29,11 @@
     <Setting Name="blnERPCheck" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="ERPTable" Type="System.String" Scope="User">
+      <Value Profile="(Default)">dbo_Estim</Value>
+    </Setting>
+    <Setting Name="blnPreview" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

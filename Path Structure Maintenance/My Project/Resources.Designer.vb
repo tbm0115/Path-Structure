@@ -62,21 +62,18 @@ Namespace My.Resources
         
         '''<summary>
         '''  Looks up a localized string similar to function DrawPoints(arr, color) {
-        '''	var clr = &quot;black&quot;;
-        '''	if (color != undefined) { clr = color; }
-        '''	var canv = document.getElementById(&quot;canvGraph&quot;);
-        '''	var ctx = canv.getContext(&apos;2d&apos;);
-        '''
-        '''	ctx.strokeStyle = clr;
-        '''
-        '''	var ratioX, ratioY;
-        '''	ratioX = canv.width / arr.length;
-        '''	ratioY = canv.height / Math.max.apply(null, arr);
-        '''	console.log(&quot;RatioX: &quot;, ratioX);
-        '''	console.log(&quot;RatioY: &quot;, ratioY);
-        '''	console.log(&quot;SampleX: &quot;, (1 + (1 - ratioX)));
-        '''	var i = 0;
-        '''	for (var len = arr.length, n = 0; n &lt; len; n += (1 + (1  [rest of string was truncated]&quot;;.
+        '''    var stats = GetStandardDeviation(arr);
+        '''    var clr = &quot;black&quot;;
+        '''    if (color != undefined) { clr = color; }
+        '''    var canv = document.getElementById(&quot;canvGraph&quot;);
+        '''    var ctx = canv.getContext(&apos;2d&apos;);
+        '''    ctx.save();
+        '''    ctx.strokeStyle = clr;
+        '''    ctx.fillStyle = clr;
+        '''    var ratioX, ratioY, sampleX, maxValue, minValue;
+        '''    for (var len = arr.length, n = 0; n &lt; len; n++) {
+        '''        // Verify that the value is within the standard deviation
+        '''        if (arr[n] &lt; (st [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property DrawGraph() As String
             Get

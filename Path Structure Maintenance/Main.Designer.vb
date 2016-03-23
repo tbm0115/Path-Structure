@@ -36,11 +36,12 @@ Partial Class Main
     Me.mnuToolsClipboard = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsTransfer = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsTransferFilesByExtension = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuToolsPreview = New System.Windows.Forms.ToolStripMenuItem()
     Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+    Me.statProgress = New System.Windows.Forms.ToolStripProgressBar()
     Me.statStatus = New System.Windows.Forms.ToolStripStatusLabel()
     Me.statCurrentPath = New System.Windows.Forms.ToolStripStatusLabel()
     Me.pnlContainer = New System.Windows.Forms.Panel()
-    Me.statProgress = New System.Windows.Forms.ToolStripProgressBar()
     Me.MenuStrip1.SuspendLayout()
     Me.StatusStrip1.SuspendLayout()
     Me.SuspendLayout()
@@ -63,7 +64,7 @@ Partial Class Main
     '
     'ToolsToolStripMenuItem
     '
-    Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAdd, Me.mnuToolsFormat, Me.mnuToolAudit, Me.mnuToolsClipboard, Me.mnuToolsTransfer})
+    Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAdd, Me.mnuToolsFormat, Me.mnuToolAudit, Me.mnuToolsClipboard, Me.mnuToolsTransfer, Me.mnuToolsPreview})
     Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
     Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(57, 24)
     Me.ToolsToolStripMenuItem.Text = "Tools"
@@ -142,6 +143,13 @@ Partial Class Main
     Me.mnuToolsTransferFilesByExtension.Size = New System.Drawing.Size(200, 26)
     Me.mnuToolsTransferFilesByExtension.Text = "Files by Extension"
     '
+    'mnuToolsPreview
+    '
+    Me.mnuToolsPreview.Enabled = Global.Path_Structure_Maintenance.My.MySettings.Default.blnPreview
+    Me.mnuToolsPreview.Name = "mnuToolsPreview"
+    Me.mnuToolsPreview.Size = New System.Drawing.Size(208, 26)
+    Me.mnuToolsPreview.Text = "Preview"
+    '
     'StatusStrip1
     '
     Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
@@ -151,6 +159,11 @@ Partial Class Main
     Me.StatusStrip1.Size = New System.Drawing.Size(423, 25)
     Me.StatusStrip1.TabIndex = 1
     Me.StatusStrip1.Text = "StatusStrip1"
+    '
+    'statProgress
+    '
+    Me.statProgress.Name = "statProgress"
+    Me.statProgress.Size = New System.Drawing.Size(100, 19)
     '
     'statStatus
     '
@@ -171,11 +184,6 @@ Partial Class Main
     Me.pnlContainer.Name = "pnlContainer"
     Me.pnlContainer.Size = New System.Drawing.Size(423, 345)
     Me.pnlContainer.TabIndex = 2
-    '
-    'statProgress
-    '
-    Me.statProgress.Name = "statProgress"
-    Me.statProgress.Size = New System.Drawing.Size(100, 19)
     '
     'Main
     '
@@ -217,5 +225,6 @@ Partial Class Main
   Friend WithEvents mnuToolsTransfer As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuToolsTransferFilesByExtension As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents statProgress As System.Windows.Forms.ToolStripProgressBar
+  Friend WithEvents mnuToolsPreview As System.Windows.Forms.ToolStripMenuItem
 
 End Class
