@@ -98,12 +98,12 @@ Public Class Add_Folder
 
   Private Sub Variable_Changed(ByVal sender As System.Object, ByVal e As System.EventArgs)
     Dim vals As New SortedList(Of String, String)
+    txtPreview.Text = _CurrentPath.ReplaceVariables(fileName)
     For Each pnl As Control In pnlVariables.Controls
       vals.Add(pnl.Controls(1).Tag, pnl.Controls(1).Text)
-    Next
-    txtPreview.Text = fileName
-    For Each Val As KeyValuePair(Of String, String) In vals
-      txtPreview.Text = txtPreview.Text.Replace("{" & Val.Key & "}", Val.Value)
+      If Not String.IsNullOrEmpty(pnl.Controls(1).Text) Then
+        txtPreview.Text = txtPreview.Text.Replace("{" & pnl.Controls(1).Tag & "}", pnl.Controls(1).Text)
+      End If
     Next
   End Sub
 

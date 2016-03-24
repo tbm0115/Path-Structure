@@ -45,3 +45,4 @@ C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\
 C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Preview.resources
 C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Transfer_FilesByExtension.resources
 C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path Structure Maintenance.vbproj.GenerateResource.Cache
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\HTML.dll

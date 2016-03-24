@@ -1,5 +1,6 @@
 ﻿Imports System.Xml
 Imports System.Security.Principal
+Imports HTML, HTML.HTMLWriter
 
 Public Class Main
 
@@ -248,7 +249,6 @@ Public Class Main
       End If
     End If
   End Sub
-
   Private Sub mnuToolsAuditFile_Click(sender As Object, e As EventArgs) Handles mnuToolsAuditFile.Click
     Dim opn As New OpenFileDialog
     opn.Title = "Select a file under the 'parts' folder to format:"
@@ -433,7 +433,6 @@ Public Class Main
       MessageBox.Show("Audit Successful!" & vbLf & "No errors found in the Path Structure", "Audit Success!", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End If
   End Sub
-
   Private Sub mnuToolsClipboard_Click(sender As Object, e As EventArgs) Handles mnuToolsClipboard.Click
     Dim opn As New SelectFolderDialog
     opn.Title = "Select a 'parts' folder to format:"
@@ -455,7 +454,6 @@ Public Class Main
       End If
     End If
   End Sub
-
   Private Sub mnuToolsTransferFilesByExtension_Click(sender As Object, e As EventArgs) Handles mnuToolsTransferFilesByExtension.Click
     Dim opn As New SelectFolderDialog
     opn.Title = "Select a 'parts' folder to search for transfer files:"
@@ -477,7 +475,6 @@ Public Class Main
       End If
     End If
   End Sub
-
   Private Sub mnuToolsPreview_Click(sender As Object, e As EventArgs) Handles mnuToolsPreview.Click
     Dim opn As New SelectFolderDialog
     opn.Title = "Select a folder to search for preview:"
@@ -500,4 +497,80 @@ Public Class Main
       End If
     End If
   End Sub
+  Private Sub mnuGeneratePathStructure_Click(sender As Object, e As EventArgs) Handles mnuGeneratePathStructure.Click
+    Dim rpt As New HTMLWriter
+
+    rpt.AddBootstrapReference()
+    rpt += "<style>ul li{list-style-type: none;cursor: pointer;}.folder:before{content:'\e118';font-family:'Glyphicons Halflings';font-size:12px;float:left;margin-top:4px;margin-left:-17px;color:#222;}.file:before{content:'\e032';font-family:'Glyphicons Halflings';font-size:12px;float:left;margin-top:4px;margin-left:-17px;color:#222;}.contains:before{color: steelblue;}</style>"
+    rpt += New HTMLHeader("Path Structure", HTMLHeader.HeaderSize.H1)
+    rpt += New HTMLHeader("This document is not controlled. Created " & DateTime.Now.ToString("MM/dd/yyyy hh:mm tt"), HTMLHeader.HeaderSize.H6)
+
+    rpt += New HTMLParagraph("Folders and Files with a name enclosed in <code>{}</code> are wildcard objects, meaning that the object name can be any valid object name.", New AttributeList({"class"}, {"alert alert-info"}))
+
+    Dim lstMain As New HTMLList(HTMLList.ListType.Unordered, New AttributeList({"id"}, {"structure"}))
+
+    Dim myXML As New XmlDocument
+    myXML.Load(My.Settings.SettingsPath)
+
+
+    Dim struct As New HTMLList.ListItem("Structure: " & myXML.SelectSingleNode("Structure").Attributes("defaultPath").Value.ToString)
+    If myXML.SelectSingleNode("Structure").SelectNodes("./*").Count > 0 Then
+      Dim innerList As New HTMLList(HTMLList.ListType.Unordered)
+      For Each chld As XmlElement In myXML.SelectSingleNode("Structure").SelectNodes("./*")
+        If Not chld.Name = "Variables" And Not chld.Name = "Variable" Then
+          innerList += RecursivePathStructure(chld)
+        End If
+      Next
+      struct.AddInnerHTML(innerList.Markup)
+    End If
+    lstMain.AddListItem(struct)
+    'lstMain.SetList()
+
+    rpt += lstMain.Markup
+
+    rpt += ("<script type='text/javascript'>" & _
+            "$('#structure ul li ul').toggle();" & _
+            "$('.folder,.file').click(function() {" & _
+            "$(this).children('ul').slideToggle();" & _
+            "return false;" & _
+            "});</script>")
+
+    Dim opn As New SaveFileDialog
+    opn.Title = "Select a location to save the report..."
+    opn.Filter = "HTML|*.html"
+    opn.FileName = "Path Structure.html"
+    opn.CheckPathExists = True
+    opn.OverwritePrompt = True
+
+    opn.ShowDialog()
+
+    If Not String.IsNullOrEmpty(opn.FileName) Then
+      Try
+        IO.File.WriteAllText(opn.FileName, rpt.HTMLMarkup)
+        Process.Start(opn.FileName)
+      Catch ex As Exception
+        MessageBox.Show("An error occurred while attempting to save and open the Path Structure: " & vbLf & ex.Message & vbLf & opn.FileName, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+      End Try
+    End If
+  End Sub
+  Private Function RecursivePathStructure(ByVal node As XmlElement) As HTMLList.ListItem
+    Dim li As HTMLList.ListItem
+    Dim cls As String = ""
+    If node.Name = "Folder" Then
+      cls = "folder"
+    ElseIf node.Name = "File" Or node.Name = "Option" Then
+      cls = "file"
+    End If
+    li = New HTMLList.ListItem("<b>" & node.Attributes("name").Value.ToString & "</b>: " & node.Attributes("description").Value.ToString, New AttributeList({"class"}, {cls}))
+    If node.SelectNodes("./*").Count > 0 Then
+      Dim lst As New HTMLList(HTMLList.ListType.Unordered)
+      For Each chld As XmlElement In node.SelectNodes("./*")
+        lst.AddListItem(RecursivePathStructure(chld))
+      Next
+      lst.SetList()
+      li.AddInnerHTML(lst.Markup)
+      li.AttributeList = New AttributeList({"class"}, {cls & " contains"})
+    End If
+    Return li
+  End Function
 End Class

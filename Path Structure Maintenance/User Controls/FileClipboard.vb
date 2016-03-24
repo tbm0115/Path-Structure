@@ -12,9 +12,6 @@ Public Class FileClipboard
 
     '' Add any initialization after the InitializeComponent() call.
     myXML.Load(My.Settings.SettingsPath)
-    'Log(vbTab & "Directory: " & _CurrentPath.FileInfo.DirectoryName)
-    'Log(vbTab & "Filename: " & _CurrentPath.FileInfo.Name)
-    'Log(vbTab & "Extension: " & _CurrentPath.FileInfo.Extension)
     For Each var As KeyValuePair(Of String, String) In _CurrentPath.Variables
       Log(vbTab & var.Key & ": " & var.Value)
     Next
@@ -105,12 +102,13 @@ Public Class FileClipboard
 
   Private Sub Variable_Changed(ByVal sender As System.Object, ByVal e As System.EventArgs)
     Dim vals As New SortedList(Of String, String)
+    txtPreview.Text = _CurrentPath.ReplaceVariables(fileName)
     For Each pnl As Control In pnlVariables.Controls
       vals.Add(pnl.Controls(1).Tag, pnl.Controls(1).Text)
+      If Not String.IsNullOrEmpty(pnl.Controls(1).Text) Then
+        txtPreview.Text = txtPreview.Text.Replace("{" & pnl.Controls(1).Tag & "}", pnl.Controls(1).Text)
+      End If
     Next
-    txtPreview.Text = fileName
-
-    txtPreview.Text = _CurrentPath.ReplaceVariables(txtPreview.Text)
   End Sub
 
   Private Sub btnAccept_Click(sender As Object, e As EventArgs) Handles btnAccept.Click

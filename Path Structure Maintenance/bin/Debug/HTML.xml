@@ -299,6 +299,12 @@ HTML
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
+</member><member name="M:HTML.HTMLWriter.HTMLList.ListItem.SetListItem(System.String)">
+	<summary>
+ Resets the inner html of the current instance of a list item.
+ </summary>
+	<param name="InnerHTML">The html markup that will take up the inner html of the element</param>
+	<remarks></remarks>
 </member><member name="T:HTML.HTMLWriter.HTMLList">
 	<summary>
  Represents an instance of an HTML List. Consists of either bulleted or numbered lists.
