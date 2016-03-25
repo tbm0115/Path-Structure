@@ -63,6 +63,30 @@ HTML
 	<param name="Markup">Raw HTML Markup to search</param>
 	<returns></returns>
 	<remarks></remarks>
+</member><member name="M:HTML.Quick_Tags.ToTop_Anchor">
+	<summary>
+ Represents the HTML Markup for a generic "To Top" link. This markup is styled to hover in the upper right corner of the page.
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:HTML.Quick_Tags.Overlay">
+	<summary>
+ Represents the HTML Markup for a generic "Overlay" control consisting of two Divs, two Anchors, and any other specified HTML Markup
+ </summary>
+	<remarks></remarks>
+</member><member name="P:HTML.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:HTML.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:HTML.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
 </member><member name="P:HTML.HTMLWriter.SafeMode">
 	<summary>
  Get/Set the condition of whether the HTMLWriter class should find and replace any invalid characteristics. Note that most HTML tags should be safe.
@@ -392,30 +416,6 @@ HTML
 	<param name="InputLine">Incoming inner text.</param>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:HTML.Quick_Tags.ToTop_Anchor">
-	<summary>
- Represents the HTML Markup for a generic "To Top" link. This markup is styled to hover in the upper right corner of the page.
- </summary>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="T:HTML.Quick_Tags.Overlay">
-	<summary>
- Represents the HTML Markup for a generic "Overlay" control consisting of two Divs, two Anchors, and any other specified HTML Markup
- </summary>
-	<remarks></remarks>
-</member><member name="P:HTML.My.Resources.Resources.ResourceManager">
-	<summary>
-  Returns the cached ResourceManager instance used by this class.
-</summary>
-</member><member name="P:HTML.My.Resources.Resources.Culture">
-	<summary>
-  Overrides the current thread's CurrentUICulture property for all
-  resource lookups using this strongly typed resource class.
-</summary>
-</member><member name="T:HTML.My.Resources.Resources">
-	<summary>
-  A strongly-typed resource class, for looking up localized strings, etc.
-</summary>
 </member>
 </members>
 </doc>

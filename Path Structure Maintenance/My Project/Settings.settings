@@ -27,7 +27,7 @@
       <Value Profile="(Default)">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\server\SHARE\Systems Database\Access Database\IrongateApplications.mdb</Value>
     </Setting>
     <Setting Name="blnERPCheck" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ERPTable" Type="System.String" Scope="User">
       <Value Profile="(Default)">dbo_Estim</Value>

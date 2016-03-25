@@ -62,9 +62,9 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HTML, Version=4.0.0.8, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="HTML, Version=4.0.0.17, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\HTML Writer\HTML Writer\bin\Release\HTML.dll</HintPath>
+      <HintPath>..\..\..\HTML Writer\HTML-Writer\HTML Writer\bin\Release\HTML.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

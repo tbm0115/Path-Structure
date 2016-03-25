@@ -9,7 +9,7 @@ Public Class Main
 
     Dim myXML As New XmlDocument
     myXML.Load(My.Settings.SettingsPath)
-    defaultPath = myXML.SelectSingleNode("Structure").Attributes("defaultPath").Value
+    defaultPath = myXML.SelectSingleNode("Structure").Attributes("defaultPath").Value.ToLower
     Dim custCode As String = ""
     Dim partNo As String = ""
 
@@ -356,8 +356,10 @@ Public Class Main
 
         If Not IsValidERP(c.Variables) Then
           auditRpt.Report("Skipped '" & cust & "' as the Customer Code could not be found in the E2 database.", PathStructure.AuditReport.StatusCode.ErrorStatus)
-          rtb.AppendText("Skipping '" & cust & "' because could not be found in E2" & vbCrLf)
+          rtb.AppendText("Skipping '" & cust & "' because could not be found in ERP system." & vbCrLf)
           Continue For
+        Else
+          rtb.AppendText("Found '" & cust & "' in ERP system. ")
         End If
       End If
 

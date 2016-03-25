@@ -231,25 +231,28 @@ Module PathStructure_Helper_Functions
   End Function
 
   Public Function IsValidERP(ByVal Values As SortedList(Of String, String)) As Boolean
+    Dim cond As String = ""
     Try
       Dim blnFound As Boolean = False
       Using Cnn As New OleDbConnection(My.Settings.ERPConnection)
         Cnn.Open()
         Dim fields As String = String.Join(",", Values.Keys)
         If fields.EndsWith(",") Then fields = fields.Remove(fields.Length - 1)
-        Dim cond As String = ""
+        fields = fields.Replace("{", "").Replace("}", "")
         For Each Val As KeyValuePair(Of String, String) In Values
-          cond += Val.Key & "=" & Chr(34) & Val.Value & Chr(34) & " AND "
+          cond += Val.Key & "=" & Chr(34) & Val.Value.ToUpper & Chr(34) & " AND "
         Next
         If cond.EndsWith(" AND ") Then cond = cond.Remove(cond.LastIndexOf(" AND "))
-        Using Cmd As New OleDbCommand("SELECT " & fields & " FROM " & My.Settings.ERPTable & " WHERE " & cond, Cnn)
+        cond = cond.Replace("{", "").Replace("}", "")
+        Using Cmd As New OleDbCommand("SELECT " & fields & " FROM " & My.Settings.ERPTable & " WHERE " & cond & ";", Cnn)
           For Each Rcd As IDataRecord In Cmd.ExecuteReader
             '' Iterate through each list of values to look for
             For Each val As KeyValuePair(Of String, String) In Values
               '' Verify that the value key exists in the RecordSet
-              If Not IsNothing(Rcd.Item(val.Key)) Then
+              Dim col As String = val.Key.Replace("{", "").Replace("}", "")
+              If Not IsNothing(Rcd.Item(col)) Then
                 '' Verify that the RecordSet value equals the expected value
-                If Rcd.Item(val.Key) = val.Value Then
+                If Rcd.Item(col).ToString.ToUpper = val.Value.ToUpper Then
                   blnFound = True
                   Exit For
                 End If
@@ -262,7 +265,12 @@ Module PathStructure_Helper_Functions
       End Using
       Return blnFound
     Catch ex As Exception
-      Return True
+      Log("Error checking ERP system: " & _
+          vbCrLf & vbTab & "Keys: " & String.Join(",", Values.Keys.ToArray) & _
+          vbCrLf & vbTab & "Values: " & String.Join(",", Values.Values.ToArray) & _
+          vbCrLf & vbTab & "Condition: " & cond & _
+          vbCrLf & vbTab & "Error: " & ex.Message)
+      Return False
     End Try
   End Function
 End Module

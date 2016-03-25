@@ -133,7 +133,7 @@ Public Class PathStructure
 
   Public Function IsDescendantOfDefaultPath() As Boolean
     If Not String.IsNullOrEmpty(GetUNCPath(_path)) Then
-      If GetUNCPath(_path).StartsWith(_defaultPath) Then
+      If GetUNCPath(_path).ToLower.StartsWith(_defaultPath) Then
         Return True
       End If
     End If
@@ -351,12 +351,14 @@ Public Class PathStructure
     Dim found As Boolean = False '' Determines whether any valid locations were found, assume false
     Dim successfulN As String = ""
     Dim struct As String = ""
+    Dim childCount As Integer = 0
     If Me.IsNameStructured(, ns) Then
       Report.Report("'" & Me.UNCPath & "' is Name-Structured with '" & ns.Count.ToString & "' structure candidates:<br /><ul><li>" & String.Join("</li><li>", XPathListToURIList(ns).ToArray()) & "</li></ul>", AuditReport.StatusCode.Optimalstatus)
     Else
       Report.Report("'" & Me.UNCPath & "' is not Name-Structured.", AuditReport.StatusCode.ErrorStatus)
     End If
     found = False
+    '' Valid XPath's
     For Each n As String In ns.ToArray
       struct = GetURIfromXPath(n)
       If n.Contains("Option") Then n = n.Remove(n.LastIndexOf("/"))
@@ -368,9 +370,10 @@ Public Class PathStructure
     Next
     If Not IsNothing(Me.Children) Then
       For Each child As PathStructure In Me.Children
-        AuditChildren(Report, child, BadList)
+        childCount += AuditChildren(Report, child, BadList)
       Next
     End If
+    Report.Report("'" & UNCPath & "' has '" & childCount.ToString & "' descendant objects")
     If Not found And Not Me.UNCPath.ToLower = Me.StartPath.ToLower Then
       Report.Report("'" & Me.UNCPath & "' does not adhere to a valid location relative to the '" & ns.Count.ToString & "' Name-Structure results found.", AuditReport.StatusCode.ErrorStatus)
       BadList.Add(Me.UNCPath)
@@ -383,7 +386,8 @@ Public Class PathStructure
       Return True
     End If
   End Function
-  Private Sub AuditChildren(ByVal Report As AuditReport, ByVal Child As PathStructure, ByRef Bads As List(Of String))
+  Private Function AuditChildren(ByVal Report As AuditReport, ByVal Child As PathStructure, ByRef Bads As List(Of String)) As Integer
+    Dim childrenCount As Integer = 0
     Dim ns As New List(Of String)
     If Child.IsNameStructured(, ns) Then
       Report.Report("'" & Child.UNCPath & "' is Name-Structured with '" & ns.Count.ToString & "' structure candidates:<br /><ul><li>" & String.Join("</li><li>", XPathListToURIList(ns).ToArray) & "</li></ul>", AuditReport.StatusCode.Optimalstatus)
@@ -412,9 +416,11 @@ Public Class PathStructure
     If Not IsNothing(Child.Children) Then
       For Each chld As PathStructure In Child.Children
         AuditChildren(Report, chld, Bads)
+        childrenCount += 1
       Next
     End If
-  End Sub
+    Return childrenCount
+  End Function
 
   Public Sub LogData(ByVal ChangedPath As String, ByVal Method As String)
     Try
