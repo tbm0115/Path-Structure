@@ -152,18 +152,38 @@ Public Class Preview
       If IO.File.Exists(Files(lstFiles.SelectedItem.ToString)) Then
         Dim fil As New IO.FileInfo(Files(lstFiles.SelectedItem.ToString))
         If Not IsNothing(fil.Extension) Then
-          Select Case fil.Extension
+          Select Case fil.Extension.ToLower
             Case ".pdf"
               Dim pdf As New WebBrowser
               pdf.Dock = DockStyle.Fill
               pnlPreview.Controls.Add(pdf)
               pdf.Navigate("file:///" & fil.FullName)
-            Case ".txt" Or ".gcode" Or ".eia" Or ".rtf"
+            Case ".txt"
               Dim txt As New RichTextBox
               txt.Dock = DockStyle.Fill
               pnlPreview.Controls.Add(txt)
               txt.LoadFile(fil.FullName)
-            Case ".html" Or ".htm"
+            Case ".gcode"
+              Dim txt As New RichTextBox
+              txt.Dock = DockStyle.Fill
+              pnlPreview.Controls.Add(txt)
+              txt.LoadFile(fil.FullName)
+            Case ".eia"
+              Dim txt As New RichTextBox
+              txt.Dock = DockStyle.Fill
+              pnlPreview.Controls.Add(txt)
+              txt.LoadFile(fil.FullName)
+            Case ".rtf"
+              Dim txt As New RichTextBox
+              txt.Dock = DockStyle.Fill
+              pnlPreview.Controls.Add(txt)
+              txt.LoadFile(fil.FullName)
+            Case ".html"
+              Dim html As New WebBrowser
+              html.Dock = DockStyle.Fill
+              pnlPreview.Controls.Add(html)
+              html.Navigate(fil.FullName)
+            Case ".htm"
               Dim html As New WebBrowser
               html.Dock = DockStyle.Fill
               pnlPreview.Controls.Add(html)

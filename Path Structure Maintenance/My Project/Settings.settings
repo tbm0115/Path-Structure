@@ -9,19 +9,19 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="blnAddSingle" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="blnFormat" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="blnAudit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="blnClipboard" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="blnTransferByExtension" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ERPConnection" Type="System.String" Scope="User">
       <Value Profile="(Default)">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\server\SHARE\Systems Database\Access Database\IrongateApplications.mdb</Value>
@@ -33,6 +33,15 @@
       <Value Profile="(Default)">dbo_Estim</Value>
     </Setting>
     <Setting Name="blnPreview" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="blnReportErrors" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="blnReportInformation" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="blnReportOptimal" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>

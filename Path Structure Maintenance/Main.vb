@@ -24,7 +24,7 @@ Public Class Main
         Select Case args(1)
           Case "-add"
             If args.Length >= 3 Then
-              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
+              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath) Then
                 statCurrentPath.Text = GetUNCPath(args(2))
                 Log("Add Command Received")
                 Dim fi As New Add_Folder(GetUNCPath(args(2)))
@@ -39,7 +39,7 @@ Public Class Main
             End If
           Case "-addall"
             If args.Length >= 3 Then
-              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
+              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath) Then
                 statCurrentPath.Text = GetUNCPath(args(2))
                 dg = MessageBox.Show("Are you sure you wish to create all main folders in the selected directory?", "Verify", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                 If dg = Windows.Forms.DialogResult.Yes Then
@@ -62,7 +62,7 @@ Public Class Main
             End If
           Case "-format"
             If args.Length >= 3 Then
-              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
+              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath) Then
                 statCurrentPath.Text = GetUNCPath(args(2))
                 Log("Format Command Received")
                 Dim fi As New Format_Item(GetUNCPath(args(2)))
@@ -77,7 +77,7 @@ Public Class Main
             End If
           Case "-audit"
             If args.Length >= 3 Then
-              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
+              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath) Then
                 statCurrentPath.Text = GetUNCPath(args(2))
                 Log("Audit Command Received")
 
@@ -108,7 +108,7 @@ Public Class Main
             End If
           Case "-clipboard"
             If args.Length >= 3 Then
-              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath.ToLower) Then
+              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath) Then
                 statCurrentPath.Text = GetUNCPath(args(2))
                 Log("Clipboard Command Received")
                 Dim fi As New FileClipboard(GetUNCPath(args(2)))
@@ -123,7 +123,7 @@ Public Class Main
             End If
           Case "-transfer"
             If args.Length >= 3 Then
-              If GetUNCPath(args(2)).StartsWith(defaultPath) Then
+              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath) Then
                 statCurrentPath.Text = args(2)
                 Log("Transfer_Files_By_Extension Command Received")
                 Dim fi As New Transfer_FilesByExtension(args(2))
@@ -139,7 +139,7 @@ Public Class Main
             End If
           Case "-preview"
             If args.Length >= 3 Then
-              If GetUNCPath(args(2)).StartsWith(defaultPath) Then
+              If GetUNCPath(args(2)).ToLower.StartsWith(defaultPath) Then
                 statCurrentPath.Text = GetUNCPath(args(2))
                 Log("Preview Command Received")
 
@@ -299,6 +299,7 @@ Public Class Main
         '' If audit report exists, then delete it
         If IO.File.Exists(pt.StartPath & "\Audit Report.html") Then IO.File.Delete(pt.StartPath & "\Audit Report.html")
         Dim auditRpt As New PathStructure.AuditReport(pt)
+
         If Not pt.Audit(auditRpt, bads) Then
           MessageBox.Show("Invalid path(s) found. Click OK to open temporary report...", "Audit Failed!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
           Try
@@ -348,8 +349,10 @@ Public Class Main
     Dim stpWatch As New Stopwatch
     Dim averageTime As Double
 
+
     For Each cust As String In IO.Directory.GetDirectories(defaultPath)
       statProgress.Value = (curIndex / totCustomers) * 100
+      curIndex += 1
       '' If parsed Customer is invalid in E2, then continue by skipping
       If My.Settings.blnERPCheck Then
         Dim c As New PathStructure(cust)
@@ -367,20 +370,14 @@ Public Class Main
         stpWatch.Restart()
         rtb.AppendText("Auditing '" & part & "'..." & vbLf)
         statCurrentPath.Text = "'" & part & "'"
-        'Debug.WriteLine("Auditing '" & part & "'...")
         Application.DoEvents()
 
         Dim pt As New PathStructure(part)
-        'Dim bads As New List(Of String)
 
-        If Not pt.Audit(auditRpt) Then ', bads) Then
-          'auditRpt.Report("Bad Paths:" & String.Join("<br />", bads.ToArray), PathStructure.AuditReport.StatusCode.ErrorStatus)
-          'rtb.AppendText(vbTab & "Found '" & bads.Count.ToString & "' errors!" & vbLf)
+        If Not pt.Audit(auditRpt) Then
           bad += 1
           blnSuccess = False
         End If
-
-        'pt.LogData(defaultPath & "\Audit Report.html", "Generic Audit")
 
         rtb.ScrollToCaret()
         tot += 1
@@ -393,7 +390,6 @@ Public Class Main
 
         If cancelAudit Then Exit For
       Next
-      curIndex += 1
 
       System.GC.Collect()
 
@@ -419,8 +415,8 @@ Public Class Main
     auditRpt.Raw("DrawPoints(dataPoints, 'black');</script>")
 
     stp.Stop()
-    Dim ts As New TimeSpan(stp.ElapsedTicks)
-    rtb.AppendText(vbLf & "Audit completed in '" & ts.Hours.ToString & ":" & ts.Minutes.ToString & ":" & ts.Seconds.ToString & "." & ts.Milliseconds.ToString & "'" & vbLf)
+    Dim ts As New TimeSpan(0, 0, 0, 0, stp.ElapsedMilliseconds)
+    rtb.AppendText(vbLf & "Audited '" & auditRpt.FileCount.ToString & "' files in '" & ts.Hours.ToString & ":" & ts.Minutes.ToString & ":" & ts.Seconds.ToString & "." & ts.Milliseconds.ToString & "'" & vbLf)
     rtb.AppendText(bad.ToString & "/" & tot.ToString & " part folders contained Path Structure error(s)." & vbLf)
 
     If Not blnSuccess Then

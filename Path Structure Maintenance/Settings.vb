@@ -6,6 +6,22 @@ Public Class Settings
   Private Const regFoldMain As String = "AllFilesystemObjects\\shell\\PathStructure\\"
   Private Const regCommand As String = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\"
 
+  Private Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
+    Dim opn As New OpenFileDialog
+    opn.Title = "Select the Path Structure XML file"
+    opn.Filter = "XML|*.xml"
+    opn.CheckFileExists = True
+    opn.CheckPathExists = True
+    opn.ShowDialog()
+
+    If IO.File.Exists(opn.FileName) And Not opn.FileName = My.Settings.SettingsPath Then
+      My.Settings.SettingsPath = opn.FileName
+      My.Settings.Save()
+      MessageBox.Show("The application will now restart to save these changes...", "Application Restart Required", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+      Application.Restart()
+    End If
+  End Sub
+
   Private Sub btnAddContextMenu_Click(sender As Object, e As EventArgs) Handles btnAddContextMenu.Click
     Dim regmenu As RegistryKey
     Dim regcmd As RegistryKey
@@ -109,7 +125,6 @@ Public Class Settings
     End If
     MsgBox("Complete!")
   End Sub
-
   Private Sub btnRemoveContextMenu_Click(sender As Object, e As EventArgs) Handles btnRemoveContextMenu.Click
     Dim myXML As New XmlDocument
     Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
@@ -214,22 +229,5 @@ Public Class Settings
       Log("Couldn't find Settings File: '" & My.Settings.SettingsPath & "'")
     End If
     MsgBox("Complete!")
-  End Sub
-
-
-  Private Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
-    Dim opn As New OpenFileDialog
-    opn.Title = "Select the Path Structure XML file"
-    opn.Filter = "XML|*.xml"
-    opn.CheckFileExists = True
-    opn.CheckPathExists = True
-    opn.ShowDialog()
-
-    If IO.File.Exists(opn.FileName) And Not opn.FileName = My.Settings.SettingsPath Then
-      My.Settings.SettingsPath = opn.FileName
-      My.Settings.Save()
-      MessageBox.Show("The application will now restart to save these changes...", "Application Restart Required", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-      Application.Restart()
-    End If
   End Sub
 End Class

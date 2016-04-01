@@ -351,7 +351,6 @@ Public Class PathStructure
     Dim found As Boolean = False '' Determines whether any valid locations were found, assume false
     Dim successfulN As String = ""
     Dim struct As String = ""
-    Dim childCount As Integer = 0
     If Me.IsNameStructured(, ns) Then
       Report.Report("'" & Me.UNCPath & "' is Name-Structured with '" & ns.Count.ToString & "' structure candidates:<br /><ul><li>" & String.Join("</li><li>", XPathListToURIList(ns).ToArray()) & "</li></ul>", AuditReport.StatusCode.Optimalstatus)
     Else
@@ -370,10 +369,11 @@ Public Class PathStructure
     Next
     If Not IsNothing(Me.Children) Then
       For Each child As PathStructure In Me.Children
-        childCount += AuditChildren(Report, child, BadList)
+        AuditChildren(Report, child, BadList)
+        Report.FileCount += 1
       Next
     End If
-    Report.Report("'" & UNCPath & "' has '" & childCount.ToString & "' descendant objects")
+    Report.Report("'" & UNCPath & "' has '" & Report.FileCount.ToString & "' descendant objects")
     If Not found And Not Me.UNCPath.ToLower = Me.StartPath.ToLower Then
       Report.Report("'" & Me.UNCPath & "' does not adhere to a valid location relative to the '" & ns.Count.ToString & "' Name-Structure results found.", AuditReport.StatusCode.ErrorStatus)
       BadList.Add(Me.UNCPath)
@@ -386,8 +386,7 @@ Public Class PathStructure
       Return True
     End If
   End Function
-  Private Function AuditChildren(ByVal Report As AuditReport, ByVal Child As PathStructure, ByRef Bads As List(Of String)) As Integer
-    Dim childrenCount As Integer = 0
+  Private Function AuditChildren(ByRef Report As AuditReport, ByVal Child As PathStructure, ByRef Bads As List(Of String))
     Dim ns As New List(Of String)
     If Child.IsNameStructured(, ns) Then
       Report.Report("'" & Child.UNCPath & "' is Name-Structured with '" & ns.Count.ToString & "' structure candidates:<br /><ul><li>" & String.Join("</li><li>", XPathListToURIList(ns).ToArray) & "</li></ul>", AuditReport.StatusCode.Optimalstatus)
@@ -416,10 +415,9 @@ Public Class PathStructure
     If Not IsNothing(Child.Children) Then
       For Each chld As PathStructure In Child.Children
         AuditChildren(Report, chld, Bads)
-        childrenCount += 1
+        Report.FileCount += 1
       Next
     End If
-    Return childrenCount
   End Function
 
   Public Sub LogData(ByVal ChangedPath As String, ByVal Method As String)
@@ -434,11 +432,45 @@ Public Class PathStructure
   Public Class AuditReport
     Private _report As HTML.HTMLWriter
     Private _path As PathStructure
+    Private _fileCount As Integer
+    Private _showErrors, _showOptimal, _showInformation As Boolean
 
     Public ReadOnly Property ReportMarkup
       Get
         Return _report.HTMLMarkup
       End Get
+    End Property
+    Public Property FileCount As Integer
+      Get
+        Return _fileCount
+      End Get
+      Set(value As Integer)
+        _fileCount += 1
+      End Set
+    End Property
+    Public Property ReportErrorMessages As Boolean
+      Get
+        Return _showErrors
+      End Get
+      Set(value As Boolean)
+        _showErrors = value
+      End Set
+    End Property
+    Public Property ReportOptimalMessages As Boolean
+      Get
+        Return _showOptimal
+      End Get
+      Set(value As Boolean)
+        _showOptimal = value
+      End Set
+    End Property
+    Public Property ReportInformationMessages As Boolean
+      Get
+        Return _showInformation
+      End Get
+      Set(value As Boolean)
+        _showInformation = value
+      End Set
     End Property
 
     Public Sub New(ByVal CurrentPath As PathStructure)
@@ -448,6 +480,10 @@ Public Class PathStructure
 
       _report += New HTMLHeader("Path Structure Audit", HTMLHeader.HeaderSize.H1)
       _report += New HTMLHeader(_path.UNCPath, HTMLHeader.HeaderSize.H3)
+
+      _showErrors = My.Settings.blnReportErrors
+      _showOptimal = My.Settings.blnReportOptimal
+      _showInformation = My.Settings.blnReportInformation
     End Sub
 
     Public Enum StatusCode
@@ -458,11 +494,17 @@ Public Class PathStructure
     Public Sub Report(ByVal Message As String, Optional ByVal Code As StatusCode = StatusCode.DefaultStatus)
       Select Case Code
         Case StatusCode.ErrorStatus
-          _report += New HTMLParagraph(Message, New AttributeList({"class"}, {"alert alert-danger"}))
+          If _showErrors Then
+            _report += New HTMLParagraph(Message, New AttributeList({"class"}, {"alert alert-danger"}))
+          End If
         Case StatusCode.DefaultStatus
-          _report += New HTMLParagraph(Message, New AttributeList({"class"}, {"alert alert-info"}))
+          If _showInformation Then
+            _report += New HTMLParagraph(Message, New AttributeList({"class"}, {"alert alert-info"}))
+          End If
         Case StatusCode.Optimalstatus
-          _report += New HTMLParagraph(Message, New AttributeList({"class"}, {"alert alert-success"}))
+          If _showOptimal Then
+            _report += New HTMLParagraph(Message, New AttributeList({"class"}, {"alert alert-success"}))
+          End If
       End Select
     End Sub
     Public Sub Raw(ByVal HTMLMarkup As String)

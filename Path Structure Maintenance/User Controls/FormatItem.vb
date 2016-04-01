@@ -96,6 +96,9 @@ Public Class Format_Item
         txt.Dock = DockStyle.Right
         txt.Size = New Size(pnlVariables.Width * 0.6, 30)
         txt.Tag = str
+        If _CurrentPath.Variables.ContainsKey("{" & str & "}") Then
+          txt.Text = _CurrentPath.Variables("{" & str & "}")
+        End If
         AddHandler txt.TextChanged, AddressOf Variable_Changed
 
         pnl.Controls.Add(lbl)

@@ -80,7 +80,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
         Public Property blnAddSingle() As Boolean
             Get
                 Return CType(Me("blnAddSingle"),Boolean)
@@ -92,7 +92,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
         Public Property blnFormat() As Boolean
             Get
                 Return CType(Me("blnFormat"),Boolean)
@@ -116,7 +116,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
         Public Property blnClipboard() As Boolean
             Get
                 Return CType(Me("blnClipboard"),Boolean)
@@ -128,7 +128,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
         Public Property blnTransferByExtension() As Boolean
             Get
                 Return CType(Me("blnTransferByExtension"),Boolean)
@@ -184,6 +184,42 @@ Namespace My
             End Get
             Set
                 Me("blnPreview") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+        Public Property blnReportErrors() As Boolean
+            Get
+                Return CType(Me("blnReportErrors"),Boolean)
+            End Get
+            Set
+                Me("blnReportErrors") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+        Public Property blnReportInformation() As Boolean
+            Get
+                Return CType(Me("blnReportInformation"),Boolean)
+            End Get
+            Set
+                Me("blnReportInformation") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+        Public Property blnReportOptimal() As Boolean
+            Get
+                Return CType(Me("blnReportOptimal"),Boolean)
+            End Get
+            Set
+                Me("blnReportOptimal") = value
             End Set
         End Property
     End Class

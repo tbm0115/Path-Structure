@@ -22,39 +22,88 @@ Partial Class Settings
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-    Me.btnAddContextMenu = New System.Windows.Forms.Button()
-    Me.btnRemoveContextMenu = New System.Windows.Forms.Button()
-    Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-    Me.Label1 = New System.Windows.Forms.Label()
+    Me.TabControl1 = New System.Windows.Forms.TabControl()
+    Me.TabPage1 = New System.Windows.Forms.TabPage()
     Me.btnBrowse = New System.Windows.Forms.Button()
+    Me.Label1 = New System.Windows.Forms.Label()
+    Me.TabPage2 = New System.Windows.Forms.TabPage()
+    Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+    Me.btnRemoveContextMenu = New System.Windows.Forms.Button()
+    Me.btnAddContextMenu = New System.Windows.Forms.Button()
+    Me.TabPage3 = New System.Windows.Forms.TabPage()
+    Me.CheckBox7 = New System.Windows.Forms.CheckBox()
+    Me.CheckBox8 = New System.Windows.Forms.CheckBox()
+    Me.CheckBox9 = New System.Windows.Forms.CheckBox()
     Me.txtPathStructure = New System.Windows.Forms.TextBox()
+    Me.CheckBox6 = New System.Windows.Forms.CheckBox()
     Me.chkTransfer = New System.Windows.Forms.CheckBox()
     Me.CheckBox5 = New System.Windows.Forms.CheckBox()
     Me.CheckBox4 = New System.Windows.Forms.CheckBox()
     Me.CheckBox3 = New System.Windows.Forms.CheckBox()
     Me.CheckBox2 = New System.Windows.Forms.CheckBox()
     Me.CheckBox1 = New System.Windows.Forms.CheckBox()
-    Me.CheckBox6 = New System.Windows.Forms.CheckBox()
+    Me.TabControl1.SuspendLayout()
+    Me.TabPage1.SuspendLayout()
+    Me.TabPage2.SuspendLayout()
     Me.GroupBox1.SuspendLayout()
+    Me.TabPage3.SuspendLayout()
     Me.SuspendLayout()
     '
-    'btnAddContextMenu
+    'TabControl1
     '
-    Me.btnAddContextMenu.Location = New System.Drawing.Point(13, 425)
-    Me.btnAddContextMenu.Name = "btnAddContextMenu"
-    Me.btnAddContextMenu.Size = New System.Drawing.Size(216, 66)
-    Me.btnAddContextMenu.TabIndex = 0
-    Me.btnAddContextMenu.Text = "Add/Update Windows Context Menu"
-    Me.btnAddContextMenu.UseVisualStyleBackColor = True
+    Me.TabControl1.Controls.Add(Me.TabPage1)
+    Me.TabControl1.Controls.Add(Me.TabPage2)
+    Me.TabControl1.Controls.Add(Me.TabPage3)
+    Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
+    Me.TabControl1.Location = New System.Drawing.Point(0, 0)
+    Me.TabControl1.Name = "TabControl1"
+    Me.TabControl1.SelectedIndex = 0
+    Me.TabControl1.Size = New System.Drawing.Size(465, 503)
+    Me.TabControl1.TabIndex = 0
     '
-    'btnRemoveContextMenu
+    'TabPage1
     '
-    Me.btnRemoveContextMenu.Location = New System.Drawing.Point(235, 425)
-    Me.btnRemoveContextMenu.Name = "btnRemoveContextMenu"
-    Me.btnRemoveContextMenu.Size = New System.Drawing.Size(216, 66)
-    Me.btnRemoveContextMenu.TabIndex = 1
-    Me.btnRemoveContextMenu.Text = "Remove Windows Context Menu"
-    Me.btnRemoveContextMenu.UseVisualStyleBackColor = True
+    Me.TabPage1.Controls.Add(Me.btnBrowse)
+    Me.TabPage1.Controls.Add(Me.txtPathStructure)
+    Me.TabPage1.Controls.Add(Me.Label1)
+    Me.TabPage1.Location = New System.Drawing.Point(4, 34)
+    Me.TabPage1.Name = "TabPage1"
+    Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
+    Me.TabPage1.Size = New System.Drawing.Size(457, 465)
+    Me.TabPage1.TabIndex = 0
+    Me.TabPage1.Text = "Basic Settings"
+    Me.TabPage1.UseVisualStyleBackColor = True
+    '
+    'btnBrowse
+    '
+    Me.btnBrowse.Location = New System.Drawing.Point(337, 31)
+    Me.btnBrowse.Name = "btnBrowse"
+    Me.btnBrowse.Size = New System.Drawing.Size(108, 30)
+    Me.btnBrowse.TabIndex = 11
+    Me.btnBrowse.Text = "Browse..."
+    Me.btnBrowse.UseVisualStyleBackColor = True
+    '
+    'Label1
+    '
+    Me.Label1.AutoSize = True
+    Me.Label1.Location = New System.Drawing.Point(8, 3)
+    Me.Label1.Name = "Label1"
+    Me.Label1.Size = New System.Drawing.Size(142, 25)
+    Me.Label1.TabIndex = 9
+    Me.Label1.Text = "Path Structure:"
+    '
+    'TabPage2
+    '
+    Me.TabPage2.Controls.Add(Me.GroupBox1)
+    Me.TabPage2.Controls.Add(Me.btnRemoveContextMenu)
+    Me.TabPage2.Controls.Add(Me.btnAddContextMenu)
+    Me.TabPage2.Location = New System.Drawing.Point(4, 34)
+    Me.TabPage2.Name = "TabPage2"
+    Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
+    Me.TabPage2.Size = New System.Drawing.Size(457, 465)
+    Me.TabPage2.TabIndex = 1
+    Me.TabPage2.Text = "Windows Context Menu"
+    Me.TabPage2.UseVisualStyleBackColor = True
     '
     'GroupBox1
     '
@@ -65,40 +114,105 @@ Partial Class Settings
     Me.GroupBox1.Controls.Add(Me.CheckBox3)
     Me.GroupBox1.Controls.Add(Me.CheckBox2)
     Me.GroupBox1.Controls.Add(Me.CheckBox1)
-    Me.GroupBox1.Location = New System.Drawing.Point(13, 88)
+    Me.GroupBox1.Location = New System.Drawing.Point(8, 6)
     Me.GroupBox1.Name = "GroupBox1"
     Me.GroupBox1.Size = New System.Drawing.Size(440, 281)
-    Me.GroupBox1.TabIndex = 2
+    Me.GroupBox1.TabIndex = 11
     Me.GroupBox1.TabStop = False
     Me.GroupBox1.Text = "Context Menu Options"
     '
-    'Label1
+    'btnRemoveContextMenu
     '
-    Me.Label1.AutoSize = True
-    Me.Label1.Location = New System.Drawing.Point(13, 13)
-    Me.Label1.Name = "Label1"
-    Me.Label1.Size = New System.Drawing.Size(142, 25)
-    Me.Label1.TabIndex = 3
-    Me.Label1.Text = "Path Structure:"
+    Me.btnRemoveContextMenu.Location = New System.Drawing.Point(230, 343)
+    Me.btnRemoveContextMenu.Name = "btnRemoveContextMenu"
+    Me.btnRemoveContextMenu.Size = New System.Drawing.Size(216, 66)
+    Me.btnRemoveContextMenu.TabIndex = 10
+    Me.btnRemoveContextMenu.Text = "Remove Windows Context Menu"
+    Me.btnRemoveContextMenu.UseVisualStyleBackColor = True
     '
-    'btnBrowse
+    'btnAddContextMenu
     '
-    Me.btnBrowse.Location = New System.Drawing.Point(342, 41)
-    Me.btnBrowse.Name = "btnBrowse"
-    Me.btnBrowse.Size = New System.Drawing.Size(108, 30)
-    Me.btnBrowse.TabIndex = 5
-    Me.btnBrowse.Text = "Browse..."
-    Me.btnBrowse.UseVisualStyleBackColor = True
+    Me.btnAddContextMenu.Location = New System.Drawing.Point(8, 343)
+    Me.btnAddContextMenu.Name = "btnAddContextMenu"
+    Me.btnAddContextMenu.Size = New System.Drawing.Size(216, 66)
+    Me.btnAddContextMenu.TabIndex = 9
+    Me.btnAddContextMenu.Text = "Add/Update Windows Context Menu"
+    Me.btnAddContextMenu.UseVisualStyleBackColor = True
+    '
+    'TabPage3
+    '
+    Me.TabPage3.Controls.Add(Me.CheckBox9)
+    Me.TabPage3.Controls.Add(Me.CheckBox8)
+    Me.TabPage3.Controls.Add(Me.CheckBox7)
+    Me.TabPage3.Location = New System.Drawing.Point(4, 34)
+    Me.TabPage3.Name = "TabPage3"
+    Me.TabPage3.Padding = New System.Windows.Forms.Padding(3)
+    Me.TabPage3.Size = New System.Drawing.Size(457, 465)
+    Me.TabPage3.TabIndex = 2
+    Me.TabPage3.Text = "Reports"
+    Me.TabPage3.UseVisualStyleBackColor = True
+    '
+    'CheckBox7
+    '
+    Me.CheckBox7.AutoSize = True
+    Me.CheckBox7.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnReportErrors
+    Me.CheckBox7.CheckState = System.Windows.Forms.CheckState.Checked
+    Me.CheckBox7.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnReportErrors", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.CheckBox7.Location = New System.Drawing.Point(9, 7)
+    Me.CheckBox7.Name = "CheckBox7"
+    Me.CheckBox7.Size = New System.Drawing.Size(294, 29)
+    Me.CheckBox7.TabIndex = 0
+    Me.CheckBox7.Text = "Report Audit Errors Messages"
+    Me.CheckBox7.UseVisualStyleBackColor = True
+    '
+    'CheckBox8
+    '
+    Me.CheckBox8.AutoSize = True
+    Me.CheckBox8.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnReportInformation
+    Me.CheckBox8.CheckState = System.Windows.Forms.CheckState.Checked
+    Me.CheckBox8.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnReportInformation", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.CheckBox8.Location = New System.Drawing.Point(9, 43)
+    Me.CheckBox8.Name = "CheckBox8"
+    Me.CheckBox8.Size = New System.Drawing.Size(338, 29)
+    Me.CheckBox8.TabIndex = 1
+    Me.CheckBox8.Text = "Report Audit Information Messages"
+    Me.CheckBox8.UseVisualStyleBackColor = True
+    '
+    'CheckBox9
+    '
+    Me.CheckBox9.AutoSize = True
+    Me.CheckBox9.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnReportOptimal
+    Me.CheckBox9.CheckState = System.Windows.Forms.CheckState.Checked
+    Me.CheckBox9.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnReportOptimal", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.CheckBox9.Location = New System.Drawing.Point(9, 79)
+    Me.CheckBox9.Name = "CheckBox9"
+    Me.CheckBox9.Size = New System.Drawing.Size(309, 29)
+    Me.CheckBox9.TabIndex = 2
+    Me.CheckBox9.Text = "Report Audit Optimal Messages"
+    Me.CheckBox9.UseVisualStyleBackColor = True
     '
     'txtPathStructure
     '
     Me.txtPathStructure.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.Path_Structure_Maintenance.My.MySettings.Default, "SettingsPath", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-    Me.txtPathStructure.Location = New System.Drawing.Point(12, 41)
+    Me.txtPathStructure.Location = New System.Drawing.Point(7, 31)
     Me.txtPathStructure.Name = "txtPathStructure"
     Me.txtPathStructure.ReadOnly = True
     Me.txtPathStructure.Size = New System.Drawing.Size(324, 30)
-    Me.txtPathStructure.TabIndex = 4
+    Me.txtPathStructure.TabIndex = 10
     Me.txtPathStructure.Text = Global.Path_Structure_Maintenance.My.MySettings.Default.SettingsPath
+    '
+    'CheckBox6
+    '
+    Me.CheckBox6.AutoSize = True
+    Me.CheckBox6.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnPreview
+    Me.CheckBox6.CheckState = System.Windows.Forms.CheckState.Checked
+    Me.CheckBox6.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnPreview", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.CheckBox6.Location = New System.Drawing.Point(7, 240)
+    Me.CheckBox6.Name = "CheckBox6"
+    Me.CheckBox6.Size = New System.Drawing.Size(241, 29)
+    Me.CheckBox6.TabIndex = 6
+    Me.CheckBox6.Text = "Preview File/Information"
+    Me.CheckBox6.UseVisualStyleBackColor = True
     '
     'chkTransfer
     '
@@ -174,50 +288,45 @@ Partial Class Settings
     Me.CheckBox1.Text = "Add All Main Folders"
     Me.CheckBox1.UseVisualStyleBackColor = True
     '
-    'CheckBox6
-    '
-    Me.CheckBox6.AutoSize = True
-    Me.CheckBox6.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnPreview
-    Me.CheckBox6.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnPreview", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-    Me.CheckBox6.Location = New System.Drawing.Point(7, 240)
-    Me.CheckBox6.Name = "CheckBox6"
-    Me.CheckBox6.Size = New System.Drawing.Size(241, 29)
-    Me.CheckBox6.TabIndex = 6
-    Me.CheckBox6.Text = "Preview File/Information"
-    Me.CheckBox6.UseVisualStyleBackColor = True
-    '
     'Settings
     '
     Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 25.0!)
     Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
     Me.ClientSize = New System.Drawing.Size(465, 503)
-    Me.Controls.Add(Me.btnBrowse)
-    Me.Controls.Add(Me.txtPathStructure)
-    Me.Controls.Add(Me.Label1)
-    Me.Controls.Add(Me.GroupBox1)
-    Me.Controls.Add(Me.btnRemoveContextMenu)
-    Me.Controls.Add(Me.btnAddContextMenu)
+    Me.Controls.Add(Me.TabControl1)
     Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
     Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
     Me.Name = "Settings"
     Me.Text = "Settings"
+    Me.TabControl1.ResumeLayout(False)
+    Me.TabPage1.ResumeLayout(False)
+    Me.TabPage1.PerformLayout()
+    Me.TabPage2.ResumeLayout(False)
     Me.GroupBox1.ResumeLayout(False)
     Me.GroupBox1.PerformLayout()
+    Me.TabPage3.ResumeLayout(False)
+    Me.TabPage3.PerformLayout()
     Me.ResumeLayout(False)
-    Me.PerformLayout()
 
   End Sub
-  Friend WithEvents btnAddContextMenu As System.Windows.Forms.Button
-  Friend WithEvents btnRemoveContextMenu As System.Windows.Forms.Button
+  Friend WithEvents TabControl1 As System.Windows.Forms.TabControl
+  Friend WithEvents TabPage1 As System.Windows.Forms.TabPage
+  Friend WithEvents btnBrowse As System.Windows.Forms.Button
+  Friend WithEvents txtPathStructure As System.Windows.Forms.TextBox
+  Friend WithEvents Label1 As System.Windows.Forms.Label
+  Friend WithEvents TabPage2 As System.Windows.Forms.TabPage
   Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
+  Friend WithEvents CheckBox6 As System.Windows.Forms.CheckBox
+  Friend WithEvents chkTransfer As System.Windows.Forms.CheckBox
+  Friend WithEvents CheckBox5 As System.Windows.Forms.CheckBox
+  Friend WithEvents CheckBox4 As System.Windows.Forms.CheckBox
   Friend WithEvents CheckBox3 As System.Windows.Forms.CheckBox
   Friend WithEvents CheckBox2 As System.Windows.Forms.CheckBox
   Friend WithEvents CheckBox1 As System.Windows.Forms.CheckBox
-  Friend WithEvents CheckBox4 As System.Windows.Forms.CheckBox
-  Friend WithEvents CheckBox5 As System.Windows.Forms.CheckBox
-  Friend WithEvents chkTransfer As System.Windows.Forms.CheckBox
-  Friend WithEvents Label1 As System.Windows.Forms.Label
-  Friend WithEvents txtPathStructure As System.Windows.Forms.TextBox
-  Friend WithEvents btnBrowse As System.Windows.Forms.Button
-  Friend WithEvents CheckBox6 As System.Windows.Forms.CheckBox
+  Friend WithEvents btnRemoveContextMenu As System.Windows.Forms.Button
+  Friend WithEvents btnAddContextMenu As System.Windows.Forms.Button
+  Friend WithEvents TabPage3 As System.Windows.Forms.TabPage
+  Friend WithEvents CheckBox9 As System.Windows.Forms.CheckBox
+  Friend WithEvents CheckBox8 As System.Windows.Forms.CheckBox
+  Friend WithEvents CheckBox7 As System.Windows.Forms.CheckBox
 End Class
