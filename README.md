@@ -35,7 +35,7 @@ First, create a **Path Structure** format file in XML using the following rules:
    * For example: `<File name='Purchase Order'>{CustomerName}_PO</File>` in the folder `\\server\Customers\tbm0115\` will require the `Purchase Order` type file to have the filename of `tbm0115_PO` with whichever file extension is necessary.
 
 For example:
-```
+```xml
 <Structure defaultPath="\\server\Customers" path="{CustomerName}">
 	<Variables>
 		<Variable name="{CustomerName}">2</Variable>
