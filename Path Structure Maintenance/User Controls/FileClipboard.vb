@@ -96,7 +96,7 @@ Public Class FileClipboard
       Next
     End If
     fileName = _CurrentPath.GetURIfromXPath(FindXPath(nod)) & fileName
-    txtPreview.Text = fileName
+    txtPreview.Text = _CurrentPath.ReplaceVariables(fileName)
 
   End Sub
 

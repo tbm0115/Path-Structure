@@ -93,7 +93,7 @@ Public Class Add_Folder
       Next
     End If
 
-    txtPreview.Text = fileName
+    txtPreview.Text = _CurrentPath.ReplaceVariables(fileName)
   End Sub
 
   Private Sub Variable_Changed(ByVal sender As System.Object, ByVal e As System.EventArgs)
