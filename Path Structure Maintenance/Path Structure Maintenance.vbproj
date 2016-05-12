@@ -144,6 +144,12 @@
     <Compile Include="User Controls\FileClipboard.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="User Controls\FolderHeatMap.Designer.vb">
+      <DependentUpon>FolderHeatMap.vb</DependentUpon>
+    </Compile>
+    <Compile Include="User Controls\FolderHeatMap.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="User Controls\FormatItem.Designer.vb">
       <DependentUpon>FormatItem.vb</DependentUpon>
     </Compile>
@@ -187,6 +193,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="User Controls\FileClipboard.resx">
       <DependentUpon>FileClipboard.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="User Controls\FolderHeatMap.resx">
+      <DependentUpon>FolderHeatMap.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="User Controls\FormatItem.resx">
       <DependentUpon>FormatItem.vb</DependentUpon>

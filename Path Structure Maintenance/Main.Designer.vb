@@ -37,12 +37,13 @@ Partial Class Main
     Me.mnuToolsTransfer = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsTransferFilesByExtension = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsPreview = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuGeneratePathStructure = New System.Windows.Forms.ToolStripMenuItem()
     Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
     Me.statProgress = New System.Windows.Forms.ToolStripProgressBar()
     Me.statStatus = New System.Windows.Forms.ToolStripStatusLabel()
     Me.statCurrentPath = New System.Windows.Forms.ToolStripStatusLabel()
     Me.pnlContainer = New System.Windows.Forms.Panel()
-    Me.mnuGeneratePathStructure = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuToolsFolderHeatMap = New System.Windows.Forms.ToolStripMenuItem()
     Me.MenuStrip1.SuspendLayout()
     Me.StatusStrip1.SuspendLayout()
     Me.SuspendLayout()
@@ -65,7 +66,7 @@ Partial Class Main
     '
     'ToolsToolStripMenuItem
     '
-    Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAdd, Me.mnuToolsFormat, Me.mnuToolAudit, Me.mnuToolsClipboard, Me.mnuToolsTransfer, Me.mnuToolsPreview})
+    Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAdd, Me.mnuToolsFormat, Me.mnuToolAudit, Me.mnuToolsClipboard, Me.mnuToolsTransfer, Me.mnuToolsPreview, Me.mnuToolsFolderHeatMap})
     Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
     Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(57, 24)
     Me.ToolsToolStripMenuItem.Text = "Tools"
@@ -151,6 +152,12 @@ Partial Class Main
     Me.mnuToolsPreview.Size = New System.Drawing.Size(208, 26)
     Me.mnuToolsPreview.Text = "Preview"
     '
+    'mnuGeneratePathStructure
+    '
+    Me.mnuGeneratePathStructure.Name = "mnuGeneratePathStructure"
+    Me.mnuGeneratePathStructure.Size = New System.Drawing.Size(177, 24)
+    Me.mnuGeneratePathStructure.Text = "Generate Path Structure"
+    '
     'StatusStrip1
     '
     Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
@@ -186,11 +193,11 @@ Partial Class Main
     Me.pnlContainer.Size = New System.Drawing.Size(423, 345)
     Me.pnlContainer.TabIndex = 2
     '
-    'mnuGeneratePathStructure
+    'mnuToolsFolderHeatMap
     '
-    Me.mnuGeneratePathStructure.Name = "mnuGeneratePathStructure"
-    Me.mnuGeneratePathStructure.Size = New System.Drawing.Size(177, 24)
-    Me.mnuGeneratePathStructure.Text = "Generate Path Structure"
+    Me.mnuToolsFolderHeatMap.Name = "mnuToolsFolderHeatMap"
+    Me.mnuToolsFolderHeatMap.Size = New System.Drawing.Size(208, 26)
+    Me.mnuToolsFolderHeatMap.Text = "Folder Heat Map"
     '
     'Main
     '
@@ -234,5 +241,6 @@ Partial Class Main
   Friend WithEvents statProgress As System.Windows.Forms.ToolStripProgressBar
   Friend WithEvents mnuToolsPreview As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuGeneratePathStructure As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents mnuToolsFolderHeatMap As System.Windows.Forms.ToolStripMenuItem
 
 End Class

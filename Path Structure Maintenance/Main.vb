@@ -156,6 +156,18 @@ Public Class Main
                 Application.Exit()
               End If
             End If
+          Case "-heatmap"
+            If args.Length >= 3 Then
+              statCurrentPath.Text = GetUNCPath(args(2))
+              Log("Preview Command Received")
+
+              '' Load preview control
+              Me.WindowState = FormWindowState.Maximized
+              Application.DoEvents()
+              Dim fhm As New FolderHeatMap(GetUNCPath(args(2)))
+              fhm.Dock = DockStyle.Fill
+              pnlContainer.Controls.Add(fhm)
+            End If
         End Select
       End If
     End If
@@ -571,4 +583,24 @@ Public Class Main
     End If
     Return li
   End Function
+
+  Private Sub mnuToolsFolderHeatMap_Click(sender As Object, e As EventArgs) Handles mnuToolsFolderHeatMap.Click
+    Dim opn As New SelectFolderDialog
+    opn.Title = "Select a folder to search for preview:"
+    If IO.Directory.Exists(defaultPath) Then
+      opn.InitialDirectory = defaultPath
+    End If
+    opn.ShowDialog()
+    If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
+      statCurrentPath.Text = GetUNCPath(opn.CurrentDirectory)
+      Log("Preview Command Received")
+
+      '' Load preview control
+      Me.WindowState = FormWindowState.Maximized
+      Application.DoEvents()
+      Dim fhm As New FolderHeatMap(GetUNCPath(opn.CurrentDirectory))
+      fhm.Dock = DockStyle.Fill
+      pnlContainer.Controls.Add(fhm)
+    End If
+  End Sub
 End Class
