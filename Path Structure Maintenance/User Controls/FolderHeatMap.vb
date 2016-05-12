@@ -6,11 +6,11 @@ Public Class FolderHeatMap
   Const freqGreen = 0.1
   Const freqBlue = 0.1
   Const phasRed = 10
-  Const phasGreen = 5
+  Const phasGreen = 6
   Const phasBlue = 0
-  Const indxInterval = 9
+  Const indxInterval = 7
   Const amplification = 126
-  Const center = 127
+  Const center = 130
   Const length = 55
 
   Public Shared colors As List(Of Color)
@@ -21,6 +21,13 @@ Public Class FolderHeatMap
       Dim tmpRed = Math.Sin(freqRed * i + phasRed) * amplification + center
       Dim tmpGreen = Math.Sin(freqGreen * i + phasGreen) * amplification + center
       Dim tmpblue = Math.Sin(freqBlue * i + phasBlue) * amplification + center
+      If tmpRed > 255 Then tmpRed = 255
+      If tmpRed < 0 Then tmpRed = 0
+      If tmpGreen > 255 Then tmpGreen = 255
+      If tmpGreen < 0 Then tmpGreen = 0
+      If tmpblue > 255 Then tmpblue = 255
+      If tmpblue < 0 Then tmpblue = 0
+
       colors.Add(Color.FromArgb(Math.Round(tmpRed), Math.Round(tmpGreen), Math.Round(tmpblue)))
     Next
   End Sub
