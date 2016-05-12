@@ -31,10 +31,8 @@ Partial Class Settings
     Me.btnRemoveContextMenu = New System.Windows.Forms.Button()
     Me.btnAddContextMenu = New System.Windows.Forms.Button()
     Me.TabPage3 = New System.Windows.Forms.TabPage()
-    Me.CheckBox7 = New System.Windows.Forms.CheckBox()
-    Me.CheckBox8 = New System.Windows.Forms.CheckBox()
-    Me.CheckBox9 = New System.Windows.Forms.CheckBox()
     Me.txtPathStructure = New System.Windows.Forms.TextBox()
+    Me.CheckBox10 = New System.Windows.Forms.CheckBox()
     Me.CheckBox6 = New System.Windows.Forms.CheckBox()
     Me.chkTransfer = New System.Windows.Forms.CheckBox()
     Me.CheckBox5 = New System.Windows.Forms.CheckBox()
@@ -42,6 +40,9 @@ Partial Class Settings
     Me.CheckBox3 = New System.Windows.Forms.CheckBox()
     Me.CheckBox2 = New System.Windows.Forms.CheckBox()
     Me.CheckBox1 = New System.Windows.Forms.CheckBox()
+    Me.CheckBox9 = New System.Windows.Forms.CheckBox()
+    Me.CheckBox8 = New System.Windows.Forms.CheckBox()
+    Me.CheckBox7 = New System.Windows.Forms.CheckBox()
     Me.TabControl1.SuspendLayout()
     Me.TabPage1.SuspendLayout()
     Me.TabPage2.SuspendLayout()
@@ -107,6 +108,7 @@ Partial Class Settings
     '
     'GroupBox1
     '
+    Me.GroupBox1.Controls.Add(Me.CheckBox10)
     Me.GroupBox1.Controls.Add(Me.CheckBox6)
     Me.GroupBox1.Controls.Add(Me.chkTransfer)
     Me.GroupBox1.Controls.Add(Me.CheckBox5)
@@ -116,7 +118,7 @@ Partial Class Settings
     Me.GroupBox1.Controls.Add(Me.CheckBox1)
     Me.GroupBox1.Location = New System.Drawing.Point(8, 6)
     Me.GroupBox1.Name = "GroupBox1"
-    Me.GroupBox1.Size = New System.Drawing.Size(440, 281)
+    Me.GroupBox1.Size = New System.Drawing.Size(440, 311)
     Me.GroupBox1.TabIndex = 11
     Me.GroupBox1.TabStop = False
     Me.GroupBox1.Text = "Context Menu Options"
@@ -152,45 +154,6 @@ Partial Class Settings
     Me.TabPage3.Text = "Reports"
     Me.TabPage3.UseVisualStyleBackColor = True
     '
-    'CheckBox7
-    '
-    Me.CheckBox7.AutoSize = True
-    Me.CheckBox7.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnReportErrors
-    Me.CheckBox7.CheckState = System.Windows.Forms.CheckState.Checked
-    Me.CheckBox7.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnReportErrors", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-    Me.CheckBox7.Location = New System.Drawing.Point(9, 7)
-    Me.CheckBox7.Name = "CheckBox7"
-    Me.CheckBox7.Size = New System.Drawing.Size(294, 29)
-    Me.CheckBox7.TabIndex = 0
-    Me.CheckBox7.Text = "Report Audit Errors Messages"
-    Me.CheckBox7.UseVisualStyleBackColor = True
-    '
-    'CheckBox8
-    '
-    Me.CheckBox8.AutoSize = True
-    Me.CheckBox8.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnReportInformation
-    Me.CheckBox8.CheckState = System.Windows.Forms.CheckState.Checked
-    Me.CheckBox8.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnReportInformation", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-    Me.CheckBox8.Location = New System.Drawing.Point(9, 43)
-    Me.CheckBox8.Name = "CheckBox8"
-    Me.CheckBox8.Size = New System.Drawing.Size(338, 29)
-    Me.CheckBox8.TabIndex = 1
-    Me.CheckBox8.Text = "Report Audit Information Messages"
-    Me.CheckBox8.UseVisualStyleBackColor = True
-    '
-    'CheckBox9
-    '
-    Me.CheckBox9.AutoSize = True
-    Me.CheckBox9.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnReportOptimal
-    Me.CheckBox9.CheckState = System.Windows.Forms.CheckState.Checked
-    Me.CheckBox9.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnReportOptimal", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-    Me.CheckBox9.Location = New System.Drawing.Point(9, 79)
-    Me.CheckBox9.Name = "CheckBox9"
-    Me.CheckBox9.Size = New System.Drawing.Size(309, 29)
-    Me.CheckBox9.TabIndex = 2
-    Me.CheckBox9.Text = "Report Audit Optimal Messages"
-    Me.CheckBox9.UseVisualStyleBackColor = True
-    '
     'txtPathStructure
     '
     Me.txtPathStructure.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.Path_Structure_Maintenance.My.MySettings.Default, "SettingsPath", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
@@ -200,6 +163,19 @@ Partial Class Settings
     Me.txtPathStructure.Size = New System.Drawing.Size(324, 30)
     Me.txtPathStructure.TabIndex = 10
     Me.txtPathStructure.Text = Global.Path_Structure_Maintenance.My.MySettings.Default.SettingsPath
+    '
+    'CheckBox10
+    '
+    Me.CheckBox10.AutoSize = True
+    Me.CheckBox10.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnFolderHeatMap
+    Me.CheckBox10.CheckState = System.Windows.Forms.CheckState.Checked
+    Me.CheckBox10.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnFolderHeatMap", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.CheckBox10.Location = New System.Drawing.Point(7, 275)
+    Me.CheckBox10.Name = "CheckBox10"
+    Me.CheckBox10.Size = New System.Drawing.Size(179, 29)
+    Me.CheckBox10.TabIndex = 7
+    Me.CheckBox10.Text = "Folder Heat Map"
+    Me.CheckBox10.UseVisualStyleBackColor = True
     '
     'CheckBox6
     '
@@ -218,6 +194,7 @@ Partial Class Settings
     '
     Me.chkTransfer.AutoSize = True
     Me.chkTransfer.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnTransferByExtension
+    Me.chkTransfer.CheckState = System.Windows.Forms.CheckState.Checked
     Me.chkTransfer.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnTransferByExtension", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
     Me.chkTransfer.Location = New System.Drawing.Point(7, 205)
     Me.chkTransfer.Name = "chkTransfer"
@@ -230,6 +207,7 @@ Partial Class Settings
     '
     Me.CheckBox5.AutoSize = True
     Me.CheckBox5.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnClipboard
+    Me.CheckBox5.CheckState = System.Windows.Forms.CheckState.Checked
     Me.CheckBox5.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnClipboard", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
     Me.CheckBox5.Location = New System.Drawing.Point(7, 170)
     Me.CheckBox5.Name = "CheckBox5"
@@ -255,6 +233,7 @@ Partial Class Settings
     '
     Me.CheckBox3.AutoSize = True
     Me.CheckBox3.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnFormat
+    Me.CheckBox3.CheckState = System.Windows.Forms.CheckState.Checked
     Me.CheckBox3.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnFormat", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
     Me.CheckBox3.Location = New System.Drawing.Point(7, 100)
     Me.CheckBox3.Name = "CheckBox3"
@@ -267,6 +246,7 @@ Partial Class Settings
     '
     Me.CheckBox2.AutoSize = True
     Me.CheckBox2.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnAddSingle
+    Me.CheckBox2.CheckState = System.Windows.Forms.CheckState.Checked
     Me.CheckBox2.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnAddSingle", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
     Me.CheckBox2.Location = New System.Drawing.Point(7, 65)
     Me.CheckBox2.Name = "CheckBox2"
@@ -287,6 +267,45 @@ Partial Class Settings
     Me.CheckBox1.TabIndex = 0
     Me.CheckBox1.Text = "Add All Main Folders"
     Me.CheckBox1.UseVisualStyleBackColor = True
+    '
+    'CheckBox9
+    '
+    Me.CheckBox9.AutoSize = True
+    Me.CheckBox9.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnReportOptimal
+    Me.CheckBox9.CheckState = System.Windows.Forms.CheckState.Checked
+    Me.CheckBox9.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnReportOptimal", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.CheckBox9.Location = New System.Drawing.Point(9, 79)
+    Me.CheckBox9.Name = "CheckBox9"
+    Me.CheckBox9.Size = New System.Drawing.Size(309, 29)
+    Me.CheckBox9.TabIndex = 2
+    Me.CheckBox9.Text = "Report Audit Optimal Messages"
+    Me.CheckBox9.UseVisualStyleBackColor = True
+    '
+    'CheckBox8
+    '
+    Me.CheckBox8.AutoSize = True
+    Me.CheckBox8.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnReportInformation
+    Me.CheckBox8.CheckState = System.Windows.Forms.CheckState.Checked
+    Me.CheckBox8.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnReportInformation", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.CheckBox8.Location = New System.Drawing.Point(9, 43)
+    Me.CheckBox8.Name = "CheckBox8"
+    Me.CheckBox8.Size = New System.Drawing.Size(338, 29)
+    Me.CheckBox8.TabIndex = 1
+    Me.CheckBox8.Text = "Report Audit Information Messages"
+    Me.CheckBox8.UseVisualStyleBackColor = True
+    '
+    'CheckBox7
+    '
+    Me.CheckBox7.AutoSize = True
+    Me.CheckBox7.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnReportErrors
+    Me.CheckBox7.CheckState = System.Windows.Forms.CheckState.Checked
+    Me.CheckBox7.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnReportErrors", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.CheckBox7.Location = New System.Drawing.Point(9, 7)
+    Me.CheckBox7.Name = "CheckBox7"
+    Me.CheckBox7.Size = New System.Drawing.Size(294, 29)
+    Me.CheckBox7.TabIndex = 0
+    Me.CheckBox7.Text = "Report Audit Errors Messages"
+    Me.CheckBox7.UseVisualStyleBackColor = True
     '
     'Settings
     '
@@ -329,4 +348,5 @@ Partial Class Settings
   Friend WithEvents CheckBox9 As System.Windows.Forms.CheckBox
   Friend WithEvents CheckBox8 As System.Windows.Forms.CheckBox
   Friend WithEvents CheckBox7 As System.Windows.Forms.CheckBox
+  Friend WithEvents CheckBox10 As System.Windows.Forms.CheckBox
 End Class

@@ -38,7 +38,7 @@ Public Class Settings
         '' Add main values
         regmenu.SetValue("MUIVerb", "Path Structure")
         regmenu.SetValue("icon", "%windir%\system32\imageres.dll,153")
-        regmenu.SetValue("SubCommands", "PathStructure.Open;" & IIf(My.Settings.blnAddAll Or My.Settings.blnAddSingle, "PathStructure.Add;", "") & IIf(My.Settings.blnFormat, "PathStructure.Format;", "") & IIf(My.Settings.blnAudit, "PathStructure.Audit;", "") & IIf(My.Settings.blnClipboard, "PathStructure.Clipboard;", "") & IIf(My.Settings.blnTransferByExtension, "PathStructure.TransferByExtension;", "") & IIf(My.Settings.blnPreview, "PathStructure.Preview;", ""))
+        regmenu.SetValue("SubCommands", "PathStructure.Open;" & IIf(My.Settings.blnAddAll Or My.Settings.blnAddSingle, "PathStructure.Add;", "") & IIf(My.Settings.blnFormat, "PathStructure.Format;", "") & IIf(My.Settings.blnAudit, "PathStructure.Audit;", "") & IIf(My.Settings.blnClipboard, "PathStructure.Clipboard;", "") & IIf(My.Settings.blnTransferByExtension, "PathStructure.TransferByExtension;", "") & IIf(My.Settings.blnPreview, "PathStructure.Preview;", "") & IIf(My.Settings.blnFolderHeatMap, "PathStructure.FolderHeatMap;", ""))
 
         ''Create 'Add' submenu
         If My.Settings.blnAddAll Or My.Settings.blnAddSingle Then
@@ -115,6 +115,15 @@ Public Class Settings
           regmenu.SetValue("icon", "%windir%\system32\wpdshext.dll,4")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.Preview\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -preview " & Chr(34) & "%1" & Chr(34))
+        End If
+
+        If My.Settings.blnFolderHeatMap Then
+          Log(vbTab & "Adding 'Folder Heat Map' commands")
+          regmenu = view32.CreateSubKey(regCommand & "PathStructure.FolderHeatMap")
+          regmenu.SetValue("MUIVerb", "Heat Map...")
+          regmenu.SetValue("icon", "%windir%\system32\wpdshext.dll,4")
+          regcmd = view32.CreateSubKey(regCommand & "PathStructure.FolderHeatMap\\command")
+          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -heatmap " & Chr(34) & "%1" & Chr(34))
         End If
 
       Catch ex As Exception
@@ -221,6 +230,15 @@ Public Class Settings
           Log("Deleted 'Preview' registry entry")
         Else
           Log("Could not open main 'Preview' registry entry")
+        End If
+
+        reg = view32.OpenSubKey(regCommand & "PathStructure.FolderHeatMap")
+        If Not IsNothing(reg) Then
+          reg.Close()
+          view32.DeleteSubKeyTree(regCommand & "PathStructure.FolderHeatMap")
+          Log("Deleted 'FolderHeatMap' registry entry")
+        Else
+          Log("Could not open main 'FolderHeatMap' registry entry")
         End If
       Catch ex As Exception
         Log("An error occurred..." & vbLf & vbTab & ex.Message)

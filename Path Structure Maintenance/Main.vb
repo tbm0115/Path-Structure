@@ -159,7 +159,7 @@ Public Class Main
           Case "-heatmap"
             If args.Length >= 3 Then
               statCurrentPath.Text = GetUNCPath(args(2))
-              Log("Preview Command Received")
+              Log("Folder Heat Map Command Received")
 
               '' Load preview control
               Me.WindowState = FormWindowState.Maximized
