@@ -4,11 +4,15 @@ Public Class Format_Item
   Private _CurrentPath As PathStructure
   Private myXML As New XmlDocument
   Private fileName As String
+  Private _blnAutoClose As Boolean = True
 
-  Public Sub New(ByVal CurrentPath As String, Optional ByVal QuickSelect As Boolean = False)
+  Public Event Accepted(ByVal sender As Object, ByVal e As FormatItemAcceptedEventArgs)
+
+  Public Sub New(ByVal CurrentPath As String, Optional ByVal QuickSelect As Boolean = False, Optional ByVal AutoClose As Boolean = True)
     '' This call is required by the designer.
     InitializeComponent()
     _CurrentPath = New PathStructure(CurrentPath)
+    _blnAutoClose = AutoClose
 
     If _CurrentPath.Type = PathStructure.PathType.File Then
       '' Add any initialization after the InitializeComponent() call.
@@ -39,7 +43,7 @@ Public Class Format_Item
       End If
     Else
       MessageBox.Show("You must select a file to complete the 'Format' function!", "Invalid FileSystemObject type", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-      Application.Exit()
+      If _blnAutoClose Then Application.Exit()
     End If
   End Sub
 
@@ -131,6 +135,18 @@ Public Class Format_Item
     Log("Changing the filename from '" & _CurrentPath.UNCPath & "' to '" & _CurrentPath.FileInfo.DirectoryName & "\" & txtPreview.Text & "'")
     IO.File.Move(_CurrentPath.UNCPath, _CurrentPath.FileInfo.DirectoryName & "\" & txtPreview.Text) ' & filInfo.Extension)
     _CurrentPath.LogData(_CurrentPath.FileInfo.DirectoryName & "\" & txtPreview.Text, "Format Filename")
-    Application.Exit()
+    If _blnAutoClose Then Application.Exit()
+    RaiseEvent Accepted(Me, New FormatItemAcceptedEventArgs(_CurrentPath.UNCPath))
+  End Sub
+End Class
+Public Class FormatItemAcceptedEventArgs
+  Inherits EventArgs
+
+  Public Property Path As String
+
+  Public Sub New(ByVal path As String)
+    MyBase.New()
+
+    Me.Path = path
   End Sub
 End Class

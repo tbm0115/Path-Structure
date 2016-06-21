@@ -27,7 +27,7 @@
       <Value Profile="(Default)">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\server\SHARE\Systems Database\Access Database\IrongateApplications.mdb</Value>
     </Setting>
     <Setting Name="blnERPCheck" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ERPTable" Type="System.String" Scope="User">
       <Value Profile="(Default)">dbo_Estim</Value>
@@ -46,6 +46,12 @@
     </Setting>
     <Setting Name="blnFolderHeatMap" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ERPSettingsPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\server\clientapps\in-house\Path Structure-ERP.ini</Value>
+    </Setting>
+    <Setting Name="blnDeleteThumbsDb" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

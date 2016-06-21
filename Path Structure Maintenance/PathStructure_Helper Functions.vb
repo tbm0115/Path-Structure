@@ -79,7 +79,16 @@ Module PathStructure_Helper_Functions
     Loop
     Return lst
   End Function
-
+  Public Function CountStringOccurance(ByVal Input As String, ByVal Identifier As String) As Integer
+    Dim i As Integer = 0
+    Do Until Not Input.Contains(Identifier)
+      If Input.Contains(Identifier) Then
+        Input = Input.Remove(0, Input.IndexOf(Identifier) + (Identifier.Length))
+        i += 1
+      End If
+    Loop
+    Return i
+  End Function
   Public Function AddFolder(ByVal CurrentPath As String, ByVal PathName As String)
     Dim strTemp As String
     Dim dg As DialogResult
@@ -230,39 +239,88 @@ Module PathStructure_Helper_Functions
     Return -1
   End Function
 
-  Public Function IsValidERP(ByVal Values As SortedList(Of String, String)) As Boolean
+  Public Function SurroundJoin(ByVal Arr As String(), ByVal Prefix As String, ByVal Suffix As String, Optional ByVal SkipEmpties As Boolean = False) As String
+    Dim out As New StringBuilder
+    If Not IsNothing(Arr) Then
+      For Each s As String In Arr
+        If (SkipEmpties And Not String.IsNullOrEmpty(s)) Or Not SkipEmpties Then
+          out.Append(Prefix & s & Suffix)
+        End If
+      Next
+    End If
+    Return out.ToString
+  End Function
+
+  Public Function GetERPVariables(ByVal Section As String, ByRef TableName As String, Optional ByVal Path As PathStructure = Nothing) As SortedList(Of String, String)
+    Dim ERPVariables As New SortedList(Of String, String)
+    If IO.File.Exists(My.Settings.ERPSettingsPath) Then
+      Using rdr As IO.StreamReader = IO.File.OpenText(My.Settings.ERPSettingsPath)
+        Dim strRead As String = ""
+        Do Until (strRead = ("[" & Section & "]")) Or rdr.EndOfStream
+          '' Do nothing, we're just trying to find the Audit section
+          strRead = rdr.ReadLine
+          If strRead.StartsWith(Section) And strRead.Contains("=") Then TableName = strRead.Remove(0, strRead.IndexOf("=") + 1)
+        Loop
+        strRead = ""
+        Do Until (strRead.StartsWith("[") And strRead.EndsWith("]")) Or rdr.EndOfStream
+          strRead = rdr.ReadLine()
+          If strRead.Contains("{") And strRead.Contains("}") Then
+            If Not IsNothing(Path) Then
+              strRead = Path.ReplaceVariables(strRead)
+            End If
+          End If
+          If strRead.Contains("=") Then
+            ERPVariables.Add(strRead.Remove(strRead.IndexOf("=")), strRead.Remove(0, strRead.IndexOf("=") + 1))
+          End If
+        Loop
+      End Using
+    End If
+    Return ERPVariables
+  End Function
+
+  <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")> Public Function IsValidERP(ByVal Table As String, ByVal Values As SortedList(Of String, String), Optional ByVal ERPConnection As OleDbConnection = Nothing) As Boolean
     Dim cond As String = ""
+    Dim fields As String = ""
     Try
       Dim blnFound As Boolean = False
-      Using Cnn As New OleDbConnection(My.Settings.ERPConnection)
+      Dim Cnn As OleDbConnection
+      If IsNothing(ERPConnection) Then
+        Cnn = New OleDbConnection(My.Settings.ERPConnection)
         Cnn.Open()
-        Dim fields As String = String.Join(",", Values.Keys)
-        If fields.EndsWith(",") Then fields = fields.Remove(fields.Length - 1)
-        fields = fields.Replace("{", "").Replace("}", "")
-        For Each Val As KeyValuePair(Of String, String) In Values
-          cond += Val.Key & "=" & Chr(34) & Val.Value.ToUpper & Chr(34) & " AND "
-        Next
-        If cond.EndsWith(" AND ") Then cond = cond.Remove(cond.LastIndexOf(" AND "))
-        cond = cond.Replace("{", "").Replace("}", "")
-        Using Cmd As New OleDbCommand("SELECT " & fields & " FROM " & My.Settings.ERPTable & " WHERE " & cond & ";", Cnn)
-          For Each Rcd As IDataRecord In Cmd.ExecuteReader
-            '' Iterate through each list of values to look for
-            For Each val As KeyValuePair(Of String, String) In Values
-              '' Verify that the value key exists in the RecordSet
-              Dim col As String = val.Key.Replace("{", "").Replace("}", "")
-              If Not IsNothing(Rcd.Item(col)) Then
-                '' Verify that the RecordSet value equals the expected value
-                If Rcd.Item(col).ToString.ToUpper = val.Value.ToUpper Then
-                  blnFound = True
-                  Exit For
-                End If
-              End If
-            Next
-            If blnFound Then Exit For
-          Next
+      Else
+        Cnn = ERPConnection
+      End If
+
+      fields = String.Join(",", Values.Keys)
+      If fields.EndsWith(",") Then fields = fields.Remove(fields.Length - 1)
+      fields = fields.Replace("{", "").Replace("}", "")
+      fields = fields.Replace("||", ",")
+      For i = 0 To Values.Count - 1 Step 1 'Each Val As KeyValuePair(Of String, String) In Values
+        If Not String.IsNullOrEmpty(Values.Values(i)) Then
+          If Values.Keys(i).Contains("||") Then
+            Dim orFields As String() = Values.Keys(i).Split("||")
+            cond += "(" & SurroundJoin(orFields, "", "=" & Chr(34) & Values.Values(i) & Chr(34) & " OR ", True) & ")"
+            If cond.EndsWith(" OR )") Then cond = cond.Remove(cond.LastIndexOf(" OR )")) & ")"
+          Else
+            cond += Values.Keys(i) & "=" & Chr(34) & Values.Values(0) & Chr(34) & " AND "
+          End If
+        End If
+      Next
+      If cond.EndsWith(" AND ") Then cond = cond.Remove(cond.LastIndexOf(" AND "))
+      cond = cond.Replace("{", "").Replace("}", "")
+
+      Using Cmd As New OleDbCommand("SELECT " & fields & " FROM " & Table & " WHERE " & cond & ";", Cnn)
+        Using Rdr As OleDbDataReader = Cmd.ExecuteReader
+          If Rdr.HasRows Then
+            blnFound = True '' The fact that the for loop is executing is enough evidence of the existance
+          End If
         End Using
-        Cnn.Close()
       End Using
+
+      If IsNothing(ERPConnection) Then
+        Cnn.Close()
+      End If
+
       Return blnFound
     Catch ex As Exception
       Log("Error checking ERP system: " & _

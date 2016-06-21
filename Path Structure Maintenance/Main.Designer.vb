@@ -22,7 +22,6 @@ Partial Class Main
   'Do not modify it using the code editor.
   <System.Diagnostics.DebuggerStepThrough()> _
   Private Sub InitializeComponent()
-    Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
     Me.mnuSettings = New System.Windows.Forms.ToolStripMenuItem()
     Me.ToolsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsAdd = New System.Windows.Forms.ToolStripMenuItem()
@@ -33,30 +32,22 @@ Partial Class Main
     Me.mnuToolsAuditFile = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsAuditFolder = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsAuditDefaultPath = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuToolsAuditVisualDefaultPath = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsClipboard = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsTransfer = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsTransferFilesByExtension = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsPreview = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuToolsFolderHeatMap = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuGeneratePathStructure = New System.Windows.Forms.ToolStripMenuItem()
-    Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
     Me.statProgress = New System.Windows.Forms.ToolStripProgressBar()
     Me.statStatus = New System.Windows.Forms.ToolStripStatusLabel()
     Me.statCurrentPath = New System.Windows.Forms.ToolStripStatusLabel()
+    Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+    Me.mnu = New System.Windows.Forms.MenuStrip()
     Me.pnlContainer = New System.Windows.Forms.Panel()
-    Me.mnuToolsFolderHeatMap = New System.Windows.Forms.ToolStripMenuItem()
-    Me.MenuStrip1.SuspendLayout()
     Me.StatusStrip1.SuspendLayout()
+    Me.mnu.SuspendLayout()
     Me.SuspendLayout()
-    '
-    'MenuStrip1
-    '
-    Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-    Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuSettings, Me.ToolsToolStripMenuItem, Me.mnuGeneratePathStructure})
-    Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
-    Me.MenuStrip1.Name = "MenuStrip1"
-    Me.MenuStrip1.Size = New System.Drawing.Size(423, 28)
-    Me.MenuStrip1.TabIndex = 0
-    Me.MenuStrip1.Text = "MenuStrip1"
     '
     'mnuSettings
     '
@@ -101,7 +92,7 @@ Partial Class Main
     '
     'mnuToolAudit
     '
-    Me.mnuToolAudit.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAuditFile, Me.mnuToolsAuditFolder, Me.mnuToolsAuditDefaultPath})
+    Me.mnuToolAudit.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAuditFile, Me.mnuToolsAuditFolder, Me.mnuToolsAuditDefaultPath, Me.mnuToolsAuditVisualDefaultPath})
     Me.mnuToolAudit.Enabled = Global.Path_Structure_Maintenance.My.MySettings.Default.blnAudit
     Me.mnuToolAudit.Name = "mnuToolAudit"
     Me.mnuToolAudit.Size = New System.Drawing.Size(208, 26)
@@ -110,20 +101,26 @@ Partial Class Main
     'mnuToolsAuditFile
     '
     Me.mnuToolsAuditFile.Name = "mnuToolsAuditFile"
-    Me.mnuToolsAuditFile.Size = New System.Drawing.Size(166, 26)
+    Me.mnuToolsAuditFile.Size = New System.Drawing.Size(209, 26)
     Me.mnuToolsAuditFile.Text = "Audit File"
     '
     'mnuToolsAuditFolder
     '
     Me.mnuToolsAuditFolder.Name = "mnuToolsAuditFolder"
-    Me.mnuToolsAuditFolder.Size = New System.Drawing.Size(166, 26)
+    Me.mnuToolsAuditFolder.Size = New System.Drawing.Size(209, 26)
     Me.mnuToolsAuditFolder.Text = "Audit Folder"
     '
     'mnuToolsAuditDefaultPath
     '
     Me.mnuToolsAuditDefaultPath.Name = "mnuToolsAuditDefaultPath"
-    Me.mnuToolsAuditDefaultPath.Size = New System.Drawing.Size(166, 26)
+    Me.mnuToolsAuditDefaultPath.Size = New System.Drawing.Size(209, 26)
     Me.mnuToolsAuditDefaultPath.Text = "Default Path"
+    '
+    'mnuToolsAuditVisualDefaultPath
+    '
+    Me.mnuToolsAuditVisualDefaultPath.Name = "mnuToolsAuditVisualDefaultPath"
+    Me.mnuToolsAuditVisualDefaultPath.Size = New System.Drawing.Size(209, 26)
+    Me.mnuToolsAuditVisualDefaultPath.Text = "Visual Default Path"
     '
     'mnuToolsClipboard
     '
@@ -152,21 +149,17 @@ Partial Class Main
     Me.mnuToolsPreview.Size = New System.Drawing.Size(208, 26)
     Me.mnuToolsPreview.Text = "Preview"
     '
+    'mnuToolsFolderHeatMap
+    '
+    Me.mnuToolsFolderHeatMap.Name = "mnuToolsFolderHeatMap"
+    Me.mnuToolsFolderHeatMap.Size = New System.Drawing.Size(208, 26)
+    Me.mnuToolsFolderHeatMap.Text = "Folder Heat Map"
+    '
     'mnuGeneratePathStructure
     '
     Me.mnuGeneratePathStructure.Name = "mnuGeneratePathStructure"
     Me.mnuGeneratePathStructure.Size = New System.Drawing.Size(177, 24)
     Me.mnuGeneratePathStructure.Text = "Generate Path Structure"
-    '
-    'StatusStrip1
-    '
-    Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-    Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statProgress, Me.statStatus, Me.statCurrentPath})
-    Me.StatusStrip1.Location = New System.Drawing.Point(0, 373)
-    Me.StatusStrip1.Name = "StatusStrip1"
-    Me.StatusStrip1.Size = New System.Drawing.Size(423, 25)
-    Me.StatusStrip1.TabIndex = 1
-    Me.StatusStrip1.Text = "StatusStrip1"
     '
     'statProgress
     '
@@ -185,19 +178,33 @@ Partial Class Main
     Me.statCurrentPath.Size = New System.Drawing.Size(38, 20)
     Me.statCurrentPath.Text = "Path"
     '
+    'StatusStrip1
+    '
+    Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
+    Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statProgress, Me.statStatus, Me.statCurrentPath})
+    Me.StatusStrip1.Location = New System.Drawing.Point(0, 373)
+    Me.StatusStrip1.Name = "StatusStrip1"
+    Me.StatusStrip1.Size = New System.Drawing.Size(423, 25)
+    Me.StatusStrip1.TabIndex = 1
+    Me.StatusStrip1.Text = "StatusStrip1"
+    '
+    'mnu
+    '
+    Me.mnu.ImageScalingSize = New System.Drawing.Size(20, 20)
+    Me.mnu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuSettings, Me.ToolsToolStripMenuItem, Me.mnuGeneratePathStructure})
+    Me.mnu.Location = New System.Drawing.Point(0, 0)
+    Me.mnu.Name = "mnu"
+    Me.mnu.Size = New System.Drawing.Size(423, 28)
+    Me.mnu.TabIndex = 2
+    Me.mnu.Text = "MenuStrip1"
+    '
     'pnlContainer
     '
     Me.pnlContainer.Dock = System.Windows.Forms.DockStyle.Fill
     Me.pnlContainer.Location = New System.Drawing.Point(0, 28)
     Me.pnlContainer.Name = "pnlContainer"
     Me.pnlContainer.Size = New System.Drawing.Size(423, 345)
-    Me.pnlContainer.TabIndex = 2
-    '
-    'mnuToolsFolderHeatMap
-    '
-    Me.mnuToolsFolderHeatMap.Name = "mnuToolsFolderHeatMap"
-    Me.mnuToolsFolderHeatMap.Size = New System.Drawing.Size(208, 26)
-    Me.mnuToolsFolderHeatMap.Text = "Folder Heat Map"
+    Me.pnlContainer.TabIndex = 5
     '
     'Main
     '
@@ -206,24 +213,20 @@ Partial Class Main
     Me.ClientSize = New System.Drawing.Size(423, 398)
     Me.Controls.Add(Me.pnlContainer)
     Me.Controls.Add(Me.StatusStrip1)
-    Me.Controls.Add(Me.MenuStrip1)
+    Me.Controls.Add(Me.mnu)
     Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-    Me.MainMenuStrip = Me.MenuStrip1
     Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
     Me.Name = "Main"
     Me.Text = "Path Structure Maintenance"
-    Me.MenuStrip1.ResumeLayout(False)
-    Me.MenuStrip1.PerformLayout()
     Me.StatusStrip1.ResumeLayout(False)
     Me.StatusStrip1.PerformLayout()
+    Me.mnu.ResumeLayout(False)
+    Me.mnu.PerformLayout()
     Me.ResumeLayout(False)
     Me.PerformLayout()
 
   End Sub
-  Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
   Friend WithEvents mnuSettings As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents StatusStrip1 As System.Windows.Forms.StatusStrip
-  Friend WithEvents pnlContainer As System.Windows.Forms.Panel
   Friend WithEvents ToolsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuToolsAdd As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuToolsFormat As System.Windows.Forms.ToolStripMenuItem
@@ -242,5 +245,9 @@ Partial Class Main
   Friend WithEvents mnuToolsPreview As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuGeneratePathStructure As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuToolsFolderHeatMap As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents mnuToolsAuditVisualDefaultPath As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents StatusStrip1 As System.Windows.Forms.StatusStrip
+  Friend WithEvents mnu As System.Windows.Forms.MenuStrip
+  Friend WithEvents pnlContainer As System.Windows.Forms.Panel
 
 End Class

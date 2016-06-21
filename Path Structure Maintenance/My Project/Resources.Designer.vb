@@ -80,5 +80,15 @@ Namespace My.Resources
                 Return ResourceManager.GetString("DrawGraph", resourceCulture)
             End Get
         End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to &lt;html&gt;
+        '''	&lt;script src=&apos;https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js&apos;&gt;&lt;/script&gt;&lt;link href=&apos;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css&apos; rel=&apos;stylesheet&apos; integrity=&apos;sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==&apos; crossorigin=&apos;anonymous&apos;/&gt;&lt;script type=&apos;text/javascript&apos; src=&apos;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js&apos; integrity=&apos;sha256-KXn5puM [rest of string was truncated]&quot;;.
+        '''</summary>
+        Friend ReadOnly Property FileSystemVisualAuditTemplate() As String
+            Get
+                Return ResourceManager.GetString("FileSystemVisualAuditTemplate", resourceCulture)
+            End Get
+        End Property
     End Module
 End Namespace

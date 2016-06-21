@@ -153,7 +153,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
         Public Property blnERPCheck() As Boolean
             Get
                 Return CType(Me("blnERPCheck"),Boolean)
@@ -232,6 +232,30 @@ Namespace My
             End Get
             Set
                 Me("blnFolderHeatMap") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("\\server\clientapps\in-house\Path Structure-ERP.ini")>  _
+        Public Property ERPSettingsPath() As String
+            Get
+                Return CType(Me("ERPSettingsPath"),String)
+            End Get
+            Set
+                Me("ERPSettingsPath") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property blnDeleteThumbsDb() As Boolean
+            Get
+                Return CType(Me("blnDeleteThumbsDb"),Boolean)
+            End Get
+            Set
+                Me("blnDeleteThumbsDb") = value
             End Set
         End Property
     End Class

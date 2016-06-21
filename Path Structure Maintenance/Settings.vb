@@ -248,4 +248,19 @@ Public Class Settings
     End If
     MsgBox("Complete!")
   End Sub
+
+  Private Sub btnBrowseERPSettings_Click(sender As Object, e As EventArgs) Handles btnBrowseERPSettings.Click
+    Dim opn As New OpenFileDialog
+    opn.Title = "Select the Path Structure ERP .ini file"
+    opn.Filter = "ERP Settings File|*.ini"
+    opn.CheckFileExists = True
+    opn.CheckPathExists = True
+    opn.ShowDialog()
+
+    If IO.File.Exists(opn.FileName) And Not opn.FileName = My.Settings.SettingsPath Then
+      My.Settings.ERPSettingsPath = opn.FileName
+      My.Settings.Save()
+      MessageBox.Show("ERP Settings path set", "Settings Saved", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End If
+  End Sub
 End Class

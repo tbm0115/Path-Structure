@@ -3,13 +3,14 @@ Imports System.Security.Principal
 Imports HTML, HTML.HTMLWriter
 
 Public Class Main
+  Public _xml As XmlDocument
 
   Private Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
     My.Application.SaveMySettingsOnExit = True
 
-    Dim myXML As New XmlDocument
-    myXML.Load(My.Settings.SettingsPath)
-    defaultPath = myXML.SelectSingleNode("Structure").Attributes("defaultPath").Value.ToLower
+    _xml = New XmlDocument
+    _xml.Load(My.Settings.SettingsPath)
+    defaultPath = _xml.SelectSingleNode("Structure").Attributes("defaultPath").Value.ToLower
     Dim custCode As String = ""
     Dim partNo As String = ""
 
@@ -45,7 +46,7 @@ Public Class Main
                 If dg = Windows.Forms.DialogResult.Yes Then
                   Log("Add All Command Received")
                   Dim c As New PathStructure(GetUNCPath(args(2)))
-                  For Each fold As XmlElement In myXML.SelectNodes("//Folder")
+                  For Each fold As XmlElement In _xml.SelectNodes("//Folder")
                     If Not fold.Attributes("name").Value.Contains("{") And Not fold.Attributes("name").Value.Contains("}") Then
                       If Not IO.Directory.Exists(c.ReplaceVariables(c.GetURIfromXPath(FindXPath(fold)))) Then
                         IO.Directory.CreateDirectory(c.ReplaceVariables(c.GetURIfromXPath(FindXPath(fold))))
@@ -93,15 +94,18 @@ Public Class Main
                     auditRpt.Report("Bad Paths: " & String.Join("<br />", bads.ToArray), PathStructure.AuditReport.StatusCode.ErrorStatus)
                     IO.File.WriteAllText(pt.StartPath & "\Audit Report.html", auditRpt.ReportMarkup)
                     Process.Start(pt.StartPath & "\Audit Report.html")
+                    Dim fix As New FixAudit(auditRpt)
+                    fix.Dock = DockStyle.Fill
+                    pnlContainer.Controls.Add(fix)
                   Catch ex As Exception
                     MessageBox.Show("An error occurred while attempting to create the audit report: " & vbLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Application.Exit()
                   End Try
                 Else
                   MessageBox.Show("Audit Successful!" & vbLf & "No errors found in the Path Structure", "Audit Success!", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                  pt.LogData(pt.StartPath & "\Audit Report.html", "Generic Audit")
+                  Application.Exit()
                 End If
-
-                pt.LogData(pt.StartPath & "\Audit Report.html", "Generic Audit")
-                Application.Exit()
               Else
                 Log("Path does not match default path!" & vbCrLf & vbTab & "'" & defaultPath & "' != '" & GetUNCPath(args(2)) & "'")
               End If
@@ -199,11 +203,13 @@ Public Class Main
     If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
       If GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) Then
         Debug.WriteLine("Adding folders for '" & GetUNCPath(opn.CurrentDirectory) & "'")
-        Dim myXML As New XmlDocument
-        myXML.Load(My.Settings.SettingsPath)
+        If IsNothing(_xml) Then
+          _xml = New XmlDocument
+          _xml.Load(My.Settings.SettingsPath)
+        End If
         Log("Add All Command Received")
         Dim c As New PathStructure(GetUNCPath(opn.CurrentDirectory))
-        For Each fold As XmlElement In myXML.SelectNodes("//Folder")
+        For Each fold As XmlElement In _xml.SelectNodes("//Folder")
           If Not fold.Attributes("name").Value.Contains("{") And Not fold.Attributes("name").Value.Contains("}") Then
             If Not IO.Directory.Exists(c.ReplaceVariables(c.GetURIfromXPath(FindXPath(fold)))) Then
               IO.Directory.CreateDirectory(c.ReplaceVariables(c.GetURIfromXPath(FindXPath(fold))))
@@ -318,6 +324,9 @@ Public Class Main
             auditRpt.Report("Bad Paths:" & String.Join("<br />", bads.ToArray), PathStructure.AuditReport.StatusCode.ErrorStatus)
             IO.File.WriteAllText(pt.StartPath & "\Audit Report.html", auditRpt.ReportMarkup)
             Process.Start(pt.StartPath & "\Audit Report.html")
+            Dim fix As New FixAudit(auditRpt)
+            fix.Dock = DockStyle.Fill
+            pnlContainer.Controls.Add(fix)
           Catch ex As Exception
             MessageBox.Show("An error occurred while attempting to create the audit report: " & vbLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
           End Try
@@ -361,6 +370,7 @@ Public Class Main
     Dim stpWatch As New Stopwatch
     Dim averageTime As Double
 
+    Dim ERPVariables As New SortedList(Of String, String)
 
     For Each cust As String In IO.Directory.GetDirectories(defaultPath)
       statProgress.Value = (curIndex / totCustomers) * 100
@@ -369,7 +379,9 @@ Public Class Main
       If My.Settings.blnERPCheck Then
         Dim c As New PathStructure(cust)
 
-        If Not IsValidERP(c.Variables) Then
+        Dim ERPCustCodeTable As String = ""
+        ERPVariables = GetERPVariables("Audit_CustCode", ERPCustCodeTable, c)
+        If Not IsValidERP(ERPCustCodeTable, c.Variables) Then
           auditRpt.Report("Skipped '" & cust & "' as the Customer Code could not be found in the E2 database.", PathStructure.AuditReport.StatusCode.ErrorStatus)
           rtb.AppendText("Skipping '" & cust & "' because could not be found in ERP system." & vbCrLf)
           Continue For
@@ -385,26 +397,31 @@ Public Class Main
         Application.DoEvents()
 
         Dim pt As New PathStructure(part)
+        
+        Dim ERPPartNoTable As String = ""
+        '' Check if user want to check ERP system
+        ERPVariables = GetERPVariables("Audit_PartNo", ERPPartNoTable, pt)
+        If IsValidERP(ERPPartNoTable, ERPVariables) Then
+          If Not pt.Audit(auditRpt) Then
+            bad += 1
+            blnSuccess = False
+          End If
+          rtb.ScrollToCaret()
+          tot += 1
 
-        If Not pt.Audit(auditRpt) Then
-          bad += 1
-          blnSuccess = False
+          '' Do math to display
+          lstTime.Add(stpWatch.ElapsedMilliseconds)
+          averageTime += stpWatch.ElapsedMilliseconds
+          lstAverageHistory.Add((averageTime / lstTime.Count))
+          statStatus.Text = "Average Processing Time (ms): " & (averageTime / lstTime.Count).ToString & vbTab & "Last Processing Time (ms): " & stpWatch.ElapsedMilliseconds.ToString
+
         End If
-
-        rtb.ScrollToCaret()
-        tot += 1
-
-        '' Do math to display
-        lstTime.Add(stpWatch.ElapsedMilliseconds)
-        averageTime += stpWatch.ElapsedMilliseconds
-        lstAverageHistory.Add((averageTime / lstTime.Count))
-        statStatus.Text = "Average Processing Time (ms): " & (averageTime / lstTime.Count).ToString & vbTab & "Last Processing Time (ms): " & stpWatch.ElapsedMilliseconds.ToString
-
         If cancelAudit Then Exit For
       Next
 
       System.GC.Collect()
 
+      '' Keep track of RichTextBox length and clear frequently to avoid bogging down computer
       If rtb.Lines.Count > 100 Then
         rtb.Clear()
       End If
@@ -413,18 +430,18 @@ Public Class Main
     cancelAudit = False
 
 
-    auditRpt.Raw(New HTML.HTMLWriter.HTMLCanvas("canvGraph", New HTML.AttributeList({New HTML.AttributeList.AttributeItem("width", "400"), New HTML.AttributeList.AttributeItem("height", "400")}, {New HTML.AttributeList.StyleItem("border", "1px solid black")})).Markup)
-    auditRpt.Raw("<script>" & My.Resources.DrawGraph)
-    Dim dataPoints As New System.Text.StringBuilder
-    dataPoints.Append(String.Join(",", lstTime.ToArray))
-    If dataPoints.Chars(dataPoints.Length - 1) = "," Then dataPoints.Remove(dataPoints.Length - 1, 1)
-    auditRpt.Raw("var dataPoints = [" & dataPoints.ToString & "];")
-    dataPoints = New System.Text.StringBuilder
-    dataPoints.Append(String.Join(",", lstAverageHistory.ToArray))
-    If dataPoints.Chars(dataPoints.Length - 1) = "," Then dataPoints.Remove(dataPoints.Length - 1, 1)
-    auditRpt.Raw("var dataAverage = [" & dataPoints.ToString & "];")
-    auditRpt.Raw("DrawPoints(dataAverage, 'yellow');")
-    auditRpt.Raw("DrawPoints(dataPoints, 'black');</script>")
+    'auditRpt.Raw(New HTML.HTMLWriter.HTMLCanvas("canvGraph", New HTML.AttributeList({New HTML.AttributeList.AttributeItem("width", "400"), New HTML.AttributeList.AttributeItem("height", "400")}, {New HTML.AttributeList.StyleItem("border", "1px solid black")})).Markup)
+    'auditRpt.Raw("<script>" & My.Resources.DrawGraph)
+    'Dim dataPoints As New System.Text.StringBuilder
+    'dataPoints.Append(String.Join(",", lstTime.ToArray))
+    'If dataPoints.Chars(dataPoints.Length - 1) = "," Then dataPoints.Remove(dataPoints.Length - 1, 1)
+    'auditRpt.Raw("var dataPoints = [" & dataPoints.ToString & "];")
+    'dataPoints = New System.Text.StringBuilder
+    'dataPoints.Append(String.Join(",", lstAverageHistory.ToArray))
+    'If dataPoints.Chars(dataPoints.Length - 1) = "," Then dataPoints.Remove(dataPoints.Length - 1, 1)
+    'auditRpt.Raw("var dataAverage = [" & dataPoints.ToString & "];")
+    'auditRpt.Raw("DrawPoints(dataAverage, 'yellow');")
+    'auditRpt.Raw("DrawPoints(dataPoints, 'black');</script>")
 
     stp.Stop()
     Dim ts As New TimeSpan(0, 0, 0, 0, stp.ElapsedMilliseconds)
@@ -519,14 +536,16 @@ Public Class Main
 
     Dim lstMain As New HTMLList(HTMLList.ListType.Unordered, New AttributeList({"id"}, {"structure"}))
 
-    Dim myXML As New XmlDocument
-    myXML.Load(My.Settings.SettingsPath)
+    If IsNothing(_xml) Then
+      _xml = New XmlDocument
+      _xml.Load(My.Settings.SettingsPath)
+    End If
+    
 
-
-    Dim struct As New HTMLList.ListItem("Structure: " & myXML.SelectSingleNode("Structure").Attributes("defaultPath").Value.ToString)
-    If myXML.SelectSingleNode("Structure").SelectNodes("./*").Count > 0 Then
+    Dim struct As New HTMLList.ListItem("Structure: " & _xml.SelectSingleNode("Structure").Attributes("defaultPath").Value.ToString)
+    If _xml.SelectSingleNode("Structure").SelectNodes("./*").Count > 0 Then
       Dim innerList As New HTMLList(HTMLList.ListType.Unordered)
-      For Each chld As XmlElement In myXML.SelectSingleNode("Structure").SelectNodes("./*")
+      For Each chld As XmlElement In _xml.SelectSingleNode("Structure").SelectNodes("./*")
         If Not chld.Name = "Variables" And Not chld.Name = "Variable" Then
           innerList += RecursivePathStructure(chld)
         End If
@@ -602,5 +621,119 @@ Public Class Main
       fhm.Dock = DockStyle.Fill
       pnlContainer.Controls.Add(fhm)
     End If
+  End Sub
+
+  Private Sub mnuToolsAuditVisualDefaultPath_Click(sender As Object, e As EventArgs) Handles mnuToolsAuditVisualDefaultPath.Click
+    pnlContainer.Controls.Clear()
+    Dim rtb As New RichTextBox
+    rtb.Dock = DockStyle.Fill
+    Dim btnCancel As New Button
+    btnCancel.Text = "Cancel Audit"
+    btnCancel.Dock = DockStyle.Bottom
+    AddHandler btnCancel.Click, AddressOf CancelAudit_Clicked
+    pnlContainer.Controls.Add(btnCancel)
+    pnlContainer.Controls.Add(rtb)
+
+
+    Dim tot As Integer
+    Dim stp As New Stopwatch
+    stp.Start()
+    Dim auditRpt As New PathStructure.AuditVisualReport
+
+    Dim curIndex As Integer = 0
+    Dim totCustomers As Integer = IO.Directory.EnumerateDirectories(defaultPath).Count
+    Dim lstTime As New List(Of Double)
+    Dim lstAverageHistory As New List(Of Double)
+    Dim stpWatch As New Stopwatch
+    Dim averageTime As Double
+
+    Dim ERPVariables As New SortedList(Of String, String)
+    Dim ERPConnection As New OleDb.OleDbConnection(My.Settings.ERPConnection)
+    ERPConnection.Open()
+    For Each cust As String In IO.Directory.GetDirectories(defaultPath)
+      '' If parsed Customer is invalid in E2, then continue by skipping
+      Dim mainLI As HTMLList.ListItem
+      Dim c As New PathStructure(cust)
+
+      '' Now check main folder
+      If My.Settings.blnERPCheck Then
+        '' Check if user want to check ERP system
+        Dim ERPCustCodeTable As String = ""
+        ERPVariables = GetERPVariables("Audit_CustCode", ERPCustCodeTable, c)
+        If Not IsValidERP(ERPCustCodeTable, ERPVariables, ERPConnection) Then
+          mainLI = auditRpt.Report("Skipped '" & cust & "' as the Customer Code could not be found in the E2 database.", PathStructure.AuditVisualReport.StatusCode.InvalidPath, c)
+          rtb.AppendText("Skipping '" & cust & "' because could not be found in ERP system." & vbCrLf)
+          Continue For
+        Else
+          mainLI = auditRpt.Report("", PathStructure.AuditVisualReport.StatusCode.ValidPath, c)
+          rtb.AppendText("Found '" & cust & "' in ERP system. ")
+        End If
+      Else
+        mainLI = auditRpt.Report("", PathStructure.AuditVisualReport.StatusCode.Other, c)
+      End If
+
+
+      If c.Children.Length > 0 Then
+        Dim ul As HTMLList = auditRpt.CreateNewList(c)
+        For i = 0 To c.Children.Length - 1 Step 1
+          Dim part As PathStructure = c.Children(i)
+          stpWatch.Restart()
+          rtb.AppendText("Auditing '" & part.UNCPath & "'..." & vbLf)
+          statCurrentPath.Text = "'" & part.UNCPath & "'"
+          Application.DoEvents()
+
+          If My.Settings.blnERPCheck Then
+            Dim ERPPartNoTable As String = ""
+            '' Check if user want to check ERP system
+            ERPVariables = GetERPVariables("Audit_PartNo", ERPPartNoTable, part)
+            If IsValidERP(ERPPartNoTable, ERPVariables, ERPConnection) Then
+              part.AuditVisualChildren(auditRpt, ul, part)
+              rtb.ScrollToCaret()
+              tot += 1
+            Else
+              auditRpt.AddListItemToList(ul, auditRpt.Report("Skipped '" & part.PathName & "' as the PartNo could not be found or was invalid in the E2 database.", PathStructure.AuditVisualReport.StatusCode.InvalidPath, part))
+              rtb.AppendText("Skipping '" & part.PathName & "' because could not be found in ERP system." & vbCrLf)
+            End If
+          Else
+            part.AuditVisualChildren(auditRpt, ul, part)
+            rtb.ScrollToCaret()
+            tot += 1
+          End If
+
+          '' Do math to display
+          lstTime.Add(stpWatch.ElapsedMilliseconds)
+          averageTime += stpWatch.ElapsedMilliseconds
+          lstAverageHistory.Add((averageTime / lstTime.Count))
+          statStatus.Text = "Average Processing Time (ms): " & (averageTime / lstTime.Count).ToString & vbTab & "Last Processing Time (ms): " & stpWatch.ElapsedMilliseconds.ToString
+
+          If cancelAudit Then Exit For
+        Next
+        auditRpt.AddListToListItem(mainLI, ul)
+      End If
+      auditRpt.AddListItemToList(Nothing, mainLI)
+
+      System.GC.Collect()
+
+      '' Keep track of RichTextBox length and clear frequently to avoid bogging down computer
+      'If rtb.Lines.Count > 100 Then
+      'End If
+      rtb.Clear()
+      If cancelAudit Then Exit For
+    Next
+    ERPConnection.Close()
+    cancelAudit = False
+
+    stp.Stop()
+    Dim ts As New TimeSpan(0, 0, 0, 0, stp.ElapsedMilliseconds)
+    rtb.AppendText(vbLf & "Audited '" & auditRpt.FileCount.ToString & "' files in '" & ts.Hours.ToString & ":" & ts.Minutes.ToString & ":" & ts.Seconds.ToString & "." & ts.Milliseconds.ToString & "'" & vbLf)
+    rtb.AppendText(tot.ToString & " part folders audited." & vbLf)
+
+    MessageBox.Show("Click OK to open temporary report...", "Audit Complete!", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    IO.File.WriteAllText(defaultPath & "\Audit Report.html", auditRpt.ReportMarkup)
+    Try
+      Process.Start(defaultPath & "\Audit Report.html")
+    Catch ex As Exception
+      MessageBox.Show("An error occurred while attempting to create the audit report: " & vbLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+    End Try
   End Sub
 End Class

@@ -102,6 +102,7 @@
     <Compile Include="Dialogs\SelectFolderDialog.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GlobalSuppressions.vb" />
     <Compile Include="Main.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -142,6 +143,12 @@
       <DependentUpon>FileClipboard.vb</DependentUpon>
     </Compile>
     <Compile Include="User Controls\FileClipboard.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="User Controls\FixAudit.Designer.vb">
+      <DependentUpon>FixAudit.vb</DependentUpon>
+    </Compile>
+    <Compile Include="User Controls\FixAudit.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="User Controls\FolderHeatMap.Designer.vb">
@@ -194,6 +201,9 @@
     <EmbeddedResource Include="User Controls\FileClipboard.resx">
       <DependentUpon>FileClipboard.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="User Controls\FixAudit.resx">
+      <DependentUpon>FixAudit.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="User Controls\FolderHeatMap.resx">
       <DependentUpon>FolderHeatMap.vb</DependentUpon>
     </EmbeddedResource>
@@ -222,6 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\DrawGraph.js" />
+    <None Include="Resources\Path Structure Audit.html" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="AcroPDFLib">
