@@ -2,7 +2,8 @@
 
 Public Class FileClipboard
   Private _CurrentPath As PathStructure
-  Private myXML As New XmlDocument
+  'Private myXML As New XmlDocument
+  Private _x As XmlElement
   Private fileName As String
 
   Public Sub New(ByVal CurrentPath As String)
@@ -11,35 +12,46 @@ Public Class FileClipboard
     _CurrentPath = New PathStructure(CurrentPath)
 
     '' Add any initialization after the InitializeComponent() call.
-    myXML.Load(My.Settings.SettingsPath)
-    For Each var As KeyValuePair(Of String, String) In _CurrentPath.Variables
-      Log(vbTab & var.Key & ": " & var.Value)
+    'myXML.Load(My.Settings.SettingsPath)
+    For Each var As PathStructure.Variable In _CurrentPath.Variables.Items
+      Log(vbTab & var.Name & ": " & var.Value)
     Next
-    Dim cand As New List(Of String)
+    'Dim cand As New List(Of String)
 
     pnlVariables.Controls.Clear()
+    pnlDescription.Visible = False
     cmbFiles.Items.Clear()
-    If cand.Count > 0 Then
-      For Each fil As String In cand.ToArray
-        If fil.Contains("Option") Then fil = fil.Remove(fil.LastIndexOf("/"))
-        cmbFiles.Items.Add(myXML.SelectSingleNode(fil).Attributes("name").Value)
-      Next
-    Else
-      For Each fil As XmlElement In myXML.SelectNodes("//File")
-        cmbFiles.Items.Add(fil.Attributes("name").Value)
-      Next
+    _x = _CurrentPath.StructureCandidates.GetHighestMatch().XElement
+    If _x Is Nothing Then
+      _x = _CurrentPath.PathStructure
     End If
+    Debug.WriteLine("Root node: " & _x.OuterXml)
+    Dim fils As XmlNodeList = _x.SelectNodes(".//File")
+    For i = 0 To fils.Count - 1 Step 1
+      cmbFiles.Items.Add(fils(i).Attributes("name").Value)
+    Next
+    'If cand.Count > 0 Then
+    '  For Each fil As String In cand.ToArray
+    '    If fil.Contains("Option") Then fil = fil.Remove(fil.LastIndexOf("/"))
+    '    cmbFiles.Items.Add(_CurrentPath.PathStructure.SelectSingleNode(fil).Attributes("name").Value)
+    '  Next
+    'Else
+    '  For Each fil As XmlElement In myXML.SelectNodes("//File")
+    '    cmbFiles.Items.Add(fil.Attributes("name").Value)
+    '  Next
+    'End If
   End Sub
 
   Private Sub cmbFiles_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbFiles.SelectedIndexChanged
     Dim FileType As String = cmbFiles.Items(cmbFiles.SelectedIndex).ToString
     cmbOptions.Items.Clear()
     pnlVariables.Controls.Clear()
-    For Each opt As XmlElement In myXML.SelectNodes("//File[@name='" & FileType & "']/Option")
+    For Each opt As XmlElement In _x.SelectNodes(".//File[@name='" & FileType & "']/Option")
       cmbOptions.Items.Add(opt.Attributes("name").Value)
     Next
     If cmbOptions.Items.Count > 0 Then
       pnlOptions.Enabled = True
+      pnlDescription.Visible = False
     Else
       pnlOptions.Enabled = False
       LoadFileSyntax(FileType)
@@ -54,15 +66,15 @@ Public Class FileClipboard
   Private Sub LoadFileSyntax(ByVal nameFile As String, Optional ByVal nameOption As String = "")
     Dim nod As XmlElement
     If Not String.IsNullOrEmpty(nameOption) Then
-      nod = myXML.SelectSingleNode("//File[@name='" & nameFile & "']/Option[@name='" & nameOption & "']")
+      nod = _x.SelectSingleNode(".//File[@name='" & nameFile & "']/Option[@name='" & nameOption & "']")
       fileName = nod.InnerText
       If fileName.Contains("{name}") Then fileName = fileName.Replace("{name}", nameOption)
     Else
-      nod = myXML.SelectSingleNode("//File[@name='" & nameFile & "']")
+      nod = _x.SelectSingleNode(".//File[@name='" & nameFile & "']")
       fileName = nod.InnerText
       If fileName.Contains("{name}") Then fileName = fileName.Replace("{name}", nameFile)
     End If
-    fileName = _CurrentPath.ReplaceVariables(fileName)
+    fileName = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
     If fileName.Contains("{Date}") Then fileName = fileName.Replace("{Date}", DateTime.Now.ToString("MM-dd-yyyy"))
     If fileName.Contains("{Time}") Then fileName = fileName.Replace("{Time}", DateTime.Now.ToString("hh-mm-ss tt"))
 
@@ -95,14 +107,16 @@ Public Class FileClipboard
         pnlVariables.Controls.SetChildIndex(pnl, 0)
       Next
     End If
-    fileName = _CurrentPath.GetURIfromXPath(FindXPath(nod)) & fileName
-    txtPreview.Text = _CurrentPath.ReplaceVariables(fileName)
+    fileName = GetURIfromXPath(FindXPath(nod)) ' & fileName
+    txtPreview.Text = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
 
+    pnlDescription.Visible = True
+    lblDescription.Text = GetDescriptionfromXPath(FindXPath(nod))
   End Sub
 
   Private Sub Variable_Changed(ByVal sender As System.Object, ByVal e As System.EventArgs)
     Dim vals As New SortedList(Of String, String)
-    txtPreview.Text = _CurrentPath.ReplaceVariables(fileName)
+    txtPreview.Text = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
     For Each pnl As Control In pnlVariables.Controls
       vals.Add(pnl.Controls(1).Tag, pnl.Controls(1).Text)
       If Not String.IsNullOrEmpty(pnl.Controls(1).Text) Then

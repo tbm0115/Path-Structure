@@ -1,7 +1,7 @@
 ﻿Imports System.Windows.Forms
 
 Public Class SelectFolderDialog
-  Private _init As String = defaultPath
+  Private _init As String '= defaultPath
   Private _cur As String = _init
   Public Property Title As String
     Get
@@ -34,19 +34,21 @@ Public Class SelectFolderDialog
   Private Event DirectoryChanged(ByVal OldDirectory As String, ByVal NewDirectory As String)
 
   Private Sub DirectoryChanged_Raised(ByVal OldDirectory As String, ByVal NewDirectory As String) Handles Me.DirectoryChanged
-    If IO.Directory.Exists(NewDirectory) Then
-      _cur = NewDirectory
-      txtCurrentPath.Text = NewDirectory
+    If Not String.IsNullOrEmpty(NewDirectory) Then
+      If IO.Directory.Exists(NewDirectory) Then
+        _cur = NewDirectory
+        txtCurrentPath.Text = NewDirectory
 
-      '' Clear listview
-      lstFolders.Items.Clear()
-      Dim fold As IO.DirectoryInfo
-      For Each Dir As String In IO.Directory.GetDirectories(NewDirectory)
-        fold = New IO.DirectoryInfo(Dir)
-        lstFolders.Items.Add(fold.Name, 0).Tag = fold.FullName
-      Next
-    Else
-      Throw New ArgumentException("'" & NewDirectory & "' is not a valid directory!")
+        '' Clear listview
+        lstFolders.Items.Clear()
+        Dim fold As IO.DirectoryInfo
+        For Each Dir As String In IO.Directory.GetDirectories(NewDirectory)
+          fold = New IO.DirectoryInfo(Dir)
+          lstFolders.Items.Add(fold.Name, 0).Tag = fold.FullName
+        Next
+      Else
+        Throw New ArgumentException("'" & NewDirectory & "' is not a valid directory!")
+      End If
     End If
   End Sub
 

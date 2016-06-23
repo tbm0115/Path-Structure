@@ -2,7 +2,7 @@
 <html>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js'></script></html><link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' rel='stylesheet' integrity='sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==' crossorigin='anonymous'/></html><script type='text/javascript' src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' integrity='sha256-KXn5puMvxCw+dAYznun+drMdG1IFl3agK0p/pqT9KAo= sha512-2e8qq0ETcfWRI4HJBzQiA3UoyFk6tbNyG+qSaIBZLyW9Xf3sWZHN/lxe9fTh1U45DpPf07yj94KsUHHWe4Yk1A==' crossorigin='anonymous'></script></html>	<style>ul li{list-style-type: none;cursor: pointer;}.folder:before{content:'\e118';font-family:'Glyphicons Halflings';font-size:12px;float:left;margin-top:4px;margin-left:-17px;color:#222;}.file:before{content:'\e032';font-family:'Glyphicons Halflings';font-size:12px;float:left;margin-top:4px;margin-left:-17px;color:#222;}.contains:before{color: steelblue;}</style>
 	<H1>Path Structure</H1>
-	<H6>This document is not controlled. Created 03/28/2016 03:49 PM</H6>
+	<H6>This document is not controlled. Created 06/20/2016 12:49 PM</H6>
 	<p class="alert alert-info">Folders and Files with a name enclosed in <code>{}</code> are wildcard objects, meaning that the object name can be any valid object name.</p>
 	<ul id="structure">
 <li>Structure: \\server\Parts<ul>
@@ -12,11 +12,7 @@
 <li class="file"><b>Revision</b>: A revision of a dimensional part drawing that may be outdated, but still valid.</li>
 </ul>
 </li>
-<li class="file contains"><b>Bubble Print</b>: A dimensional part drawing specifying the indices of pertinent dimensions.<ul>
-<li class="file"><b>Master</b>: The master, or most current, specification of pertinent dimensions.</li>
-<li class="file"><b>Revision</b>: A revision of the specification of pertinent dimensions.</li>
-</ul>
-</li>
+<li class="file"><b>Setup Sheet URL</b>: Provides a direct link to the part's associated setup sheet on the Setup Sheet Site</li>
 <li class="folder contains"><b>Archive</b>: Contains outdated documents per QMSP-1002.<ul>
 <li class="file"><b>ArchivedFile</b>: Archived file.</li>
 </ul>
@@ -32,12 +28,13 @@
 <li class="file"><b>Revision</b>: A revised CAM document for the specific part process.</li>
 </ul>
 </li>
-<li class="folder contains"><b>{CAD-CAM Support Folder}</b>: Contains any necessary support documents for CAD-CAM applications<ul>
-<li class="file"><b>Support File</b>: A CAD-CAM support document.</li>
+<li class="folder contains"><b>Vericut</b>: Contains support documents for the program Vericut.<ul>
+<li class="file"><b>Vericut Project File</b>: The main Vericut project file.</li>
+<li class="file"><b>Vericut Support File</b>: A support document for the program Vericut.</li>
 </ul>
 </li>
-<li class="folder contains"><b>Vericut</b>: Contains support documents for the program Vericut.<ul>
-<li class="file"><b>Vericut Support File</b>: A support document for the program Vericut.</li>
+<li class="folder contains"><b>{CAD-CAM Support Folder}</b>: Contains any necessary support documents for CAD-CAM applications<ul>
+<li class="file"><b>Support File</b>: A CAD-CAM support document.</li>
 </ul>
 </li>
 </ul>
@@ -67,6 +64,11 @@
 <li class="file"><b>MicroVu</b>: A temporary data storage file from the Micro-Vu vision system.</li>
 <li class="file"><b>Romer</b>: A temporary data storage file from the Romer Arm.</li>
 <li class="file"><b>MIDI</b>: A temporary data storage file from the Manual Inspection Data Input application.</li>
+</ul>
+</li>
+<li class="file contains"><b>Bubble Print</b>: A dimensional part drawing specifying the indices of pertinent dimensions.<ul>
+<li class="file"><b>Master</b>: The master, or most current, specification of pertinent dimensions.</li>
+<li class="file"><b>Revision</b>: A revision of the specification of pertinent dimensions.</li>
 </ul>
 </li>
 </ul>

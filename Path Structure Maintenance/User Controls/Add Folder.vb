@@ -13,22 +13,54 @@ Public Class Add_Folder
     If _CurrentPath.Type = PathStructure.PathType.Folder Then
       '' Add any initialization after the InitializeComponent() call.
       myXML.Load(My.Settings.SettingsPath)
-      Log(vbTab & "Directory: " & _CurrentPath.FolderInfo.Name)
-      Log(vbTab & "Extension: " & _CurrentPath.FolderInfo.Extension)
-      For Each var As KeyValuePair(Of String, String) In _CurrentPath.Variables
-        Log(vbTab & var.Key & ": " & var.Value)
+      'Log(vbTab & "Directory: " & _CurrentPath.FolderInfo.Name)
+      'Log(vbTab & "Extension: " & _CurrentPath.FolderInfo.Extension)
+      Log(vbTab & "Directory: " & _CurrentPath.CurrentDirectory)
+      'For Each var As KeyValuePair(Of String, String) In _CurrentPath.Variables
+      '  Log(vbTab & var.Key & ": " & var.Value)
+      'Next
+      For Each var As PathStructure.Variable In _CurrentPath.Variables.Items
+        Log(vbTab & var.Name & ": " & var.Value)
       Next
-      Dim cand As New List(Of String)
       If QuickSelect Then
-        Log(vbTab & "IsNameStructured: " & _CurrentPath.IsNameStructured(, cand).ToString)
+        Log(vbTab & "IsNameStructured: " & _CurrentPath.IsNameStructured().ToString)
       End If
 
       pnlVariables.Controls.Clear()
       cmbFiles.Items.Clear()
-      If cand.Count > 0 Then
-        For Each fil As String In cand.ToArray
-          If fil.Contains("Option") Then fil = fil.Remove(fil.LastIndexOf("/"))
-          cmbFiles.Items.Add(myXML.SelectSingleNode(fil).Attributes("name").Value)
+      If _CurrentPath.StructureCandidates.Count > 0 Then
+        For Each struct As PathStructure.StructureCandidate In _CurrentPath.StructureCandidates.Items
+          If struct.XElement.Name = "File" Then
+            If struct.XElement.ParentNode IsNot Nothing Then
+              For Each nod As XmlElement In struct.XElement.ParentNode.SelectNodes("Folder")
+                If nod.HasAttribute("name") Then
+                  If Not cmbFiles.Items.Contains(nod.Attributes("name").Value) Then
+                    cmbFiles.Items.Add(nod.Attributes("name").Value)
+                  End If
+                End If
+              Next
+            End If
+          ElseIf struct.XElement.Name = "Option" Then
+            If struct.XElement.ParentNode.ParentNode IsNot Nothing Then
+              For Each nod As XmlElement In struct.XElement.ParentNode.SelectNodes("Folder")
+                If nod.HasAttribute("name") Then
+                  If Not cmbFiles.Items.Contains(nod.Attributes("name").Value) Then
+                    cmbFiles.Items.Add(nod.Attributes("name").Value)
+                  End If
+                End If
+              Next
+            End If
+          ElseIf struct.XElement.Name = "Folder" Then
+            If struct.XElement.HasChildNodes Then
+              For Each nod As XmlElement In struct.XElement.SelectNodes("Folder")
+                If nod.HasAttribute("name") Then
+                  If Not cmbFiles.Items.Contains(nod.Attributes("name").Value) Then
+                    cmbFiles.Items.Add(nod.Attributes("name").Value)
+                  End If
+                End If
+              Next
+            End If
+          End If
         Next
       Else
         For Each fil As XmlElement In myXML.SelectNodes("//Folder")
@@ -58,7 +90,7 @@ Public Class Add_Folder
       Loop
     End If
     fileName = _CurrentPath.StartPath & fileName
-    fileName = _CurrentPath.ReplaceVariables(fileName)
+    fileName = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
     If fileName.Contains("{Date}") Then fileName = fileName.Replace("{Date}", DateTime.Now.ToString("MM-dd-yyyy"))
     If fileName.Contains("{Time}") Then fileName = fileName.Replace("{Time}", DateTime.Now.ToString("hh-mm-ss tt"))
 
@@ -93,12 +125,12 @@ Public Class Add_Folder
       Next
     End If
 
-    txtPreview.Text = _CurrentPath.ReplaceVariables(fileName)
+    txtPreview.Text = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
   End Sub
 
   Private Sub Variable_Changed(ByVal sender As System.Object, ByVal e As System.EventArgs)
     Dim vals As New SortedList(Of String, String)
-    txtPreview.Text = _CurrentPath.ReplaceVariables(fileName)
+    txtPreview.Text = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
     For Each pnl As Control In pnlVariables.Controls
       vals.Add(pnl.Controls(1).Tag, pnl.Controls(1).Text)
       If Not String.IsNullOrEmpty(pnl.Controls(1).Text) Then
@@ -112,7 +144,7 @@ Public Class Add_Folder
       MessageBox.Show("You must select a file type option!", "Invalid Option", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       Exit Sub
     End If
-    IO.Directory.CreateDirectory(_CurrentPath.ReplaceVariables(txtPreview.Text))
+    IO.Directory.CreateDirectory(_CurrentPath.Variables.Replace(txtPreview.Text)) ' _CurrentPath.ReplaceVariables(txtPreview.Text))
     _CurrentPath.LogData(txtPreview.Text, "Create Folder")
     Application.Exit()
   End Sub

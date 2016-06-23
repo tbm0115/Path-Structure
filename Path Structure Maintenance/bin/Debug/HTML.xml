@@ -83,6 +83,27 @@ HTML
   Overrides the current thread's CurrentUICulture property for all
   resource lookups using this strongly typed resource class.
 </summary>
+</member><member name="P:HTML.My.Resources.Resources.SortTable">
+	<summary>
+  Looks up a localized string similar to var SortTableClass = {
+  Tables: [],
+  guid: function () {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+      s4() + '-' + s4() + s4() + s4();
+  },
+  SortTable: function (HTML) {
+    this.HTML = HTML;
+    this.Headers = [];
+    this.Data = [];
+    this.ID = (HTML.id != undefined &amp;&amp; HTML.id != "") ? HTML.id : SortTableClass.guid();
+
+    if (HTML.querySelec [rest of string was truncated]";.
+</summary>
 </member><member name="T:HTML.My.Resources.Resources">
 	<summary>
   A strongly-typed resource class, for looking up localized strings, etc.
@@ -148,7 +169,7 @@ HTML
  Creates a new instance of an HTML Table. A table consists of HTML Table Rows and their columns.
  </summary>
 	<remarks></remarks>
-</member><member name="P:HTML.HTMLWriter.HTMLTable.HTMLTableRow.Cells">
+</member><member name="P:HTML.HTMLWriter.HTMLTable.HTMLTableRow.Markup">
 	<summary>
  Get/Set the HTML markup for the current instance of an HTML Table Row directly.
  </summary>

@@ -21,10 +21,9 @@ Public Class Preview
       Application.Exit()
     End If
 
-    Dim locs As New List(Of String)
-    _CurrentPath.IsNameStructured(, locs)
+    _CurrentPath.IsNameStructured()
 
-    If locs.Count = 1 Then
+    If _CurrentPath.StructureCandidates.Count = 1 Then
       '' Declare the reusable directory search string
       Dim dirSearch As String = ""
       '' Initialize Path Structure document
@@ -32,16 +31,16 @@ Public Class Preview
       myXML.Load(My.Settings.SettingsPath)
 
       '' Iterate through each relavant XPath
-      For Each xp As String In locs
+      For Each xp As String In _CurrentPath.StructureCandidates.ToArray
         '' Iterate through each relavant xmlelement
         For Each nod As XmlElement In myXML.SelectNodes(xp)
           '' Verify the xmlelement has the 'preview' attribute
-          If Not IsNothing(nod.Attributes("preview")) Then
+          If nod.HasAttribute("preview") Then
             '' Iterate through each 'preview' xpath result
             For Each prev As XmlElement In nod.SelectNodes(nod.Attributes("preview").Value.ToString)
               '' Verify the xmlelement has the 'previewDocument' attribute
-              If Not IsNothing(prev.Attributes("previewDocument")) Then
-                dirSearch = _CurrentPath.ReplaceVariables(_CurrentPath.GetURIfromXPath(FindXPath(prev)))
+              If prev.HasAttribute("previewDocument") Then
+                dirSearch = _CurrentPath.Variables.Replace(GetURIfromXPath(FindXPath(prev))) ' _CurrentPath.ReplaceVariables(_CurrentPath.GetURIfromXPath(FindXPath(prev)))
                 '' Remove last index of global variables
                 If dirSearch.Contains("{") And dirSearch.Contains("}") Then
                   dirSearch = dirSearch.Remove(dirSearch.LastIndexOf("{"))
@@ -71,10 +70,10 @@ Public Class Preview
           End If
         Next
       Next
-    ElseIf locs.Count = 0 Then
+    ElseIf _CurrentPath.StructureCandidates.Count = 0 Then
       MessageBox.Show("Couldn't not determine what type of folder '" & SelectedPath & "' based on the Path Structure.", "Invalid Path Structure", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       Application.Exit()
-    ElseIf locs.Count > 1 Then
+    ElseIf _CurrentPath.StructureCandidates.Count > 1 Then
       MessageBox.Show("Too many potential folder types for '" & SelectedPath & "' based on the Path Structure.", "Indeterminable Path Structure", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       Application.Exit()
     End If
@@ -95,8 +94,8 @@ Public Class Preview
         Files.Clear()
         For Each fil As IO.FileInfo In New IO.DirectoryInfo(fold).GetFiles
           Dim ps As New PathStructure(fold)
-          Debug.WriteLine("Testing '" & (fil.Name.ToString) & "' against '" & ps.ReplaceVariables(FileFilter) & "'")
-          If (fil.Name.ToString).ToLower Like ps.ReplaceVariables(FileFilter).ToLower Then
+          Debug.WriteLine("Testing '" & (fil.Name.ToString) & "' against '" & ps.Variables.Replace(FileFilter) & "'") ' ps.ReplaceVariables(FileFilter) & "'")
+          If (fil.Name.ToString).ToLower Like ps.Variables.Replace(FileFilter).ToLower Then ' ps.ReplaceVariables(FileFilter).ToLower Then
             Files.Add(fil.Name, fil.FullName)
             lstFiles.Items.Add(fil.Name)
           End If

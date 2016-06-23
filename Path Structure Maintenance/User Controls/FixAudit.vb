@@ -1,6 +1,6 @@
 ﻿Public Class FixAudit
   Private _errPaths As List(Of String)
-  Public Sub New(ByVal AuditResult As PathStructure.AuditReport)
+  Public Sub New(ByVal AuditResult As Object) ' PathStructure.AuditReport)
     ' This call is required by the designer.
     InitializeComponent()
 

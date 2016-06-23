@@ -31,7 +31,6 @@ Partial Class Main
     Me.mnuToolAudit = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsAuditFile = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsAuditFolder = New System.Windows.Forms.ToolStripMenuItem()
-    Me.mnuToolsAuditDefaultPath = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsAuditVisualDefaultPath = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsClipboard = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsTransfer = New System.Windows.Forms.ToolStripMenuItem()
@@ -92,7 +91,7 @@ Partial Class Main
     '
     'mnuToolAudit
     '
-    Me.mnuToolAudit.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAuditFile, Me.mnuToolsAuditFolder, Me.mnuToolsAuditDefaultPath, Me.mnuToolsAuditVisualDefaultPath})
+    Me.mnuToolAudit.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAuditFile, Me.mnuToolsAuditFolder, Me.mnuToolsAuditVisualDefaultPath})
     Me.mnuToolAudit.Enabled = Global.Path_Structure_Maintenance.My.MySettings.Default.blnAudit
     Me.mnuToolAudit.Name = "mnuToolAudit"
     Me.mnuToolAudit.Size = New System.Drawing.Size(208, 26)
@@ -109,12 +108,6 @@ Partial Class Main
     Me.mnuToolsAuditFolder.Name = "mnuToolsAuditFolder"
     Me.mnuToolsAuditFolder.Size = New System.Drawing.Size(209, 26)
     Me.mnuToolsAuditFolder.Text = "Audit Folder"
-    '
-    'mnuToolsAuditDefaultPath
-    '
-    Me.mnuToolsAuditDefaultPath.Name = "mnuToolsAuditDefaultPath"
-    Me.mnuToolsAuditDefaultPath.Size = New System.Drawing.Size(209, 26)
-    Me.mnuToolsAuditDefaultPath.Text = "Default Path"
     '
     'mnuToolsAuditVisualDefaultPath
     '
@@ -234,7 +227,6 @@ Partial Class Main
   Friend WithEvents mnuToolsAddAll As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuToolAddFolder As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuToolsAuditFile As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents mnuToolsAuditDefaultPath As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuToolsAuditFolder As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents statStatus As System.Windows.Forms.ToolStripStatusLabel
   Friend WithEvents statCurrentPath As System.Windows.Forms.ToolStripStatusLabel

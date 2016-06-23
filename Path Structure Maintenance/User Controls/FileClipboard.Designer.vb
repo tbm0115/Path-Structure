@@ -31,10 +31,14 @@ Partial Class FileClipboard
     Me.pnlPreview = New System.Windows.Forms.Panel()
     Me.txtPreview = New System.Windows.Forms.TextBox()
     Me.btnAccept = New System.Windows.Forms.Button()
+    Me.pnlDescription = New System.Windows.Forms.Panel()
+    Me.Label3 = New System.Windows.Forms.Label()
+    Me.lblDescription = New System.Windows.Forms.Label()
     Me.pnlVariables = New System.Windows.Forms.Panel()
     Me.pnlOptions.SuspendLayout()
     Me.pnlFileType.SuspendLayout()
     Me.pnlPreview.SuspendLayout()
+    Me.pnlDescription.SuspendLayout()
     Me.SuspendLayout()
     '
     'pnlOptions
@@ -129,12 +133,42 @@ Partial Class FileClipboard
     Me.btnAccept.Text = "Accept"
     Me.btnAccept.UseVisualStyleBackColor = True
     '
+    'pnlDescription
+    '
+    Me.pnlDescription.Controls.Add(Me.lblDescription)
+    Me.pnlDescription.Controls.Add(Me.Label3)
+    Me.pnlDescription.Dock = System.Windows.Forms.DockStyle.Top
+    Me.pnlDescription.Location = New System.Drawing.Point(0, 88)
+    Me.pnlDescription.Name = "pnlDescription"
+    Me.pnlDescription.Padding = New System.Windows.Forms.Padding(5)
+    Me.pnlDescription.Size = New System.Drawing.Size(520, 135)
+    Me.pnlDescription.TabIndex = 8
+    '
+    'Label3
+    '
+    Me.Label3.Dock = System.Windows.Forms.DockStyle.Left
+    Me.Label3.Location = New System.Drawing.Point(5, 5)
+    Me.Label3.Name = "Label3"
+    Me.Label3.Size = New System.Drawing.Size(174, 125)
+    Me.Label3.TabIndex = 0
+    Me.Label3.Text = "Description:"
+    Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+    '
+    'lblDescription
+    '
+    Me.lblDescription.AutoEllipsis = True
+    Me.lblDescription.Dock = System.Windows.Forms.DockStyle.Fill
+    Me.lblDescription.Location = New System.Drawing.Point(179, 5)
+    Me.lblDescription.Name = "lblDescription"
+    Me.lblDescription.Size = New System.Drawing.Size(336, 125)
+    Me.lblDescription.TabIndex = 1
+    '
     'pnlVariables
     '
     Me.pnlVariables.Dock = System.Windows.Forms.DockStyle.Fill
-    Me.pnlVariables.Location = New System.Drawing.Point(0, 88)
+    Me.pnlVariables.Location = New System.Drawing.Point(0, 223)
     Me.pnlVariables.Name = "pnlVariables"
-    Me.pnlVariables.Size = New System.Drawing.Size(520, 156)
+    Me.pnlVariables.Size = New System.Drawing.Size(520, 21)
     Me.pnlVariables.TabIndex = 9
     '
     'FileClipboard
@@ -142,6 +176,7 @@ Partial Class FileClipboard
     Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 25.0!)
     Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
     Me.Controls.Add(Me.pnlVariables)
+    Me.Controls.Add(Me.pnlDescription)
     Me.Controls.Add(Me.pnlOptions)
     Me.Controls.Add(Me.pnlFileType)
     Me.Controls.Add(Me.pnlPreview)
@@ -153,6 +188,7 @@ Partial Class FileClipboard
     Me.pnlFileType.ResumeLayout(False)
     Me.pnlPreview.ResumeLayout(False)
     Me.pnlPreview.PerformLayout()
+    Me.pnlDescription.ResumeLayout(False)
     Me.ResumeLayout(False)
 
   End Sub
@@ -165,6 +201,9 @@ Partial Class FileClipboard
   Friend WithEvents pnlPreview As System.Windows.Forms.Panel
   Friend WithEvents txtPreview As System.Windows.Forms.TextBox
   Friend WithEvents btnAccept As System.Windows.Forms.Button
+  Friend WithEvents pnlDescription As System.Windows.Forms.Panel
+  Friend WithEvents lblDescription As System.Windows.Forms.Label
+  Friend WithEvents Label3 As System.Windows.Forms.Label
   Friend WithEvents pnlVariables As System.Windows.Forms.Panel
 
 End Class

@@ -3,7 +3,10 @@ Imports System.Xml
 Imports System.Data, System.Data.OleDb
 
 Module PathStructure_Helper_Functions
-  Public defaultPath, custCode, partNo As String
+  'Public defaultPath, custCode, partNo As String
+  Public defaultPaths As New List(Of String)
+  Public ERPConnection As New OleDbConnection(My.Settings.ERPConnection)
+  Public myXML As XmlDocument
 
   Declare Function WNetGetConnection Lib "mpr.dll" Alias "WNetGetConnectionA" (ByVal lpszLocalName As String, _
      ByVal lpszRemoteName As String, ByRef cbRemoteName As Integer) As Integer
@@ -97,7 +100,7 @@ Module PathStructure_Helper_Functions
     Dim pt As New PathStructure(CurrentPath)
 
     Dim folderName As String
-    folderName = pt.ReplaceVariables(strTemp)
+    folderName = ReplaceVariables(strTemp, CurrentPath) 'pt.ReplaceVariables(strTemp)
     If folderName.Contains("{Date}") Then folderName = folderName.Replace("{Date}", DateTime.Now.ToString("MM-dd-yyyy"))
     If folderName.Contains("{Time}") Then folderName = folderName.Replace("{Time}", DateTime.Now.ToString("hh-mm-ss tt"))
 
@@ -238,6 +241,89 @@ Module PathStructure_Helper_Functions
     Next
     Return -1
   End Function
+  'Public Function GetFileSystemObjectType(ByVal Path As String) As PathStructure.PathType
+  '  'If True Then
+  '  Dim attr As FileAttributes = File.GetAttributes(Path)
+  '  If (attr & FileAttributes.Directory) = FileAttributes.Directory Then
+  '    Return PathStructure.PathType.Folder
+  '  Else
+  '    Return PathStructure.PathType.File
+  '  End If
+  '  'Else
+  '  '  Throw New ArgumentException("Path Structure: The path provided does not appear to exist! '" & Path & "'")
+  '  'End If
+  'End Function
+  Public Function IsInDefaultPath(ByVal Input As String, Optional ByVal PreferredPath As String = "") As Boolean
+    For i = 0 To defaultPaths.Count - 1 Step 1
+      If Input.IndexOf(defaultPaths(i), System.StringComparison.OrdinalIgnoreCase) >= 0 Then
+        If String.IsNullOrEmpty(PreferredPath) And Not String.Equals(defaultPaths(i), PreferredPath) Then
+          Continue For
+        End If
+        Return True
+      End If
+    Next
+    Return False
+  End Function
+
+  ''' <summary>
+  ''' Replaces PathStructure variables with provided values.
+  ''' </summary>
+  ''' <param name="Input">Full or partial path string</param>
+  ''' <returns>String</returns>
+  ''' <remarks></remarks>
+  Public Function ReplaceVariables(ByVal Input As String, ByVal Path As String) As String
+    Dim vars As New PathStructure.VariableArray("//Variables", Path)
+    Return vars.Replace(Input)
+  End Function
+
+  ''' <summary>
+  ''' Converts the XPath for the PathStructure into a valid FileSystem path.
+  ''' </summary>
+  ''' <param name="XPath">XML XPath</param>
+  ''' <returns>String</returns>
+  ''' <remarks></remarks>
+  Public Function GetURIfromXPath(ByVal XPath As String) As String
+    If Not String.IsNullOrEmpty(XPath) Then
+      Dim x As XmlElement = myXML.SelectSingleNode(XPath)
+      '' Check if the element has the temporary URI for this session. If so, use it
+      If x.HasAttribute("tmpURI") Then
+        Return x.Attributes("tmpURI").Value
+      Else
+        Dim a As XmlAttribute = myXML.CreateAttribute("tmpURI")
+        x.Attributes.Append(a)
+        Dim u As New StringBuilder
+        Do Until x.Name = "Structure"
+          If String.Equals(x.Name, "Folder", StringComparison.OrdinalIgnoreCase) Then
+            u.Insert(0, x.Attributes("name").Value & "\")
+          ElseIf String.Equals(x.Name, "File", StringComparison.OrdinalIgnoreCase) Then
+            u.Append(x.InnerText)
+          ElseIf String.Equals(x.Name, "Option", StringComparison.OrdinalIgnoreCase) Then
+            u.Append(x.InnerText)
+            x = x.ParentNode '' Set parent node to 'File' so that the next x-set will set x to the folder
+          End If
+          x = x.ParentNode
+        Loop
+        'u = _startPath & u
+        u.Insert(0, x.Attributes("defaultPath").Value & "\") ' & x.Attributes("path").Value & "\")
+        a.Value = u.ToString
+        Return u.ToString
+      End If
+    Else
+      Return ""
+    End If
+  End Function
+  Public Function GetDescriptionfromXPath(ByVal XPath As String) As String
+    If Not String.IsNullOrEmpty(XPath) Then
+      Dim x As XmlElement = myXML.SelectSingleNode(XPath)
+      If Not IsNothing(x) Then
+        If x.HasAttribute("description") Then
+          Return x.Attributes("description").Value
+        End If
+      End If
+    End If
+    Return ""
+  End Function
+
 
   Public Function SurroundJoin(ByVal Arr As String(), ByVal Prefix As String, ByVal Suffix As String, Optional ByVal SkipEmpties As Boolean = False) As String
     Dim out As New StringBuilder
@@ -266,7 +352,7 @@ Module PathStructure_Helper_Functions
           strRead = rdr.ReadLine()
           If strRead.Contains("{") And strRead.Contains("}") Then
             If Not IsNothing(Path) Then
-              strRead = Path.ReplaceVariables(strRead)
+              strRead = ReplaceVariables(strRead, Path.UNCPath) 'Path.ReplaceVariables(strRead)
             End If
           End If
           If strRead.Contains("=") Then
@@ -278,7 +364,7 @@ Module PathStructure_Helper_Functions
     Return ERPVariables
   End Function
 
-  <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")> Public Function IsValidERP(ByVal Table As String, ByVal Values As SortedList(Of String, String), Optional ByVal ERPConnection As OleDbConnection = Nothing) As Boolean
+  Public Function IsValidERP(ByVal Table As String, ByVal Values As SortedList(Of String, String), Optional ByVal ERPConnection As OleDbConnection = Nothing) As Boolean
     Dim cond As String = ""
     Dim fields As String = ""
     Try
