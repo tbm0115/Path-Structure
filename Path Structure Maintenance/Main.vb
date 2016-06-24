@@ -202,7 +202,7 @@ Public Class Main
     End If
     opn.ShowDialog()
     If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
-      If IsInDefaultPath(GetUNCPath(opn.CurrentDirectory)) Then ' IsInDefaultPath(GetUNCPath(opn.CurrentDirectory)) Then ' GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) Then
+      If IsInDefaultPath(GetUNCPath(opn.CurrentDirectory), defaultPath) Then ' IsInDefaultPath(GetUNCPath(opn.CurrentDirectory)) Then ' GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) Then
         Debug.WriteLine("Adding folders for '" & GetUNCPath(opn.CurrentDirectory) & "'")
         If IsNothing(myXML) Then
           myXML = New XmlDocument

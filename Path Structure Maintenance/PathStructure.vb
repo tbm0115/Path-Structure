@@ -40,7 +40,7 @@ Public Class PathStructure : Implements IDisposable
     Get
       Dim splt As String() = _path.Split({"\\", "\"}, System.StringSplitOptions.RemoveEmptyEntries)
       If splt.Length > 1 Then
-        ReDim Preserve splt(splt.Length - 1)
+        ReDim Preserve splt(splt.Length - 2)
         Debug.WriteLine("Parent path: " & "\\" & String.Join("\", splt))
         Return "\\" & String.Join("\", splt)
       Else

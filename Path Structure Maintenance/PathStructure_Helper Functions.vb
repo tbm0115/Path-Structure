@@ -255,8 +255,8 @@ Module PathStructure_Helper_Functions
   'End Function
   Public Function IsInDefaultPath(ByVal Input As String, Optional ByVal PreferredPath As String = "") As Boolean
     For i = 0 To defaultPaths.Count - 1 Step 1
-      If Input.IndexOf(defaultPaths(i), System.StringComparison.OrdinalIgnoreCase) >= 0 Then
-        If String.IsNullOrEmpty(PreferredPath) And Not String.Equals(defaultPaths(i), PreferredPath) Then
+      If (Input.IndexOf(defaultPaths(i), System.StringComparison.OrdinalIgnoreCase) >= 0) Or (defaultPaths(i).IndexOf(Input, System.StringComparison.OrdinalIgnoreCase) >= 0) Then
+        If Not String.IsNullOrEmpty(PreferredPath) And Not String.Equals(defaultPaths(i), PreferredPath) Then
           Continue For
         End If
         Return True
