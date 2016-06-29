@@ -22,6 +22,7 @@ Partial Class Generic_Dialog
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+    Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Generic_Dialog))
     Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
     Me.OK_Button = New System.Windows.Forms.Button()
     Me.Cancel_Button = New System.Windows.Forms.Button()
@@ -38,7 +39,7 @@ Partial Class Generic_Dialog
     Me.TableLayoutPanel1.Controls.Add(Me.Cancel_Button, 1, 0)
     Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom
     Me.TableLayoutPanel1.Location = New System.Drawing.Point(0, 319)
-    Me.TableLayoutPanel1.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+    Me.TableLayoutPanel1.Margin = New System.Windows.Forms.Padding(6)
     Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
     Me.TableLayoutPanel1.RowCount = 1
     Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
@@ -49,7 +50,7 @@ Partial Class Generic_Dialog
     '
     Me.OK_Button.Dock = System.Windows.Forms.DockStyle.Fill
     Me.OK_Button.Location = New System.Drawing.Point(6, 6)
-    Me.OK_Button.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+    Me.OK_Button.Margin = New System.Windows.Forms.Padding(6)
     Me.OK_Button.Name = "OK_Button"
     Me.OK_Button.Size = New System.Drawing.Size(257, 65)
     Me.OK_Button.TabIndex = 0
@@ -60,7 +61,7 @@ Partial Class Generic_Dialog
     Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
     Me.Cancel_Button.Dock = System.Windows.Forms.DockStyle.Fill
     Me.Cancel_Button.Location = New System.Drawing.Point(275, 6)
-    Me.Cancel_Button.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+    Me.Cancel_Button.Margin = New System.Windows.Forms.Padding(6)
     Me.Cancel_Button.Name = "Cancel_Button"
     Me.Cancel_Button.Size = New System.Drawing.Size(258, 65)
     Me.Cancel_Button.TabIndex = 1
@@ -87,7 +88,8 @@ Partial Class Generic_Dialog
     Me.Controls.Add(Me.TableLayoutPanel1)
     Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
     Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
-    Me.Margin = New System.Windows.Forms.Padding(6, 6, 6, 6)
+    Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
+    Me.Margin = New System.Windows.Forms.Padding(6)
     Me.MaximizeBox = False
     Me.MinimizeBox = False
     Me.Name = "Generic_Dialog"

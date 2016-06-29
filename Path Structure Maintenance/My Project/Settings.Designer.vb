@@ -140,8 +140,8 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\server\SHARE\Systems Database\Acc"& _ 
-            "ess Database\IrongateApplications.mdb")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Data Source=server;Initial Catalog=IRONGATE;User ID=IrongateApplications;Password"& _ 
+            "=App2014!Dev")>  _
         Public Property ERPConnection() As String
             Get
                 Return CType(Me("ERPConnection"),String)
@@ -160,18 +160,6 @@ Namespace My
             End Get
             Set
                 Me("blnERPCheck") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("dbo_Estim")>  _
-        Public Property ERPTable() As String
-            Get
-                Return CType(Me("ERPTable"),String)
-            End Get
-            Set
-                Me("ERPTable") = value
             End Set
         End Property
         
@@ -237,18 +225,6 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("\\server\clientapps\in-house\Path Structure-ERP.ini")>  _
-        Public Property ERPSettingsPath() As String
-            Get
-                Return CType(Me("ERPSettingsPath"),String)
-            End Get
-            Set
-                Me("ERPSettingsPath") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
         Public Property blnDeleteThumbsDb() As Boolean
             Get
@@ -256,6 +232,18 @@ Namespace My
             End Get
             Set
                 Me("blnDeleteThumbsDb") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+        Public Property blnDirectArchive() As Boolean
+            Get
+                Return CType(Me("blnDirectArchive"),Boolean)
+            End Get
+            Set
+                Me("blnDirectArchive") = value
             End Set
         End Property
     End Class

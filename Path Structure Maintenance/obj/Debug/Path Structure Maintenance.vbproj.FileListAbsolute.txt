@@ -49,3 +49,9 @@ C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\
 C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.FolderHeatMap.resources
 C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.FixAudit.resources
 C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Select_Default_Path.resources
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\PathStructureClass.dll
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\PathStructureClass.pdb
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\bin\Debug\PathStructureClass.xml
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Interop.SHDocVw.dll
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Interop.Shell32.dll
+C:\Users\Trais\Documents\Visual Studio 2010\Projects\Path Structure Maintenance\Path-Structure\Path Structure Maintenance\obj\Debug\Path_Structure_Maintenance.Select_File_from_List.resources

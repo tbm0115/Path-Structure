@@ -1,7 +1,8 @@
 ﻿Imports System.Xml
+Imports PathStructureClass
 
 Public Class FileClipboard
-  Private _CurrentPath As PathStructure
+  Private _CurrentPath As Path
   'Private myXML As New XmlDocument
   Private _x As XmlElement
   Private fileName As String
@@ -9,14 +10,13 @@ Public Class FileClipboard
   Public Sub New(ByVal CurrentPath As String)
     '' This call is required by the designer.
     InitializeComponent()
-    _CurrentPath = New PathStructure(CurrentPath)
+    _CurrentPath = New Path(Main.PathStruct, CurrentPath)
 
-    '' Add any initialization after the InitializeComponent() call.
-    'myXML.Load(My.Settings.SettingsPath)
-    For Each var As PathStructure.Variable In _CurrentPath.Variables.Items
+    For Each var As Path.Variable In _CurrentPath.Variables.Items
       Log(vbTab & var.Name & ": " & var.Value)
     Next
-    'Dim cand As New List(Of String)
+
+    Main.WindowState = FormWindowState.Maximized
 
     pnlVariables.Controls.Clear()
     pnlDescription.Visible = False
@@ -25,21 +25,13 @@ Public Class FileClipboard
     If _x Is Nothing Then
       _x = _CurrentPath.PathStructure
     End If
+    If _x.Name = "Option" Then _x = _x.ParentNode
+    If _x.Name = "File" Then _x = _x.ParentNode
     Debug.WriteLine("Root node: " & _x.OuterXml)
     Dim fils As XmlNodeList = _x.SelectNodes(".//File")
     For i = 0 To fils.Count - 1 Step 1
       cmbFiles.Items.Add(fils(i).Attributes("name").Value)
     Next
-    'If cand.Count > 0 Then
-    '  For Each fil As String In cand.ToArray
-    '    If fil.Contains("Option") Then fil = fil.Remove(fil.LastIndexOf("/"))
-    '    cmbFiles.Items.Add(_CurrentPath.PathStructure.SelectSingleNode(fil).Attributes("name").Value)
-    '  Next
-    'Else
-    '  For Each fil As XmlElement In myXML.SelectNodes("//File")
-    '    cmbFiles.Items.Add(fil.Attributes("name").Value)
-    '  Next
-    'End If
   End Sub
 
   Private Sub cmbFiles_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbFiles.SelectedIndexChanged
@@ -79,8 +71,8 @@ Public Class FileClipboard
     If fileName.Contains("{Time}") Then fileName = fileName.Replace("{Time}", DateTime.Now.ToString("hh-mm-ss tt"))
 
 
-    Dim input As List(Of String) = GetListOfInternalStrings(fileName, "{", "}")
-    If input.Count > 0 Then
+    Dim input As String() = GetListOfInternalStrings(fileName, "{", "}")
+    If input.Length > 0 Then
       For Each str As String In input
         Dim pnl As New Panel
         Dim lbl As New Label
@@ -107,11 +99,11 @@ Public Class FileClipboard
         pnlVariables.Controls.SetChildIndex(pnl, 0)
       Next
     End If
-    fileName = GetURIfromXPath(FindXPath(nod)) ' & fileName
+    fileName = Main.PathStruct.GetURIfromXPath(FindXPath(nod)) ' & fileName
     txtPreview.Text = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
 
     pnlDescription.Visible = True
-    lblDescription.Text = GetDescriptionfromXPath(FindXPath(nod))
+    lblDescription.Text = Main.PathStruct.GetDescriptionfromXPath(FindXPath(nod))
   End Sub
 
   Private Sub Variable_Changed(ByVal sender As System.Object, ByVal e As System.EventArgs)

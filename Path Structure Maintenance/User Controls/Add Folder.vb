@@ -1,25 +1,26 @@
 ﻿Imports System.Xml
+Imports PathStructureClass
 
 Public Class Add_Folder
-  Private _CurrentPath As PathStructure
-  Private myXML As New XmlDocument
+  Private _CurrentPath As Path
+  'Private myXML As New XmlDocument
   Private fileName As String
 
   Public Sub New(ByVal CurrentPath As String, Optional ByVal QuickSelect As Boolean = False)
     '' This call is required by the designer.
     InitializeComponent()
-    _CurrentPath = New PathStructure(CurrentPath)
+    _CurrentPath = New Path(Main.PathStruct, CurrentPath)
 
-    If _CurrentPath.Type = PathStructure.PathType.Folder Then
+    If _CurrentPath.Type = Path.PathType.Folder Then
       '' Add any initialization after the InitializeComponent() call.
-      myXML.Load(My.Settings.SettingsPath)
+      'Main.PathStruct.Settings.Load(My.Settings.SettingsPath)
       'Log(vbTab & "Directory: " & _CurrentPath.FolderInfo.Name)
       'Log(vbTab & "Extension: " & _CurrentPath.FolderInfo.Extension)
       Log(vbTab & "Directory: " & _CurrentPath.CurrentDirectory)
       'For Each var As KeyValuePair(Of String, String) In _CurrentPath.Variables
       '  Log(vbTab & var.Key & ": " & var.Value)
       'Next
-      For Each var As PathStructure.Variable In _CurrentPath.Variables.Items
+      For Each var As Path.Variable In _CurrentPath.Variables.Items
         Log(vbTab & var.Name & ": " & var.Value)
       Next
       If QuickSelect Then
@@ -29,7 +30,7 @@ Public Class Add_Folder
       pnlVariables.Controls.Clear()
       cmbFiles.Items.Clear()
       If _CurrentPath.StructureCandidates.Count > 0 Then
-        For Each struct As PathStructure.StructureCandidate In _CurrentPath.StructureCandidates.Items
+        For Each struct As Path.StructureCandidate In _CurrentPath.StructureCandidates.Items
           If struct.XElement.Name = "File" Then
             If struct.XElement.ParentNode IsNot Nothing Then
               For Each nod As XmlElement In struct.XElement.ParentNode.SelectNodes("Folder")
@@ -63,7 +64,7 @@ Public Class Add_Folder
           End If
         Next
       Else
-        For Each fil As XmlElement In myXML.SelectNodes("//Folder")
+        For Each fil As XmlElement In Main.PathStruct.Settings.SelectNodes("//Folder")
           cmbFiles.Items.Add(fil.Attributes("name").Value)
         Next
       End If
@@ -82,8 +83,8 @@ Public Class Add_Folder
   Private Sub LoadFileSyntax(ByVal nameFile As String, Optional ByVal nameOption As String = "")
     fileName = nameFile
     Dim parent As XmlElement
-    If Not IsNothing(myXML.SelectSingleNode("//Folder[@name='" & nameFile & "']")) Then
-      parent = myXML.SelectSingleNode("//Folder[@name='" & nameFile & "']")
+    If Not IsNothing(Main.PathStruct.Settings.SelectSingleNode("//Folder[@name='" & nameFile & "']")) Then
+      parent = Main.PathStruct.Settings.SelectSingleNode("//Folder[@name='" & nameFile & "']")
       Do Until IsNothing(parent.ParentNode.Attributes("name"))
         fileName = parent.ParentNode.Attributes("name").Value & "\" & fileName
         parent = parent.ParentNode
@@ -96,8 +97,8 @@ Public Class Add_Folder
 
     'fileName += filInfo.Extension
 
-    Dim input As List(Of String) = GetListOfInternalStrings(fileName, "{", "}")
-    If input.Count > 0 Then
+    Dim input As String() = GetListOfInternalStrings(fileName, "{", "}")
+    If input.Length > 0 Then
       For Each str As String In input
         Dim pnl As New Panel
         Dim lbl As New Label

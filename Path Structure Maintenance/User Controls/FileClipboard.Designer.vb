@@ -32,8 +32,8 @@ Partial Class FileClipboard
     Me.txtPreview = New System.Windows.Forms.TextBox()
     Me.btnAccept = New System.Windows.Forms.Button()
     Me.pnlDescription = New System.Windows.Forms.Panel()
-    Me.Label3 = New System.Windows.Forms.Label()
     Me.lblDescription = New System.Windows.Forms.Label()
+    Me.Label3 = New System.Windows.Forms.Label()
     Me.pnlVariables = New System.Windows.Forms.Panel()
     Me.pnlOptions.SuspendLayout()
     Me.pnlFileType.SuspendLayout()
@@ -144,6 +144,16 @@ Partial Class FileClipboard
     Me.pnlDescription.Size = New System.Drawing.Size(520, 135)
     Me.pnlDescription.TabIndex = 8
     '
+    'lblDescription
+    '
+    Me.lblDescription.AutoEllipsis = True
+    Me.lblDescription.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+    Me.lblDescription.Dock = System.Windows.Forms.DockStyle.Fill
+    Me.lblDescription.Location = New System.Drawing.Point(179, 5)
+    Me.lblDescription.Name = "lblDescription"
+    Me.lblDescription.Size = New System.Drawing.Size(336, 125)
+    Me.lblDescription.TabIndex = 1
+    '
     'Label3
     '
     Me.Label3.Dock = System.Windows.Forms.DockStyle.Left
@@ -153,15 +163,6 @@ Partial Class FileClipboard
     Me.Label3.TabIndex = 0
     Me.Label3.Text = "Description:"
     Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-    '
-    'lblDescription
-    '
-    Me.lblDescription.AutoEllipsis = True
-    Me.lblDescription.Dock = System.Windows.Forms.DockStyle.Fill
-    Me.lblDescription.Location = New System.Drawing.Point(179, 5)
-    Me.lblDescription.Name = "lblDescription"
-    Me.lblDescription.Size = New System.Drawing.Size(336, 125)
-    Me.lblDescription.TabIndex = 1
     '
     'pnlVariables
     '

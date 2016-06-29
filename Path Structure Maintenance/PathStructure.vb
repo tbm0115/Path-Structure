@@ -5,9 +5,9 @@ Public Class PathStructure : Implements IDisposable
   Private _type As PathType
   Private _path As String
   Private Shared _struct As XmlElement
-  'Private _infoFile As IO.FileInfo
-  'Private _infoFolder As IO.DirectoryInfo
-  Private _infoObject As IO.FileSystemInfo
+  Private _infoFile As IO.FileInfo
+  Private _infoFolder As IO.DirectoryInfo
+  'Private _infoObject As IO.FileSystemInfo
   Private Shared myXML As XmlDocument
   Private _defaultPath, _startPath As String
   Private _variables As VariableArray
@@ -24,14 +24,17 @@ Public Class PathStructure : Implements IDisposable
   Public ReadOnly Property Parent As PathStructure
     Get
       If IsNothing(_parent) Then
-        Dim strTemp As String = _path
-        If strTemp.EndsWith("\") Then strTemp = strTemp.Remove(strTemp.Length - 1) '' Fix last index issue
-        If strTemp.Contains("\") Then '' Verify the path is still valid
-          strTemp = strTemp.Remove(strTemp.LastIndexOf("\"))
-          Dim chk As Boolean = True
-          _parent = New PathStructure(strTemp, chk)
-          If Not chk Then _parent = Nothing
-        End If
+        'Dim strTemp As String = _path
+        'If strTemp.EndsWith("\") Then strTemp = strTemp.Remove(strTemp.Length - 1) '' Fix last index issue
+        'If strTemp.Contains("\") Then '' Verify the path is still valid
+        '  strTemp = strTemp.Remove(strTemp.LastIndexOf("\"))
+        '  Dim chk As Boolean = True
+        '  _parent = New PathStructure(strTemp, chk)
+        '  If Not chk Then _parent = Nothing
+        'End If
+        Dim chk As Boolean = True
+        _parent = New PathStructure(Me.ParentPath, chk)
+        If Not chk Then _parent = Nothing
       End If
       Return _parent
     End Get
@@ -41,27 +44,11 @@ Public Class PathStructure : Implements IDisposable
       Dim splt As String() = _path.Split({"\\", "\"}, System.StringSplitOptions.RemoveEmptyEntries)
       If splt.Length > 1 Then
         ReDim Preserve splt(splt.Length - 2)
-        Debug.WriteLine("Parent path: " & "\\" & String.Join("\", splt))
+        'Debug.WriteLine("Parent path: " & "\\" & String.Join("\", splt))
         Return "\\" & String.Join("\", splt)
       Else
         Return ""
       End If
-      'If _type = PathType.File Then
-      '  Return _infoFile.DirectoryName
-      'ElseIf _type = PathType.Folder Then
-      '  If Not String.IsNullOrEmpty(_infoFolder.Parent.FullName) Then
-      '    Return _infoFolder.Parent.FullName
-      '  Else
-      '    Dim splt As String() = _path.Split({"\\", "\"}, System.StringSplitOptions.RemoveEmptyEntries)
-      '    If splt.Count > 1 Then
-      '      Return splt(splt.Length - 2)
-      '    Else
-      '      Return ""
-      '    End If
-      '  End If
-      'Else
-      '  Return ""
-      'End If
     End Get
   End Property
   Public ReadOnly Property CurrentDirectory As String
@@ -85,11 +72,18 @@ Public Class PathStructure : Implements IDisposable
         If IsNothing(_children) Then
           Dim arr As New List(Of PathStructure)
           Dim chk As Boolean
-          For Each obj As String In IO.Directory.EnumerateFileSystemEntries(_path)
+          For Each fil As String In IO.Directory.EnumerateFiles(_path)
             chk = True
-            Dim tmp As New PathStructure(obj, chk)
+            Dim tmp As New PathStructure(fil, PathType.File, chk)
             If chk Then
-              arr.Add(New PathStructure(obj))
+              arr.Add(tmp)
+            End If
+          Next
+          For Each fol As String In IO.Directory.EnumerateDirectories(_path)
+            chk = True
+            Dim tmp As New PathStructure(fol, PathType.Folder, chk)
+            If chk Then
+              arr.Add(tmp)
             End If
           Next
           _children = arr.ToArray
@@ -100,39 +94,14 @@ Public Class PathStructure : Implements IDisposable
       End If
     End Get
   End Property
-  ''' <summary>
-  ''' Gets the IO.FileInfo of the current path if the current path is a file filesystem object.
-  ''' </summary>
-  ''' <value></value>
-  ''' <returns>IO.FileInfo</returns>
-  ''' <remarks></remarks>
-  'Public ReadOnly Property FileInfo As IO.FileInfo
-  '  Get
-  '    If _type = PathType.File Then
-  '      Return _infoFile
-  '    Else
-  '      Return Nothing
-  '    End If
-  '  End Get
-  'End Property
-  ''' <summary>
-  ''' Gets the IO.DirectoryInfo of the current path if the current path is a folder filesystem object.
-  ''' </summary>
-  ''' <value></value>
-  ''' <returns>IO.DirectoryInfo</returns>
-  ''' <remarks></remarks>
-  'Public ReadOnly Property FolderInfo As IO.DirectoryInfo
-  '  Get
-  '    If _type = PathType.Folder Then
-  '      Return _infoFolder
-  '    Else
-  '      Return Nothing
-  '    End If
-  '  End Get
-  'End Property
-  Public ReadOnly Property FSOInfo As IO.FileSystemInfo
+  Public ReadOnly Property FileInfo As IO.FileSystemInfo
     Get
-      Return _infoObject
+      Return _infoFile
+    End Get
+  End Property
+  Public ReadOnly Property FolderInfo As IO.FileSystemInfo
+    Get
+      Return _infoFolder
     End Get
   End Property
   ''' <summary>
@@ -192,25 +161,22 @@ Public Class PathStructure : Implements IDisposable
   End Property
   Public ReadOnly Property PathName As String
     Get
-      Return _infoObject.Name
-      'If _type = PathType.Folder Then
-      '  Return _infoFolder.Name
-      'ElseIf _type = PathType.File Then
-      '  Return _infoFile.Name
-      'Else
-      '  Return ""
-      'End If
+      If _type = PathType.File Then
+        Return _infoFile.Name
+      ElseIf _type = PathType.Folder Then
+        Return _infoFolder.Name
+      Else
+        Return ""
+      End If
     End Get
   End Property
   Public ReadOnly Property Extension As String
     Get
-      Return _infoObject.Extension
-      'If _type = PathType.File Then
-      '  If Not IsNothing(_infoFile.Extension) Then
-      '    Return _infoFile.Extension
-      '  End If
-      'End If
-      'Return ""
+      If _type = PathType.File Then
+        Return _infoFile.Extension
+      Else
+        Return ""
+      End If
     End Get
   End Property
   Public ReadOnly Property PathStructure As XmlElement
@@ -231,47 +197,45 @@ Public Class PathStructure : Implements IDisposable
   End Enum
 
   Public Overrides Function ToString() As String
-    Return _infoObject.Name
-    'If _type = PathType.File Then
-    '  Return _infoFile.Name
-    'ElseIf _type = PathType.Folder Then
-    '  Return _infoFolder.Name
-    'Else
-    '  Return _path
-    'End If
+    If _type = PathType.File Then
+      Return _infoFile.Name
+    ElseIf _type = PathType.Folder Then
+      Return _infoFolder.Name
+    Else
+      Return _path
+    End If
   End Function
 
-  Public Sub New(ByVal Path As String, Optional ByRef Successful As Boolean = Nothing)
+  Public Sub New(ByVal Path As String, Optional ByVal SetType As PathStructure.PathType = Nothing, Optional ByRef Successful As Boolean = Nothing)
     '' Set path
     _path = GetUNCPath(Path)
 
     '' Determine/Set path type
-    '_type = GetFileSystemObjectType(_path)
-    If IO.File.Exists(_path) Then
-      _type = PathType.File
-      _infoObject = New IO.FileInfo(_path)
-      Successful = True
-    ElseIf IO.Directory.Exists(_path) Then
-      _type = PathType.Folder
-      _infoObject = New IO.DirectoryInfo(_path)
-      If Not _path.EndsWith("\") Then _path += "\"
-      Successful = True
-    Else
-      If Not IsNothing(Successful) Then
-        Successful = False
+    If SetType = Nothing Then
+      If IO.File.Exists(_path) Then
+        _type = PathType.File
+        _infoFile = New IO.FileInfo(_path)
+        Successful = True
+      ElseIf IO.Directory.Exists(_path) Then
+        _type = PathType.Folder
+        _infoFolder = New IO.DirectoryInfo(_path)
+        If Not _path.EndsWith("\") Then _path += "\"
+        Successful = True
       Else
-        Throw New ArgumentException("Path type not determinable from '" & _path & "'", "Invalid Path Type")
+        If Not IsNothing(Successful) Then
+          Successful = False
+        Else
+          Throw New ArgumentException("Path type not determinable from '" & _path & "'", "Invalid Path Type")
+        End If
+      End If
+    Else
+      _type = SetType
+      If _type = PathType.File Then
+        _infoFile = New IO.FileInfo(_path)
+      ElseIf _type = PathType.Folder Then
+        _infoFolder = New IO.DirectoryInfo(_path)
       End If
     End If
-
-    '' Set path information
-    'If _type = PathType.File Then
-    '  _infoFile = New IO.FileInfo(_path)
-    'ElseIf _type = PathType.Folder Then
-    '  _infoFolder = New IO.DirectoryInfo(_path)
-    'Else
-    '  Throw New ArgumentException("Path type not determinable from '" & _path & "'.", "Invalid Path Type")
-    'End If
 
     If IsNothing(myXML) Then
       myXML = New XmlDocument
@@ -405,10 +369,21 @@ Public Class PathStructure : Implements IDisposable
       Return blnValid
     End Function
 
-    Public Function ContainsName(ByVal Name As String) As Boolean
+    Public Function ContainsName(ByVal PathName As String) As Boolean
       Dim fnd As Boolean = False
       For i = 0 To _lst.Count - 1 Step 1
-        If String.Equals(_lst(i).Name, Name, StringComparison.OrdinalIgnoreCase) Then
+        If PathName.IndexOf(_lst(i).Name, System.StringComparison.OrdinalIgnoreCase) >= 0 Then ' String.Equals(, PathName, StringComparison.OrdinalIgnoreCase) Then
+          fnd = True
+          Exit For
+        End If
+      Next
+      Return fnd
+    End Function
+    Public Function EndsWithName(ByVal PathName As String) As Boolean
+      Dim fnd As Boolean = False
+      For i = 0 To _lst.Count - 1 Step 1
+        '' Check that the index of the variable name is towards the end. There is a tolerance of 2 characters
+        If PathName.LastIndexOf(_lst(i).Name, System.StringComparison.OrdinalIgnoreCase) >= (PathName.Length - _lst(i).Name.Length - 2) Then ' String.Equals(_lst(i).Name, PathName, StringComparison.OrdinalIgnoreCase) Then
           fnd = True
           Exit For
         End If
@@ -481,27 +456,19 @@ Public Class PathStructure : Implements IDisposable
         For i = 0 To _cmds.Count - 1 Step 1
           If _cmds(i).IsOR Then '' Check if the command has an OR operator
             selFields += String.Join(",", _cmds(i).Fields) & ","
-            cond += "(" & SurroundJoin(_cmds(i).Fields, "", "=" & Chr(34) & Replace(_cmds(i).Value) & Chr(34) & " OR ", True) & ")"
+            cond += "(" & _cmds(i).Fields.SurroundJoin("", "='" & Replace(_cmds(i).Value).Replace("'", "''") & "' OR ", True) & ")"
             If cond.EndsWith(" OR )") Then cond = cond.Remove(cond.LastIndexOf(" OR )")) & ")"
           Else
             selFields += _cmds(i).Field & ","
-            cond += _cmds(i).Field & "=" & Chr(34) & Replace(_cmds(i).Value) & Chr(34) & " AND "
+            cond += _cmds(i).Field & "='" & Replace(_cmds(i).Value).Replace("'", "''") & "' AND "
           End If
         Next
         If selFields.LastIndexOf(",") = selFields.Length - 1 Then selFields = selFields.Remove(selFields.Length - 1)
         If cond.EndsWith(" AND ") Then cond = cond.Remove(cond.LastIndexOf(" AND "))
         cond = cond.Replace("{", "").Replace("}", "")
 
-        If ERPConnection.State = ConnectionState.Closed Then ERPConnection.Open()
-        'Debug.WriteLine("Connection state: " & ERPConnection.State.ToString)
-        If ERPConnection.State = ConnectionState.Open Then
-          Using Cmd As New OleDb.OleDbCommand("SELECT " & selFields & " FROM " & _erptable & " WHERE " & cond & ";", ERPConnection)
-            Using Rdr As OleDb.OleDbDataReader = Cmd.ExecuteReader
-              If Rdr.HasRows Then
-                blnFound = True '' The fact that the for loop is executing is enough evidence of the existance
-              End If
-            End Using
-          End Using
+        If ERPConnection.Successful Then
+          blnFound = ERPConnection.CommandHasValues("SELECT " & selFields & " FROM [" & _erptable & "] WHERE " & cond & ";")
         End If
       Else
         blnFound = True '' Set to true if the flag isn't even set. No need to raise alarm
@@ -905,7 +872,7 @@ Public Class PathStructure : Implements IDisposable
     If _type = PathType.File Then
       Return New RegularExpressions.Regex(pattern, RegularExpressions.RegexOptions.IgnoreCase).IsMatch(ParentPath) ' _infoFile.DirectoryName & "\")
     ElseIf _type = PathType.Folder Then
-      Return New RegularExpressions.Regex(pattern, RegularExpressions.RegexOptions.IgnoreCase).IsMatch(ParentPath & "\" & _infoObject.Name & "\") '_infoFolder.FullName)
+      Return New RegularExpressions.Regex(pattern, RegularExpressions.RegexOptions.IgnoreCase).IsMatch(ParentPath & "\" & Me.PathName & "\") '_infoFolder.FullName)
     Else
       Throw New ArgumentException("Couldn't determine path type", "Invalid Path Type")
     End If
@@ -976,7 +943,6 @@ Public Class PathStructure : Implements IDisposable
     Private fileSystem As HTML.HTMLWriter.HTMLList
     Private _path As PathStructure
     Private ERPVariables As New SortedList(Of String, String)
-    Private ERPConnection As OleDb.OleDbConnection
     Private _quit As Boolean = False
 
     ''' <summary>
@@ -1040,8 +1006,6 @@ Public Class PathStructure : Implements IDisposable
       _report = New HTML.HTMLWriter
       _path = Path
       fileSystem = New HTMLList(HTMLList.ListType.Unordered)
-
-      ERPConnection = New OleDb.OleDbConnection(My.Settings.ERPConnection)
     End Sub
 
     Public Enum StatusCode
@@ -1125,13 +1089,15 @@ Public Class PathStructure : Implements IDisposable
       _path.IsNameStructured() '' Don't run in logic check because we're applying our own logic
       cand = _path.StructureCandidates.GetHighestMatch()
       If cand IsNot Nothing Then
-        If _path.Variables.ContainsName(cand.PathName) And Not _path.Variables.IsValid(cand.StructurePath) Then '' Check that this path needs to be verified, then verify it in the ERP system.
-          'Debug.WriteLine(_path.UNCPath & " was not valid in the ERP system")
-          li = Report("'" & _path.UNCPath & "' was not valid in the ERP system",
-                        AuditVisualReport.StatusCode.InvalidPath,
-                        _path)
-          found = False
-        ElseIf cand.MatchPercentage = 100 Or _path.StructureCandidates.Count = 1 Then
+        If _path.Variables.ContainsName(cand.PathName) Then '' Check that this path needs to be verified, then verify it in the ERP system.
+          If Not _path.Variables.IsValid(cand.StructurePath) Then
+            li = Report("'" & _path.UNCPath & "' was not valid in the ERP system",
+                          AuditVisualReport.StatusCode.InvalidPath,
+                          _path)
+            found = False
+          End If
+        End If
+        If cand.MatchPercentage = 100 Or _path.StructureCandidates.Count = 1 And found Then
           li = Report("'" & cand.ObjectPath & "' matched " & cand.MatchPercentage.ToString & "%. '" & cand.StructurePath & "':" & cand.StructureDescription,
                         AuditVisualReport.StatusCode.ValidPath,
                         _path)
@@ -1187,13 +1153,17 @@ Public Class PathStructure : Implements IDisposable
       Child.IsNameStructured() '' Don't run in logic check because we're applying our own logic
       cand = Child.StructureCandidates.GetHighestMatch()
       If cand IsNot Nothing Then
-        If _path.Variables.ContainsName(cand.PathName) And Not Child.Variables.IsValid(cand.StructurePath) Then '' Check that this path needs to be verified, then verify it in the ERP system.
-          'Debug.WriteLine(Child.UNCPath & " was not valid in the ERP system")
-          li = Report("'" & Child.UNCPath & "' was not valid in the ERP system",
-                        AuditVisualReport.StatusCode.InvalidPath,
-                        Child)
-          found = False
-        ElseIf cand.MatchPercentage = 100 Or Child.StructureCandidates.Count = 1 Then
+        If _path.Variables.ContainsName(cand.PathName) Then
+          If Not Child.Variables.IsValid(cand.StructurePath) Then
+            '' Check that this path needs to be verified, then verify it in the ERP system.
+
+            li = Report("'" & Child.UNCPath & "' was not valid in the ERP system",
+                          AuditVisualReport.StatusCode.InvalidPath,
+                          Child)
+            found = False
+          End If
+        End If
+        If cand.MatchPercentage = 100 Or Child.StructureCandidates.Count = 1 And found Then
           li = Report("'" & cand.ObjectPath & "' matched " & cand.MatchPercentage.ToString & "% '" & cand.StructurePath & "':" & cand.StructureDescription,
                         AuditVisualReport.StatusCode.ValidPath,
                         Child)
@@ -1262,9 +1232,8 @@ Public Class PathStructure : Implements IDisposable
       If disposing Then
         ' TODO: dispose managed state (managed objects).
         _path = String.Empty
-        '_infoFile = Nothing
-        '_infoFolder = Nothing
-        _infoObject = Nothing
+        _infoFile = Nothing
+        _infoFolder = Nothing
         _defaultPath = String.Empty
         _startPath = String.Empty
         _variables = Nothing

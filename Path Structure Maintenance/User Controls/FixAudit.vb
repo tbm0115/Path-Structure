@@ -1,18 +1,23 @@
-﻿Public Class FixAudit
-  Private _errPaths As List(Of String)
-  Public Sub New(ByVal AuditResult As Object) ' PathStructure.AuditReport)
+﻿Imports PathStructureClass
+
+Public Class FixAudit
+  Private _errPaths As List(Of PathStructureClass.Path)
+  Public Sub New(ByVal Paths As List(Of PathStructureClass.Path)) ' PathStructure.AuditReport)
     ' This call is required by the designer.
     InitializeComponent()
 
     ' Add any initialization after the InitializeComponent() call.
-    _errPaths = AuditResult.ErrorPaths
+    _errPaths = Paths
     If Not IsNothing(_errPaths) Then
-      lstFSO.Items.Clear()
-      For Each path As String In _errPaths
-        Dim tmp As New PathStructure(path)
-        lstFSO.Items.Add(tmp)
-      Next
-      ''lstFSO.Items.AddRange(_errPaths.ToArray)
+      If _errPaths.Count > 0 Then
+        lstFSO.Items.Clear()
+        For Each p As PathStructureClass.Path In _errPaths
+          lstFSO.Items.Add(p.UNCPath)
+        Next
+        If lstFSO.Items.Count = 1 Then
+          lstFSO.SelectedIndex = 0
+        End If
+      End If
     End If
   End Sub
 
@@ -20,7 +25,8 @@
     If lstFSO.SelectedIndex = -1 Then Exit Sub
 
     pnlFormat.Controls.Clear()
-    Dim fsoFormat As New Format_Item(lstFSO.SelectedItem.UNCPath, , False)
+    Dim fsoFormat As New Format_Item(lstFSO.SelectedItem.ToString, , False)
+    fsoFormat.Dock = DockStyle.Fill
     AddHandler fsoFormat.Accepted, AddressOf FormatAccepted
     pnlFormat.Controls.Add(fsoFormat)
   End Sub

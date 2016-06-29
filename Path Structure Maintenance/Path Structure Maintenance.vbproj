@@ -76,10 +76,16 @@
   <PropertyGroup>
     <SignManifests>false</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Optical Object Recognition.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="HTML, Version=4.0.0.17, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\HTML Writer\HTML-Writer\HTML Writer\bin\Release\HTML.dll</HintPath>
+    </Reference>
+    <Reference Include="PathStructureClass">
+      <HintPath>..\..\..\PathStructureClass\PathStructureClass\bin\Debug\PathStructureClass.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -117,6 +123,12 @@
     <Compile Include="Dialogs\Select Default Path.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Dialogs\Select File from List.Designer.vb">
+      <DependentUpon>Select File from List.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Select File from List.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Dialogs\SelectFolderDialog.Designer.vb">
       <DependentUpon>SelectFolderDialog.vb</DependentUpon>
     </Compile>
@@ -146,8 +158,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="PathStructure.vb" />
-    <Compile Include="PathStructure_Helper Functions.vb" />
     <Compile Include="Settings.Designer.vb">
       <DependentUpon>Settings.vb</DependentUpon>
     </Compile>
@@ -204,6 +214,9 @@
     <EmbeddedResource Include="Dialogs\Select Default Path.resx">
       <DependentUpon>Select Default Path.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\Select File from List.resx">
+      <DependentUpon>Select File from List.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\SelectFolderDialog.resx">
       <DependentUpon>SelectFolderDialog.vb</DependentUpon>
     </EmbeddedResource>
@@ -256,6 +269,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\DrawGraph.js" />
+    <None Include="Resources\Optical Object Recognition.ico" />
     <None Include="Resources\Path Structure Audit.html" />
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +289,24 @@
       <Lcid>0</Lcid>
       <WrapperTool>aximp</WrapperTool>
       <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="SHDocVw">
+      <Guid>{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Shell32">
+      <Guid>{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
   <ItemGroup>

@@ -82,12 +82,50 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to &lt;html&gt;
-        '''	&lt;script src=&apos;https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js&apos;&gt;&lt;/script&gt;&lt;link href=&apos;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css&apos; rel=&apos;stylesheet&apos; integrity=&apos;sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==&apos; crossorigin=&apos;anonymous&apos;/&gt;&lt;script type=&apos;text/javascript&apos; src=&apos;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js&apos; integrity=&apos;sha256-KXn5puM [rest of string was truncated]&quot;;.
+        '''  Looks up a localized string similar to &lt;head&gt;
+        '''  &lt;style&gt;
+        '''    ul {
+        '''      list-style-type: none;
+        '''      transition: all 1s ease;
+        '''    }
+        '''
+        '''    a {
+        '''      text-decoration: none;
+        '''      color: inherit;
+        '''      cursor: pointer;
+        '''    }
+        '''
+        '''      a:hover {
+        '''        color: inherit;
+        '''      }
+        '''
+        '''      a[data-subobjects]::after {
+        '''        content: attr(data-subobjects) &quot; objects&quot;;
+        '''        font-size: 0.5em;
+        '''        color: dimgrey;
+        '''      }
+        '''
+        '''    .folder {
+        '''      transition: all 0.5s ease;
+        '''    }
+        '''
+        '''      .folder::before {
+        '''        content: &quot;\e117&quot;;
+        '''     [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property FileSystemVisualAuditTemplate() As String
             Get
                 Return ResourceManager.GetString("FileSystemVisualAuditTemplate", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        '''</summary>
+        Friend ReadOnly Property Optical_Object_Recognition() As System.Drawing.Icon
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Optical_Object_Recognition", resourceCulture)
+                Return CType(obj,System.Drawing.Icon)
             End Get
         End Property
     End Module

@@ -6,7 +6,7 @@ Public Class Select_Default_Path
       Dim _x As Xml.XmlNode
       If drpDefaultPath.SelectedIndex >= 0 Then
         Debug.WriteLine("Selected: " & drpDefaultPath.SelectedItem.ToString)
-        _x = myXML.SelectSingleNode("//Structure[@name='" & drpDefaultPath.SelectedItem.ToString & "']/@defaultPath")
+        _x = Main.PathStruct.Settings.SelectSingleNode("//Structure[@name='" & drpDefaultPath.SelectedItem.ToString & "']/@defaultPath")
         If _x IsNot Nothing Then
           Return _x.Value
         End If
@@ -32,7 +32,7 @@ Public Class Select_Default_Path
 
     ' Add any initialization after the InitializeComponent() call.
     drpDefaultPath.Items.Clear()
-    Dim names As Xml.XmlNodeList = myXML.SelectNodes("//Structure/@name")
+    Dim names As Xml.XmlNodeList = Main.PathStruct.Settings.SelectNodes("//Structure/@name")
     For i = 0 To names.Count - 1 Step 1
       drpDefaultPath.Items.Add(names(i).Value)
     Next

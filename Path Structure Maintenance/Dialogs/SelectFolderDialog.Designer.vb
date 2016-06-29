@@ -30,8 +30,8 @@ Partial Class SelectFolderDialog
     Me.imgList = New System.Windows.Forms.ImageList(Me.components)
     Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel()
     Me.txtCurrentPath = New System.Windows.Forms.TextBox()
-    Me.lstFolders = New System.Windows.Forms.ListView()
     Me.btnParentFolder = New System.Windows.Forms.Button()
+    Me.lstFolders = New System.Windows.Forms.ListView()
     Me.TableLayoutPanel1.SuspendLayout()
     Me.TableLayoutPanel2.SuspendLayout()
     Me.SuspendLayout()
@@ -103,6 +103,18 @@ Partial Class SelectFolderDialog
     Me.txtCurrentPath.Size = New System.Drawing.Size(542, 30)
     Me.txtCurrentPath.TabIndex = 2
     '
+    'btnParentFolder
+    '
+    Me.btnParentFolder.BackgroundImage = CType(resources.GetObject("btnParentFolder.BackgroundImage"), System.Drawing.Image)
+    Me.btnParentFolder.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
+    Me.btnParentFolder.Dock = System.Windows.Forms.DockStyle.Fill
+    Me.btnParentFolder.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+    Me.btnParentFolder.Location = New System.Drawing.Point(3, 3)
+    Me.btnParentFolder.Name = "btnParentFolder"
+    Me.btnParentFolder.Size = New System.Drawing.Size(26, 26)
+    Me.btnParentFolder.TabIndex = 3
+    Me.btnParentFolder.UseVisualStyleBackColor = True
+    '
     'lstFolders
     '
     Me.lstFolders.Activation = System.Windows.Forms.ItemActivation.TwoClick
@@ -117,18 +129,6 @@ Partial Class SelectFolderDialog
     Me.lstFolders.UseCompatibleStateImageBehavior = False
     Me.lstFolders.View = System.Windows.Forms.View.List
     '
-    'btnParentFolder
-    '
-    Me.btnParentFolder.BackgroundImage = CType(resources.GetObject("btnParentFolder.BackgroundImage"), System.Drawing.Image)
-    Me.btnParentFolder.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
-    Me.btnParentFolder.Dock = System.Windows.Forms.DockStyle.Fill
-    Me.btnParentFolder.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-    Me.btnParentFolder.Location = New System.Drawing.Point(3, 3)
-    Me.btnParentFolder.Name = "btnParentFolder"
-    Me.btnParentFolder.Size = New System.Drawing.Size(26, 26)
-    Me.btnParentFolder.TabIndex = 3
-    Me.btnParentFolder.UseVisualStyleBackColor = True
-    '
     'SelectFolderDialog
     '
     Me.AcceptButton = Me.OK_Button
@@ -140,6 +140,7 @@ Partial Class SelectFolderDialog
     Me.Controls.Add(Me.TableLayoutPanel2)
     Me.Controls.Add(Me.TableLayoutPanel1)
     Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+    Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
     Me.Margin = New System.Windows.Forms.Padding(4)
     Me.MaximizeBox = False
     Me.MinimizeBox = False

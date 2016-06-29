@@ -22,6 +22,8 @@ Partial Class Main
   'Do not modify it using the code editor.
   <System.Diagnostics.DebuggerStepThrough()> _
   Private Sub InitializeComponent()
+    Me.components = New System.ComponentModel.Container()
+    Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Main))
     Me.mnuSettings = New System.Windows.Forms.ToolStripMenuItem()
     Me.ToolsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsAdd = New System.Windows.Forms.ToolStripMenuItem()
@@ -43,7 +45,9 @@ Partial Class Main
     Me.statCurrentPath = New System.Windows.Forms.ToolStripStatusLabel()
     Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
     Me.mnu = New System.Windows.Forms.MenuStrip()
+    Me.mnuExplorerWatcher = New System.Windows.Forms.ToolStripMenuItem()
     Me.pnlContainer = New System.Windows.Forms.Panel()
+    Me.ExplorerNotification = New System.Windows.Forms.NotifyIcon(Me.components)
     Me.StatusStrip1.SuspendLayout()
     Me.mnu.SuspendLayout()
     Me.SuspendLayout()
@@ -175,39 +179,53 @@ Partial Class Main
     '
     Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
     Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statProgress, Me.statStatus, Me.statCurrentPath})
-    Me.StatusStrip1.Location = New System.Drawing.Point(0, 373)
+    Me.StatusStrip1.Location = New System.Drawing.Point(0, 367)
     Me.StatusStrip1.Name = "StatusStrip1"
-    Me.StatusStrip1.Size = New System.Drawing.Size(423, 25)
+    Me.StatusStrip1.Size = New System.Drawing.Size(501, 25)
     Me.StatusStrip1.TabIndex = 1
     Me.StatusStrip1.Text = "StatusStrip1"
     '
     'mnu
     '
     Me.mnu.ImageScalingSize = New System.Drawing.Size(20, 20)
-    Me.mnu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuSettings, Me.ToolsToolStripMenuItem, Me.mnuGeneratePathStructure})
+    Me.mnu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuSettings, Me.ToolsToolStripMenuItem, Me.mnuGeneratePathStructure, Me.mnuExplorerWatcher})
     Me.mnu.Location = New System.Drawing.Point(0, 0)
     Me.mnu.Name = "mnu"
-    Me.mnu.Size = New System.Drawing.Size(423, 28)
+    Me.mnu.Size = New System.Drawing.Size(501, 28)
     Me.mnu.TabIndex = 2
     Me.mnu.Text = "MenuStrip1"
+    '
+    'mnuExplorerWatcher
+    '
+    Me.mnuExplorerWatcher.Name = "mnuExplorerWatcher"
+    Me.mnuExplorerWatcher.Size = New System.Drawing.Size(179, 24)
+    Me.mnuExplorerWatcher.Text = "Start Explorer Watcher..."
     '
     'pnlContainer
     '
     Me.pnlContainer.Dock = System.Windows.Forms.DockStyle.Fill
     Me.pnlContainer.Location = New System.Drawing.Point(0, 28)
     Me.pnlContainer.Name = "pnlContainer"
-    Me.pnlContainer.Size = New System.Drawing.Size(423, 345)
+    Me.pnlContainer.Size = New System.Drawing.Size(501, 339)
     Me.pnlContainer.TabIndex = 5
+    '
+    'ExplorerNotification
+    '
+    Me.ExplorerNotification.BalloonTipTitle = "Windows Explorer Watcher"
+    Me.ExplorerNotification.Icon = CType(resources.GetObject("ExplorerNotification.Icon"), System.Drawing.Icon)
+    Me.ExplorerNotification.Text = "Windows Explorer Watcher"
+    Me.ExplorerNotification.Visible = True
     '
     'Main
     '
     Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 25.0!)
     Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-    Me.ClientSize = New System.Drawing.Size(423, 398)
+    Me.ClientSize = New System.Drawing.Size(501, 392)
     Me.Controls.Add(Me.pnlContainer)
     Me.Controls.Add(Me.StatusStrip1)
     Me.Controls.Add(Me.mnu)
     Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+    Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
     Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
     Me.Name = "Main"
     Me.Text = "Path Structure Maintenance"
@@ -241,5 +259,7 @@ Partial Class Main
   Friend WithEvents StatusStrip1 As System.Windows.Forms.StatusStrip
   Friend WithEvents mnu As System.Windows.Forms.MenuStrip
   Friend WithEvents pnlContainer As System.Windows.Forms.Panel
+  Friend WithEvents ExplorerNotification As System.Windows.Forms.NotifyIcon
+  Friend WithEvents mnuExplorerWatcher As System.Windows.Forms.ToolStripMenuItem
 
 End Class

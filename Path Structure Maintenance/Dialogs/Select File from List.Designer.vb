@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class Select_Default_Path
+Partial Class Select_File_from_List
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -22,12 +22,11 @@ Partial Class Select_Default_Path
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-    Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Select_Default_Path))
     Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
     Me.OK_Button = New System.Windows.Forms.Button()
     Me.Cancel_Button = New System.Windows.Forms.Button()
+    Me.drpFileSelect = New System.Windows.Forms.ComboBox()
     Me.Label1 = New System.Windows.Forms.Label()
-    Me.drpDefaultPath = New System.Windows.Forms.ComboBox()
     Me.TableLayoutPanel1.SuspendLayout()
     Me.SuspendLayout()
     '
@@ -42,7 +41,6 @@ Partial Class Select_Default_Path
     Me.TableLayoutPanel1.Location = New System.Drawing.Point(0, 136)
     Me.TableLayoutPanel1.Margin = New System.Windows.Forms.Padding(6)
     Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
-    Me.TableLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.No
     Me.TableLayoutPanel1.RowCount = 1
     Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
     Me.TableLayoutPanel1.Size = New System.Drawing.Size(539, 77)
@@ -69,44 +67,43 @@ Partial Class Select_Default_Path
     Me.Cancel_Button.TabIndex = 1
     Me.Cancel_Button.Text = "Cancel"
     '
+    'drpFileSelect
+    '
+    Me.drpFileSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+    Me.drpFileSelect.FormattingEnabled = True
+    Me.drpFileSelect.Location = New System.Drawing.Point(17, 37)
+    Me.drpFileSelect.Name = "drpFileSelect"
+    Me.drpFileSelect.Size = New System.Drawing.Size(509, 33)
+    Me.drpFileSelect.TabIndex = 4
+    '
     'Label1
     '
     Me.Label1.AutoSize = True
-    Me.Label1.Location = New System.Drawing.Point(13, 13)
+    Me.Label1.Location = New System.Drawing.Point(12, 9)
     Me.Label1.Name = "Label1"
-    Me.Label1.Size = New System.Drawing.Size(455, 25)
-    Me.Label1.TabIndex = 1
-    Me.Label1.Text = "Select a Structure Default Path from the drop down:"
+    Me.Label1.Size = New System.Drawing.Size(289, 25)
+    Me.Label1.TabIndex = 3
+    Me.Label1.Text = "Select a file from the drop down:"
     '
-    'drpDefaultPath
-    '
-    Me.drpDefaultPath.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-    Me.drpDefaultPath.FormattingEnabled = True
-    Me.drpDefaultPath.Location = New System.Drawing.Point(18, 41)
-    Me.drpDefaultPath.Name = "drpDefaultPath"
-    Me.drpDefaultPath.Size = New System.Drawing.Size(509, 33)
-    Me.drpDefaultPath.TabIndex = 2
-    '
-    'Select_Default_Path
+    'Select_File_from_List
     '
     Me.AcceptButton = Me.OK_Button
     Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 25.0!)
     Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
     Me.CancelButton = Me.Cancel_Button
     Me.ClientSize = New System.Drawing.Size(539, 213)
-    Me.Controls.Add(Me.drpDefaultPath)
+    Me.Controls.Add(Me.drpFileSelect)
     Me.Controls.Add(Me.Label1)
     Me.Controls.Add(Me.TableLayoutPanel1)
     Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
     Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
-    Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
     Me.Margin = New System.Windows.Forms.Padding(6)
     Me.MaximizeBox = False
     Me.MinimizeBox = False
-    Me.Name = "Select_Default_Path"
+    Me.Name = "Select_File_from_List"
     Me.ShowInTaskbar = False
     Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-    Me.Text = "Select Default Path"
+    Me.Text = "Select File from List"
     Me.TableLayoutPanel1.ResumeLayout(False)
     Me.ResumeLayout(False)
     Me.PerformLayout()
@@ -115,7 +112,7 @@ Partial Class Select_Default_Path
     Friend WithEvents TableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
     Friend WithEvents OK_Button As System.Windows.Forms.Button
   Friend WithEvents Cancel_Button As System.Windows.Forms.Button
+  Friend WithEvents drpFileSelect As System.Windows.Forms.ComboBox
   Friend WithEvents Label1 As System.Windows.Forms.Label
-  Friend WithEvents drpDefaultPath As System.Windows.Forms.ComboBox
 
 End Class

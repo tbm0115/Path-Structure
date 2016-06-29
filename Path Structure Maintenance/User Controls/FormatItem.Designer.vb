@@ -131,6 +131,7 @@ Partial Class Format_Item
     '
     'pnlVariables
     '
+    Me.pnlVariables.AutoScroll = True
     Me.pnlVariables.Dock = System.Windows.Forms.DockStyle.Fill
     Me.pnlVariables.Location = New System.Drawing.Point(0, 88)
     Me.pnlVariables.Name = "pnlVariables"

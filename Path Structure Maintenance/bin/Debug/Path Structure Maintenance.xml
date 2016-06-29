@@ -6,160 +6,7 @@ PathStructureMaintenance
 </name>
 </assembly>
 <members>
-<member name="P:Path_Structure_Maintenance.PathStructure.Parent">
-	<summary>
- Gets the PathStructure representation of the current path's parent directory.
- </summary>
-	<value></value>
-	<returns>PathStructure</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.Children">
-	<summary>
- Enumerates the PathStructure objects the represent the current path's child filesystem objects.
- </summary>
-	<value></value>
-	<returns>PathStructure()</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.Variables">
-	<summary>
- Gets a list of variables in the current path and their values.
- </summary>
-	<value>Key is variable name. Value is the variable value.</value>
-	<returns>SortedList(Of String, String)</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.UNCPath">
-	<summary>
- Gets the UNC formatted path of the current path
- </summary>
-	<value></value>
-	<returns>String</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.Type">
-	<summary>
- Gets the current path's path type, an enum of PathType (File or Folder)
- </summary>
-	<value></value>
-	<returns>PathType</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.DefaultPath">
-	<summary>
- Gets the default (or root) directory for the current Structure.
- </summary>
-	<value></value>
-	<returns>String</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.StartPath">
-	<summary>
- Gets the current path with replaced variables.
- </summary>
-	<value></value>
-	<returns>String</returns>
-	<remarks></remarks>
-</member><member name="M:Path_Structure_Maintenance.PathStructure.IsDescendantOfDefaultPath">
-	<summary>
- Determines if the current instance of a PathStructure is a descendant of the DefaultPath (or root directory)
- </summary>
-	<returns>Boolean</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.StructureCandidate.XPath">
-	<summary>
- Gets the XPath for the candidate
- </summary>
-	<value></value>
-	<returns>String</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.StructureCandidate.XElement">
-	<summary>
- Gets the XmlElement reference for the candidate
- </summary>
-	<value></value>
-	<returns>XmlElement</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.StructureCandidate.StructurePath">
-	<summary>
- Gets the URI string based on the structures XPath
- </summary>
-	<value></value>
-	<returns>URI string</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.StructureCandidate.ObjectPath">
-	<summary>
- Gets the objects URI string
- </summary>
-	<value></value>
-	<returns>URI string</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.StructureCandidate.StructureDescription">
-	<summary>
- Gets the description as specified in the path structure
- </summary>
-	<value></value>
-	<returns>String</returns>
-	<remarks></remarks>
-</member><member name="M:Path_Structure_Maintenance.PathStructure.IsLocationValid(System.Xml.XmlElement)">
-	<summary>
- Determines if the current path is valid according to the provided Path Structure node.
- </summary>
-	<param name="Folder">The Path Structure node to check against the current path.</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:Path_Structure_Maintenance.PathStructure.GetStructureTypefromXPath(System.String)">
-	<summary>
- Gets a full XPath from a absolute or relative XPath.
- </summary>
-	<param name="XPath">Absolute or relative XPath</param>
-	<returns>String</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.PathStructure.AuditVisualReport.ReportMarkup">
-	<summary>
- Gets the HTML markup for the report.
- </summary>
-	<value></value>
-	<returns>String</returns>
-	<remarks></remarks>
-</member><member name="M:Path_Structure_Maintenance.PathStructure.AuditVisualReport.Report(System.String,Path_Structure_Maintenance.PathStructure.AuditVisualReport.StatusCode,Path_Structure_Maintenance.PathStructure)">
-	<summary>
- Appends to the current instance of an AuditReport
- </summary>
-	<param name="Message">Text to be displayed in report.</param>
-	<param name="Code">(Optional) Status code for the message.</param>
-	<param name="Path">(Optional) Provides the path to be added to the internal list of error or optimal path(s).</param>
-	<remarks></remarks>
-</member><member name="M:Path_Structure_Maintenance.PathStructure.AuditVisualReport.AddListToListItem(HTML.HTMLWriter.HTMLList.ListItem@,HTML.HTMLWriter.HTMLList)">
-	<summary>
- Adds the raw markup of a list to the innerHTML of a list item.
- </summary>
-	<param name="LI"></param>
-	<param name="UL"></param>
-	<remarks></remarks>
-</member><member name="M:Path_Structure_Maintenance.PathStructure.AuditVisualReport.AddListItemToList(HTML.HTMLWriter.HTMLList@,HTML.HTMLWriter.HTMLList.ListItem)">
-	<summary>
- Adds the list item to the provided list. If not list is provided, the main list will be used.
- </summary>
-	<param name="UL"></param>
-	<param name="LI"></param>
-	<remarks></remarks>
-</member><member name="M:Path_Structure_Maintenance.PathStructure.AuditVisualReport.Raw(System.String)">
-	<summary>
- Appends to the current instance of an AuditReport
- </summary>
-	<param name="HTMLMarkup">Raw HTML markup string</param>
-	<remarks></remarks>
-</member><member name="M:Path_Structure_Maintenance.PathStructure_Helper_Functions.ReplaceVariables(System.String,System.String)">
-	<summary>
- Replaces PathStructure variables with provided values.
- </summary>
-	<param name="Input">Full or partial path string</param>
-	<returns>String</returns>
-	<remarks></remarks>
-</member><member name="M:Path_Structure_Maintenance.PathStructure_Helper_Functions.GetURIfromXPath(System.String)">
-	<summary>
- Converts the XPath for the PathStructure into a valid FileSystem path.
- </summary>
-	<param name="XPath">XML XPath</param>
-	<returns>String</returns>
-	<remarks></remarks>
-</member><member name="P:Path_Structure_Maintenance.My.Resources.Resources.ResourceManager">
+<member name="P:Path_Structure_Maintenance.My.Resources.Resources.ResourceManager">
 	<summary>
   Returns the cached ResourceManager instance used by this class.
 </summary>
@@ -186,8 +33,40 @@ PathStructureMaintenance
 </summary>
 </member><member name="P:Path_Structure_Maintenance.My.Resources.Resources.FileSystemVisualAuditTemplate">
 	<summary>
-  Looks up a localized string similar to &lt;html&gt;
-	&lt;script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js'&gt;&lt;/script&gt;&lt;link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' rel='stylesheet' integrity='sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==' crossorigin='anonymous'/&gt;&lt;script type='text/javascript' src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' integrity='sha256-KXn5puM [rest of string was truncated]";.
+  Looks up a localized string similar to &lt;head&gt;
+  &lt;style&gt;
+    ul {
+      list-style-type: none;
+      transition: all 1s ease;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+      a:hover {
+        color: inherit;
+      }
+
+      a[data-subobjects]::after {
+        content: attr(data-subobjects) " objects";
+        font-size: 0.5em;
+        color: dimgrey;
+      }
+
+    .folder {
+      transition: all 0.5s ease;
+    }
+
+      .folder::before {
+        content: "\e117";
+     [rest of string was truncated]";.
+</summary>
+</member><member name="P:Path_Structure_Maintenance.My.Resources.Resources.Optical_Object_Recognition">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
 </summary>
 </member><member name="T:Path_Structure_Maintenance.My.Resources.Resources">
 	<summary>

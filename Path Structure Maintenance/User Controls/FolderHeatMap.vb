@@ -1,5 +1,5 @@
 ﻿Imports System.Drawing
-Imports System.IO, System.Linq
+Imports System.IO ', System.Linq
 
 Public Class FolderHeatMap
   Const freqRed = 0.1
@@ -31,8 +31,6 @@ Public Class FolderHeatMap
       colors.Add(Color.FromArgb(Math.Round(tmpRed), Math.Round(tmpGreen), Math.Round(tmpblue)))
     Next
   End Sub
-
-
 
   Dim lstFSO As List(Of FileSystemObject)
   Private Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
@@ -163,13 +161,10 @@ Public Class FolderHeatMap
       Dim dList As DirectoryInfo() = dInfo.GetDirectories()
       Dim dlen = dList.Length
       For i = 0 To dlen - 1 Step 1
-        Debug.WriteLine("Update routine:")
-        Debug.WriteLine(vbTab & dList(i).FullName)
-        Debug.WriteLine(vbTab & ((i / dlen) * 100).ToString)
         statObject.Text = dList(i).Name
         statSize.Text = ConvertSize2Text(totalSize)
         UpdateProgressBar((i / dlen) * 100)
-        Application.DoEvents()
+        'Application.DoEvents()
 
         lstFSO.Add(New FileSystemObject(dList(i)))
         lstFSO(lstFSO.Count - 1).Size = DirectorySize(dList(i), True)
@@ -178,9 +173,6 @@ Public Class FolderHeatMap
       Dim fList As FileInfo() = dInfo.GetFiles()
       dlen = fList.Length
       For i = 0 To dlen - 1 Step 1
-        Debug.WriteLine("Update routine:")
-        Debug.WriteLine(vbTab & fList(i).FullName)
-        Debug.WriteLine(vbTab & ((i / dlen) * 100).ToString)
         statObject.Text = fList(i).Name
         UpdateProgressBar((i / dlen) * 100)
 

@@ -1,8 +1,9 @@
 ﻿Imports System.Xml
 Imports AxAcroPDFLib.AxAcroPDF
+Imports PathStructureClass
 
 Public Class Preview
-  Private _CurrentPath As PathStructure
+  Private _CurrentPath As Path
   Public Folders As New SortedList(Of String, String)
   Public Files As New SortedList(Of String, String)
   Public FileFilter As String = ""
@@ -10,13 +11,13 @@ Public Class Preview
   Public Sub New(ByVal SelectedPath As String)
     InitializeComponent()
 
-    _CurrentPath = New PathStructure(SelectedPath)
+    _CurrentPath = New Path(Main.PathStruct, SelectedPath)
     Folders.Clear()
     lstFolders.Items.Clear()
     lstFiles.Items.Clear()
 
     '' Check if valid preview item
-    If _CurrentPath.Type = PathStructure.PathType.File Then
+    If _CurrentPath.Type = Path.PathType.File Then
       MessageBox.Show("The Preview function only applies to folders with a valid preview assignment.", "Invalid Type", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       Application.Exit()
     End If
@@ -40,7 +41,7 @@ Public Class Preview
             For Each prev As XmlElement In nod.SelectNodes(nod.Attributes("preview").Value.ToString)
               '' Verify the xmlelement has the 'previewDocument' attribute
               If prev.HasAttribute("previewDocument") Then
-                dirSearch = _CurrentPath.Variables.Replace(GetURIfromXPath(FindXPath(prev))) ' _CurrentPath.ReplaceVariables(_CurrentPath.GetURIfromXPath(FindXPath(prev)))
+                dirSearch = _CurrentPath.Variables.Replace(Main.PathStruct.GetURIfromXPath(FindXPath(prev))) ' _CurrentPath.ReplaceVariables(_CurrentPath.GetURIfromXPath(FindXPath(prev)))
                 '' Remove last index of global variables
                 If dirSearch.Contains("{") And dirSearch.Contains("}") Then
                   dirSearch = dirSearch.Remove(dirSearch.LastIndexOf("{"))
@@ -93,7 +94,7 @@ Public Class Preview
       If IO.Directory.Exists(fold) Then
         Files.Clear()
         For Each fil As IO.FileInfo In New IO.DirectoryInfo(fold).GetFiles
-          Dim ps As New PathStructure(fold)
+          Dim ps As New Path(Main.PathStruct, fold)
           Debug.WriteLine("Testing '" & (fil.Name.ToString) & "' against '" & ps.Variables.Replace(FileFilter) & "'") ' ps.ReplaceVariables(FileFilter) & "'")
           If (fil.Name.ToString).ToLower Like ps.Variables.Replace(FileFilter).ToLower Then ' ps.ReplaceVariables(FileFilter).ToLower Then
             Files.Add(fil.Name, fil.FullName)
