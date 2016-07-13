@@ -20,7 +20,7 @@ Public Class Add_Folder
       'For Each var As KeyValuePair(Of String, String) In _CurrentPath.Variables
       '  Log(vbTab & var.Key & ": " & var.Value)
       'Next
-      For Each var As Path.Variable In _CurrentPath.Variables.Items
+      For Each var As Variable In _CurrentPath.Variables.Items
         Log(vbTab & var.Name & ": " & var.Value)
       Next
       If QuickSelect Then
@@ -30,7 +30,7 @@ Public Class Add_Folder
       pnlVariables.Controls.Clear()
       cmbFiles.Items.Clear()
       If _CurrentPath.StructureCandidates.Count > 0 Then
-        For Each struct As Path.StructureCandidate In _CurrentPath.StructureCandidates.Items
+        For Each struct As StructureCandidate In _CurrentPath.StructureCandidates.Items
           If struct.XElement.Name = "File" Then
             If struct.XElement.ParentNode IsNot Nothing Then
               For Each nod As XmlElement In struct.XElement.ParentNode.SelectNodes("Folder")

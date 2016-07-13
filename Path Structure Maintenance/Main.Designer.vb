@@ -39,7 +39,7 @@ Partial Class Main
     Me.mnuToolsTransferFilesByExtension = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsPreview = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuToolsFolderHeatMap = New System.Windows.Forms.ToolStripMenuItem()
-    Me.mnuGeneratePathStructure = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuToolsSetPermissions = New System.Windows.Forms.ToolStripMenuItem()
     Me.statProgress = New System.Windows.Forms.ToolStripProgressBar()
     Me.statStatus = New System.Windows.Forms.ToolStripStatusLabel()
     Me.statCurrentPath = New System.Windows.Forms.ToolStripStatusLabel()
@@ -47,7 +47,8 @@ Partial Class Main
     Me.mnu = New System.Windows.Forms.MenuStrip()
     Me.mnuExplorerWatcher = New System.Windows.Forms.ToolStripMenuItem()
     Me.pnlContainer = New System.Windows.Forms.Panel()
-    Me.ExplorerNotification = New System.Windows.Forms.NotifyIcon(Me.components)
+    Me.bgwAudit = New System.ComponentModel.BackgroundWorker()
+    Me.timCheckHotkey = New System.Windows.Forms.Timer(Me.components)
     Me.StatusStrip1.SuspendLayout()
     Me.mnu.SuspendLayout()
     Me.SuspendLayout()
@@ -60,7 +61,7 @@ Partial Class Main
     '
     'ToolsToolStripMenuItem
     '
-    Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAdd, Me.mnuToolsFormat, Me.mnuToolAudit, Me.mnuToolsClipboard, Me.mnuToolsTransfer, Me.mnuToolsPreview, Me.mnuToolsFolderHeatMap})
+    Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsAdd, Me.mnuToolsFormat, Me.mnuToolAudit, Me.mnuToolsClipboard, Me.mnuToolsTransfer, Me.mnuToolsPreview, Me.mnuToolsFolderHeatMap, Me.mnuToolsSetPermissions})
     Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
     Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(57, 24)
     Me.ToolsToolStripMenuItem.Text = "Tools"
@@ -152,43 +153,53 @@ Partial Class Main
     Me.mnuToolsFolderHeatMap.Size = New System.Drawing.Size(208, 26)
     Me.mnuToolsFolderHeatMap.Text = "Folder Heat Map"
     '
-    'mnuGeneratePathStructure
+    'mnuToolsSetPermissions
     '
-    Me.mnuGeneratePathStructure.Name = "mnuGeneratePathStructure"
-    Me.mnuGeneratePathStructure.Size = New System.Drawing.Size(177, 24)
-    Me.mnuGeneratePathStructure.Text = "Generate Path Structure"
+    Me.mnuToolsSetPermissions.Name = "mnuToolsSetPermissions"
+    Me.mnuToolsSetPermissions.Size = New System.Drawing.Size(208, 26)
+    Me.mnuToolsSetPermissions.Text = "Set Permissions"
     '
     'statProgress
     '
     Me.statProgress.Name = "statProgress"
-    Me.statProgress.Size = New System.Drawing.Size(100, 19)
+    Me.statProgress.Size = New System.Drawing.Size(100, 23)
     '
     'statStatus
     '
+    Me.statStatus.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
+            Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
+            Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
+    Me.statStatus.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter
     Me.statStatus.Name = "statStatus"
-    Me.statStatus.Size = New System.Drawing.Size(49, 20)
+    Me.statStatus.Size = New System.Drawing.Size(53, 24)
     Me.statStatus.Text = "Status"
     '
     'statCurrentPath
     '
+    Me.statCurrentPath.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
+            Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
+            Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
+    Me.statCurrentPath.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter
     Me.statCurrentPath.Name = "statCurrentPath"
-    Me.statCurrentPath.Size = New System.Drawing.Size(38, 20)
+    Me.statCurrentPath.Size = New System.Drawing.Size(292, 24)
+    Me.statCurrentPath.Spring = True
     Me.statCurrentPath.Text = "Path"
+    Me.statCurrentPath.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
     '
     'StatusStrip1
     '
     Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-    Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statProgress, Me.statStatus, Me.statCurrentPath})
-    Me.StatusStrip1.Location = New System.Drawing.Point(0, 367)
+    Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statProgress, Me.statCurrentPath, Me.statStatus})
+    Me.StatusStrip1.Location = New System.Drawing.Point(0, 363)
     Me.StatusStrip1.Name = "StatusStrip1"
-    Me.StatusStrip1.Size = New System.Drawing.Size(501, 25)
+    Me.StatusStrip1.Size = New System.Drawing.Size(501, 29)
     Me.StatusStrip1.TabIndex = 1
     Me.StatusStrip1.Text = "StatusStrip1"
     '
     'mnu
     '
     Me.mnu.ImageScalingSize = New System.Drawing.Size(20, 20)
-    Me.mnu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuSettings, Me.ToolsToolStripMenuItem, Me.mnuGeneratePathStructure, Me.mnuExplorerWatcher})
+    Me.mnu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuSettings, Me.ToolsToolStripMenuItem, Me.mnuExplorerWatcher})
     Me.mnu.Location = New System.Drawing.Point(0, 0)
     Me.mnu.Name = "mnu"
     Me.mnu.Size = New System.Drawing.Size(501, 28)
@@ -206,15 +217,16 @@ Partial Class Main
     Me.pnlContainer.Dock = System.Windows.Forms.DockStyle.Fill
     Me.pnlContainer.Location = New System.Drawing.Point(0, 28)
     Me.pnlContainer.Name = "pnlContainer"
-    Me.pnlContainer.Size = New System.Drawing.Size(501, 339)
+    Me.pnlContainer.Size = New System.Drawing.Size(501, 335)
     Me.pnlContainer.TabIndex = 5
     '
-    'ExplorerNotification
+    'bgwAudit
     '
-    Me.ExplorerNotification.BalloonTipTitle = "Windows Explorer Watcher"
-    Me.ExplorerNotification.Icon = CType(resources.GetObject("ExplorerNotification.Icon"), System.Drawing.Icon)
-    Me.ExplorerNotification.Text = "Windows Explorer Watcher"
-    Me.ExplorerNotification.Visible = True
+    Me.bgwAudit.WorkerSupportsCancellation = True
+    '
+    'timCheckHotkey
+    '
+    Me.timCheckHotkey.Interval = 1
     '
     'Main
     '
@@ -253,13 +265,14 @@ Partial Class Main
   Friend WithEvents mnuToolsTransferFilesByExtension As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents statProgress As System.Windows.Forms.ToolStripProgressBar
   Friend WithEvents mnuToolsPreview As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents mnuGeneratePathStructure As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuToolsFolderHeatMap As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuToolsAuditVisualDefaultPath As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents StatusStrip1 As System.Windows.Forms.StatusStrip
   Friend WithEvents mnu As System.Windows.Forms.MenuStrip
   Friend WithEvents pnlContainer As System.Windows.Forms.Panel
-  Friend WithEvents ExplorerNotification As System.Windows.Forms.NotifyIcon
   Friend WithEvents mnuExplorerWatcher As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents mnuToolsSetPermissions As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents bgwAudit As System.ComponentModel.BackgroundWorker
+  Friend WithEvents timCheckHotkey As System.Windows.Forms.Timer
 
 End Class

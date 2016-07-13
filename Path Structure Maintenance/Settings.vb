@@ -22,7 +22,7 @@ Public Class Settings
     End If
   End Sub
 
-  Private Sub btnAddContextMenu_Click(sender As Object, e As EventArgs) Handles btnAddContextMenu.Click
+  Public Sub btnAddContextMenu_Click(sender As Object, e As EventArgs) Handles btnAddContextMenu.Click
     Dim regmenu As RegistryKey
     Dim regcmd As RegistryKey
     Dim myXML As New XmlDocument
@@ -46,7 +46,8 @@ Public Class Settings
                          IIf(My.Settings.blnTransferByExtension, "PathStructure.TransferByExtension;", "") & _
                          IIf(My.Settings.blnPreview, "PathStructure.Preview;", "") & _
                          IIf(My.Settings.blnFolderHeatMap, "PathStructure.FolderHeatMap;", "") & _
-                         IIf(My.Settings.blnDirectArchive, "PathStructure.DirectArchive;", ""))
+                         IIf(My.Settings.blnDirectArchive, "PathStructure.DirectArchive;", "") & _
+                         IIf(My.Settings.blnSetPermissions, "PathStructure.SetPermissions;", ""))
 
 
         ''Create 'Add' submenu
@@ -69,7 +70,7 @@ Public Class Settings
           'Log(vbTab & "Adding 'Add Single'")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.Add.Single")
           regmenu.SetValue("MUIVerb", "Create a Folder...")
-          regmenu.SetValue("icon", "%windir%\system32\shell32.dll,278")
+          regmenu.SetValue("icon", "%windir%\system32\shell32.dll,279")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.Add.Single\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -add " & Chr(34) & "%1" & Chr(34))
         End If
@@ -87,7 +88,7 @@ Public Class Settings
           'Log(vbTab & "Adding 'Audit' commands")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.Audit")
           regmenu.SetValue("MUIVerb", "Audit selected object...")
-          regmenu.SetValue("icon", "%windir%\system32\comres.dll,6")
+          regmenu.SetValue("icon", "%windir%\system32\imageres.dll,109")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.Audit\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -audit " & Chr(34) & "%1" & Chr(34))
         End If
@@ -95,7 +96,7 @@ Public Class Settings
         'Log(vbTab & "Adding 'Open' commands")
         regmenu = view32.CreateSubKey(regCommand & "PathStructure.Open")
         regmenu.SetValue("MUIVerb", "Open Path Structure Application")
-        regmenu.SetValue("icon", "%windir%\system32\shell32.dll,2")
+        regmenu.SetValue("icon", "%windir%\system32\shell32.dll,261")
         regcmd = view32.CreateSubKey(regCommand & "PathStructure.Open\\command")
         regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34))
 
@@ -103,7 +104,7 @@ Public Class Settings
           'Log(vbTab & "Adding 'Clipboard' commands")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.Clipboard")
           regmenu.SetValue("MUIVerb", "Generate Path to Clipboard...")
-          regmenu.SetValue("icon", "%windir%\system32\ieframe.dll,110")
+          regmenu.SetValue("icon", "%windir%\system32\mmcndmgr.dll,21")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.Clipboard\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -clipboard " & Chr(34) & "%1" & Chr(34))
         End If
@@ -112,7 +113,7 @@ Public Class Settings
           'Log(vbTab & "Adding 'TransferByFileExtension' commands")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.TransferByExtension")
           regmenu.SetValue("MUIVerb", "Transfer Files by Extension...")
-          regmenu.SetValue("icon", "%windir%\system32\wpdshext.dll,4")
+          regmenu.SetValue("icon", "%windir%\system32\shell32.dll,132")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.TransferByExtension\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -transfer " & Chr(34) & "%1" & Chr(34))
         End If
@@ -121,7 +122,7 @@ Public Class Settings
           'Log(vbTab & "Adding 'Preview' commands")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.Preview")
           regmenu.SetValue("MUIVerb", "Preview Document(s)...")
-          regmenu.SetValue("icon", "%windir%\system32\wpdshext.dll,4")
+          regmenu.SetValue("icon", "%windir%\system32\ieframe.dll,66")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.Preview\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -preview " & Chr(34) & "%1" & Chr(34))
         End If
@@ -130,7 +131,7 @@ Public Class Settings
           'Log(vbTab & "Adding 'Folder Heat Map' commands")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.FolderHeatMap")
           regmenu.SetValue("MUIVerb", "Heat Map...")
-          regmenu.SetValue("icon", "%windir%\system32\wpdshext.dll,4")
+          regmenu.SetValue("icon", "%windir%\system32\compstui.dll,51")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.FolderHeatMap\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -heatmap " & Chr(34) & "%1" & Chr(34))
         End If
@@ -139,9 +140,18 @@ Public Class Settings
           'Log(vbTab & "Adding 'Archive' commands")
           regmenu = view32.CreateSubKey(regCommand & "PathStructure.DirectArchive")
           regmenu.SetValue("MUIVerb", "Send to Archive")
-          regmenu.SetValue("icon", "%windir%\system32\comres.dll,6")
+          regmenu.SetValue("icon", "%windir%\system32\shell32.dll,280")
           regcmd = view32.CreateSubKey(regCommand & "PathStructure.DirectArchive\\command")
           regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -archive " & Chr(34) & "%1" & Chr(34))
+        End If
+
+        If My.Settings.blnSetPermissions Then
+          'Log(vbTab & "Adding 'Permissions' commands")
+          regmenu = view32.CreateSubKey(regCommand & "PathStructure.SetPermissions")
+          regmenu.SetValue("MUIVerb", "Set Permissions")
+          regmenu.SetValue("icon", "%windir%\system32\ieframe.dll,100")
+          regcmd = view32.CreateSubKey(regCommand & "PathStructure.SetPermissions\\command")
+          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -permissions " & Chr(34) & "%1" & Chr(34))
         End If
 
       Catch ex As Exception
@@ -150,9 +160,9 @@ Public Class Settings
     Else
       'Log("Couldn't find Settings File: '" & My.Settings.SettingsPath & "'")
     End If
-    MsgBox("Complete!")
+    Main.statStatus.Text = "Added Context Menu"
   End Sub
-  Private Sub btnRemoveContextMenu_Click(sender As Object, e As EventArgs) Handles btnRemoveContextMenu.Click
+  Public Sub btnRemoveContextMenu_Click(sender As Object, e As EventArgs) Handles btnRemoveContextMenu.Click
     Dim myXML As New XmlDocument
     Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
     If IO.File.Exists(My.Settings.SettingsPath) Then
@@ -267,13 +277,22 @@ Public Class Settings
         Else
           'Log("Could not open main 'DirectArchive' registry entry")
         End If
+
+        reg = view32.OpenSubKey(regCommand & "PathStructure.SetPermissions")
+        If Not IsNothing(reg) Then
+          reg.Close()
+          view32.DeleteSubKeyTree(regCommand & "PathStructure.SetPermissions")
+          'Log("Deleted 'SetPermissions' registry entry")
+        Else
+          'Log("Could not open main 'SetPermissions' registry entry")
+        End If
       Catch ex As Exception
         'Log("An error occurred..." & vbLf & vbTab & ex.Message)
       End Try
     Else
       'Log("Couldn't find Settings File: '" & My.Settings.SettingsPath & "'")
     End If
-    MsgBox("Complete!")
+    Main.statStatus.Text = "Removed Context Menu"
   End Sub
 
 End Class

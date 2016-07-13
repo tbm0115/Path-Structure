@@ -50,5 +50,11 @@
     <Setting Name="blnDirectArchive" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="blnSetPermissions" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="keyWatcherSearch" Type="System.Windows.Forms.Keys" Scope="User">
+      <Value Profile="(Default)">Ctrl+F3</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

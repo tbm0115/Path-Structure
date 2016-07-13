@@ -12,7 +12,7 @@ Public Class FileClipboard
     InitializeComponent()
     _CurrentPath = New Path(Main.PathStruct, CurrentPath)
 
-    For Each var As Path.Variable In _CurrentPath.Variables.Items
+    For Each var As Variable In _CurrentPath.Variables.Items
       Log(vbTab & var.Name & ": " & var.Value)
     Next
 

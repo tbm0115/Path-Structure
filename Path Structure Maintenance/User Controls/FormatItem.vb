@@ -3,6 +3,7 @@ Imports PathStructureClass
 
 Public Class Format_Item
   Private _CurrentPath As Path
+  Private _overridePath As Path
   'Private myXML As New XmlDocument
   Private fileName As String
   Private _blnAutoClose As Boolean = True
@@ -10,31 +11,37 @@ Public Class Format_Item
 
   Public Event Accepted(ByVal sender As Object, ByVal e As FormatItemAcceptedEventArgs)
 
-  Public Sub New(ByVal CurrentPath As String, Optional ByVal QuickSelect As Boolean = False, Optional ByVal AutoClose As Boolean = True)
+  Public Sub New(ByVal CurrentPath As String, Optional ByVal QuickSelect As Boolean = False, Optional ByVal AutoClose As Boolean = True, Optional ByVal OverridePath As Path = Nothing)
     '' This call is required by the designer.
     InitializeComponent()
     _CurrentPath = New Path(Main.PathStruct, CurrentPath)
     _blnAutoClose = AutoClose
 
+    If OverridePath IsNot Nothing Then
+      _overridePath = OverridePath
+    Else
+      _overridePath = _CurrentPath
+    End If
+
     If _CurrentPath.Type = Path.PathType.File Then
       '' Add any initialization after the InitializeComponent() call.
       'myXML.Load(My.Settings.SettingsPath)
-      Log(vbTab & "Directory: " & _CurrentPath.CurrentDirectory)
-      Log(vbTab & "Filename: " & _CurrentPath.FileInfo.Name)
-      Log(vbTab & "Extension: " & _CurrentPath.FileInfo.Extension)
-      For Each var As Path.Variable In _CurrentPath.Variables.Items
+      Log(vbTab & "Directory: " & _overridePath.CurrentDirectory)
+      'Log(vbTab & "Filename: " & _CurrentPath.FileInfo.Name)
+      'Log(vbTab & "Extension: " & _CurrentPath.FileInfo.Extension)
+      For Each var As Variable In _overridePath.Variables.Items
         Log(vbTab & var.Name & ": " & var.Value)
       Next
       If QuickSelect Then
-        Log(vbTab & "IsNameStructured: " & _CurrentPath.IsNameStructured().ToString)
+        Log(vbTab & "IsNameStructured: " & _overridePath.IsNameStructured().ToString)
       End If
 
       pnlVariables.Controls.Clear()
       cmbFiles.Items.Clear()
       Dim slist As New SortedList(Of String, String)
-      If _CurrentPath.StructureCandidates.Count > 0 Then
+      If _overridePath.StructureCandidates.Count > 0 Then
         Dim searchNode As XmlElement
-        For Each struct As Path.StructureCandidate In _CurrentPath.StructureCandidates.Items
+        For Each struct As StructureCandidate In _overridePath.StructureCandidates.Items
           searchNode = Nothing
           If struct.XElement.Name = "File" Then
             If struct.XElement.ParentNode IsNot Nothing Then
@@ -64,7 +71,9 @@ Public Class Format_Item
         Next
       Else
         For Each fil As XmlElement In Main.PathStruct.Settings.SelectNodes("//File")
-          slist.Add(fil.Attributes("name").Value, fil.Attributes("name").Value)
+          If Not slist.ContainsKey(fil.Attributes("name").Value) Then
+            slist.Add(fil.Attributes("name").Value, fil.Attributes("name").Value)
+          End If
           'cmbFiles.Items.Add(fil.Attributes("name").Value)
         Next
       End If
@@ -81,12 +90,17 @@ Public Class Format_Item
     Dim FileType As String = cmbFiles.Items(cmbFiles.SelectedIndex).ToString
     cmbOptions.Items.Clear()
     pnlVariables.Controls.Clear()
-    Dim slist As New SortedList(Of String, String)
-    For Each opt As XmlElement In _CurrentPath.GetPathStructure.Settings.SelectNodes("//File[@name='" & FileType & "']/Option")
-      slist.Add(opt.Attributes("name").Value, opt.Attributes("name").Value)
-      'cmbOptions.Items.Add(opt.Attributes("name").Value)
-    Next
-    cmbOptions.Items.AddRange(slist.Values.ToArray())
+    Dim slist As New List(Of String)
+    Dim xPath As String = ".//File[@name='" & FileType & "']/Option"
+    If SetStruct(FileType) Then
+      If String.Equals(_struct.Name, "File", StringComparison.OrdinalIgnoreCase) Then xPath = "Option"
+      For Each opt As XmlElement In _struct.SelectNodes(xPath)
+        Debug.WriteLine(_overridePath.GetPathStructure().GetURIfromXPath(opt.FindXPath()))
+        slist.Add(opt.Attributes("name").Value) ', opt.Attributes("name").Value)
+        'cmbOptions.Items.Add(opt.Attributes("name").Value)
+      Next
+    End If
+    cmbOptions.Items.AddRange(slist.ToArray())
     If cmbOptions.Items.Count > 0 Then
       pnlOptions.Enabled = True
     Else
@@ -101,17 +115,44 @@ Public Class Format_Item
     LoadFileSyntax(cmbFiles.Items(cmbFiles.SelectedIndex).ToString, cmbOptions.Items(cmbOptions.SelectedIndex).ToString)
   End Sub
 
-  Private Sub LoadFileSyntax(ByVal nameFile As String, Optional ByVal nameOption As String = "")
-    If Not String.IsNullOrEmpty(nameOption) Then
-      _struct = _CurrentPath.GetPathStructure.Settings.SelectSingleNode("//File[@name='" & nameFile & "']/Option[@name='" & nameOption & "']")
-      fileName = _struct.InnerText
-      If fileName.Contains("{name}") Then fileName = fileName.Replace("{name}", nameOption)
-    Else
-      _struct = _CurrentPath.GetPathStructure.Settings.SelectSingleNode("//File[@name='" & nameFile & "']")
-      fileName = _struct.InnerText
-      If fileName.Contains("{name}") Then fileName = fileName.Replace("{name}", nameFile)
+  Private Function SetStruct(Optional ByVal nameFile As String = "", Optional ByVal nameOption As String = "") As Boolean
+    If _overridePath.IsNameStructured() Then
+      _struct = _overridePath.StructureCandidates.GetHighestMatch().XElement
+      Return True
+    ElseIf Not String.IsNullOrEmpty(nameFile) Then
+      If String.IsNullOrEmpty(nameOption) Then
+        _struct = _overridePath.PathStructure.SelectSingleNode(".//File[@name='" & nameFile & "']")
+        Return True
+      Else
+        _struct = _overridePath.PathStructure.SelectSingleNode(".//File[@name='" & nameFile & "']/Option[@name='" & nameOption & "']")
+        Return True
+      End If
     End If
-    fileName = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
+
+    Return False
+  End Function
+  Private Sub LoadFileSyntax(ByVal nameFile As String, Optional ByVal nameOption As String = "")
+    If SetStruct(nameFile, nameOption) Then
+      If Not String.IsNullOrEmpty(nameOption) Then
+        'If _overridePath.IsNameStructured() Then
+        '  _struct = _overridePath.StructureCandidates.GetHighestMatch().XElement
+        'Else
+        '  _struct = _overridePath.PathStructure.SelectSingleNode(".//File[@name='" & nameFile & "']/Option[@name='" & nameOption & "']")
+        'End If
+        fileName = _struct.InnerText
+        If fileName.Contains("{name}") Then fileName = fileName.Replace("{name}", nameOption)
+      Else
+        'If _overridePath.IsNameStructured() Then
+        '  _struct = _overridePath.StructureCandidates.GetHighestMatch().XElement
+        'Else
+        '  _struct = _overridePath.PathStructure.SelectSingleNode(".//File[@name='" & nameFile & "']")
+        'End If
+        fileName = _struct.InnerText
+        If fileName.Contains("{name}") Then fileName = fileName.Replace("{name}", nameFile)
+      End If
+    End If
+
+    fileName = _overridePath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
     If fileName.Contains("{Date}") Then fileName = fileName.Replace("{Date}", DateTime.Now.ToString("MM-dd-yyyy"))
     If fileName.Contains("{Time}") Then fileName = fileName.Replace("{Time}", DateTime.Now.ToString("hh-mm-ss tt"))
 
@@ -136,11 +177,9 @@ Public Class Format_Item
         txt.Dock = DockStyle.Right
         txt.Size = New Size(pnlVariables.Width * 0.6, 30)
         txt.Tag = str
-        'If _CurrentPath.Variables.ContainsKey("{" & str & "}") Then
-        '  txt.Text = _CurrentPath.Variables("{" & str & "}")
-        'End If
-        If _CurrentPath.Variables.ContainsName("{" & str & "}") Then ' _CurrentPath.Variables.ContainsKey("{" & str & "}") Then
-          txt.Text = _CurrentPath.Variables("{" & str & "}").Value ' _CurrentPath.Variables("{" & str & "}")
+
+        If _overridePath.Variables.ContainsName("{" & str & "}") Then
+          txt.Text = _overridePath.Variables("{" & str & "}").Value
         End If
         AddHandler txt.TextChanged, AddressOf Variable_Changed
 
@@ -157,7 +196,7 @@ Public Class Format_Item
 
   Private Sub Variable_Changed(ByVal sender As System.Object, ByVal e As System.EventArgs)
     Dim vals As New SortedList(Of String, String)
-    txtPreview.Text = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
+    txtPreview.Text = _overridePath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
     For Each pnl As Control In pnlVariables.Controls
       vals.Add(pnl.Controls(1).Tag, pnl.Controls(1).Text)
       If Not String.IsNullOrEmpty(pnl.Controls(1).Text) Then
@@ -172,34 +211,45 @@ Public Class Format_Item
       MessageBox.Show("You must select a file type option!", "Invalid Option", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       Exit Sub
     End If
-    Dim strDir As String = _CurrentPath.CurrentDirectory
+    Dim strDir As String = _overridePath.CurrentDirectory
     If _struct IsNot Nothing Then
       If Not _struct.Name = "Folder" Then
-        Do Until _struct.Name = "Folder" Or _struct.ParentNode.Name = "Structure"
+        Do Until String.Equals(_struct.Name, "Folder", StringComparison.OrdinalIgnoreCase) Or String.Equals(_struct.ParentNode.Name, "Structure")
           _struct = _struct.ParentNode
         Loop
-        If _struct.Name = "Folder" Then
-          strDir = _CurrentPath.Variables.Replace(Main.PathStruct.GetURIfromXPath(FindXPath(_struct)))
+        If String.Equals(_struct.Name, "Folder", StringComparison.OrdinalIgnoreCase) Then
+          strDir = _overridePath.Variables.Replace(_overridePath.GetPathStructure().GetURIfromXPath(FindXPath(_struct)))
           If Not IO.Directory.Exists(strDir) Then
             IO.Directory.CreateDirectory(strDir)
           End If
+        Else
+          Debug.WriteLine("Finding Path Failed!")
         End If
       End If
     End If
+
     If IO.File.Exists(strDir & "\" & txtPreview.Text) Then
-      Dim archive As String = _CurrentPath.FindNearestArchive()
+      Dim archive As String = _overridePath.FindNearestArchive()
       If Not String.IsNullOrEmpty(archive) Then
         IO.File.Move(strDir & "\" & txtPreview.Text, archive & "\" & Now.ToString("yyyy-MM-dd hh-mm-ss tt") & "_" & txtPreview.Text)
-        Log("Changing the filename from '" & _CurrentPath.UNCPath & "' to '" & strDir & "\" & txtPreview.Text & "'")
-        IO.File.Move(_CurrentPath.UNCPath, strDir & "\" & txtPreview.Text) ' & filInfo.Extension)
-        _CurrentPath.LogData(strDir & "\" & txtPreview.Text, "Format Filename")
+        If strDir.IndexOf("Archive", System.StringComparison.OrdinalIgnoreCase) >= 0 Then
+          IO.File.Move(_CurrentPath.UNCPath, strDir & "\" & Now.ToString("yyyy-MM-dd hh-mm-ss tt") & "_" & txtPreview.Text) '' Adding DateTime stamp
+          _CurrentPath.LogData(strDir & "\" & Now.ToString("yyyy-MM-dd hh-mm-ss tt") & "_" & txtPreview.Text, "Format Filename")
+        Else
+          IO.File.Move(_CurrentPath.UNCPath, strDir & "\" & Now.ToString("yyyy-MM-dd hh-mm-ss tt") & "_" & txtPreview.Text) '' Not transfering to archive
+          _CurrentPath.LogData(strDir & "\" & txtPreview.Text, "Format Filename")
+        End If
       Else
         MessageBox.Show("The new name seems to exist already and an archive folder could not be found to place the old file.", "Aborting", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       End If
     Else
-      Log("Changing the filename from '" & _CurrentPath.UNCPath & "' to '" & strDir & "\" & txtPreview.Text & "'")
-      IO.File.Move(_CurrentPath.UNCPath, strDir & "\" & txtPreview.Text) ' & filInfo.Extension)
-      _CurrentPath.LogData(strDir & "\" & txtPreview.Text, "Format Filename")
+      If strDir.IndexOf("Archive", System.StringComparison.OrdinalIgnoreCase) >= 0 Then
+        IO.File.Move(_CurrentPath.UNCPath, strDir & "\" & Now.ToString("yyyy-MM-dd hh-mm-ss tt") & "_" & txtPreview.Text) '' Adding DateTime stamp
+        _CurrentPath.LogData(strDir & "\" & Now.ToString("yyyy-MM-dd hh-mm-ss tt") & "_" & txtPreview.Text, "Format Filename")
+      Else
+        IO.File.Move(_CurrentPath.UNCPath, strDir & "\" & txtPreview.Text) '' Not transfering to archive
+        _CurrentPath.LogData(strDir & "\" & txtPreview.Text, "Format Filename")
+      End If
     End If
     If _blnAutoClose Then Application.Exit()
     RaiseEvent Accepted(Me, New FormatItemAcceptedEventArgs(_CurrentPath.UNCPath))

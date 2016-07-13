@@ -246,6 +246,30 @@ Namespace My
                 Me("blnDirectArchive") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+        Public Property blnSetPermissions() As Boolean
+            Get
+                Return CType(Me("blnSetPermissions"),Boolean)
+            End Get
+            Set
+                Me("blnSetPermissions") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Ctrl+F3")>  _
+        Public Property keyWatcherSearch() As Global.System.Windows.Forms.Keys
+            Get
+                Return CType(Me("keyWatcherSearch"),Global.System.Windows.Forms.Keys)
+            End Get
+            Set
+                Me("keyWatcherSearch") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

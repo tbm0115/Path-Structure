@@ -14,20 +14,23 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <PublishUrl>publish\</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>\\server\clientapps\In-House\Path Structure\Publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
+    <InstallFrom>Unc</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ProductName>Path Structure Maintenance</ProductName>
+    <PublisherName>Irongate Machine Inc</PublisherName>
+    <ApplicationRevision>8</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -68,16 +71,22 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
+    <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\Optical Object Recognition.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>3E416281DE67717C79709AAEA5438839F0D351BA</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Path Structure Maintenance_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HTML, Version=4.0.0.17, Culture=neutral, processorArchitecture=MSIL">
@@ -111,6 +120,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\FormatDialog.Designer.vb">
+      <DependentUpon>FormatDialog.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FormatDialog.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Dialogs\Generic Text Dialog.Designer.vb">
       <DependentUpon>Generic Text Dialog.vb</DependentUpon>
     </Compile>
@@ -206,8 +221,17 @@
     <Compile Include="User Controls\Transfer_FilesByExtension.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="User Controls\Watcher.Designer.vb">
+      <DependentUpon>Watcher.vb</DependentUpon>
+    </Compile>
+    <Compile Include="User Controls\Watcher.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Dialogs\FormatDialog.resx">
+      <DependentUpon>FormatDialog.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\Generic Text Dialog.resx">
       <DependentUpon>Generic Text Dialog.vb</DependentUpon>
     </EmbeddedResource>
@@ -253,6 +277,9 @@
     <EmbeddedResource Include="User Controls\Transfer_FilesByExtension.resx">
       <DependentUpon>Transfer_FilesByExtension.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="User Controls\Watcher.resx">
+      <DependentUpon>Watcher.vb</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="My Project\app.manifest" />
@@ -269,6 +296,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\DrawGraph.js" />
+    <Content Include="Resources\ITAR Folder.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Path Structure Maintenance_TemporaryKey.pfx" />
     <None Include="Resources\Optical Object Recognition.ico" />
     <None Include="Resources\Path Structure Audit.html" />
   </ItemGroup>

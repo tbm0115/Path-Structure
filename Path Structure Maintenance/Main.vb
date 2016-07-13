@@ -4,6 +4,8 @@ Imports HTML, HTML.HTMLWriter
 Imports PathStructureClass
 Imports System.IO
 
+Imports System.Runtime.InteropServices
+
 Imports Shell32               ' for ShellFolderView
 Imports SHDocVw               ' for IShellWindows
 
@@ -14,8 +16,17 @@ Public Class Main
   Private myXML As XmlDocument
   Private _exploreWatcher As ExplorerWatcher
 
-  Public Sub LogWrapper(ByVal sender As Object, ByVal e As EventArgs)
-    IO.File.AppendAllText(My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\Path Structure Log.log", sender.ToString & vbLf)
+
+  Public Sub LogWrapper(ByVal sender As Object, ByVal e As System.String)
+    Try
+      IO.File.AppendAllText(My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\Path Structure Log.log", e & vbLf)
+    Catch ex As Exception
+      Debug.WriteLine("Failed to write: " & e)
+    End Try
+  End Sub
+
+  Private Sub Main_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+    UnregisterHotKey(Me.Handle, 100) '' Unregister Ctrl+F3 HotKey
   End Sub
   Private Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
     My.Application.SaveMySettingsOnExit = True
@@ -24,8 +35,21 @@ Public Class Main
                                    My.Settings.ERPConnection,
                                    My.Settings.blnERPCheck,
                                    My.Settings.blnDeleteThumbsDb,
+                                   True,
+                                   True,
                                    True)
     AddHandler PathStructureLog, AddressOf LogWrapper
+
+    '' Set application context menu dynamically
+    Settings.btnRemoveContextMenu_Click(Settings.btnRemoveContextMenu, Nothing)
+    Settings.btnAddContextMenu_Click(Settings.btnAddContextMenu, Nothing)
+
+    Try
+      Log(SurroundJoin(Environment.GetCommandLineArgs, "[", "]" & vbTab, True))
+    Catch ex As Exception
+      LogWrapper(Nothing, "Startup Error: " & ex.Message)
+      Exit Sub
+    End Try
 
     If Environment.GetCommandLineArgs.Length > 0 Then
       Dim args As String() = Environment.GetCommandLineArgs
@@ -59,7 +83,7 @@ Public Class Main
                 If dg = Windows.Forms.DialogResult.Yes Then
                   Log("Add All Command Received")
                   Dim c As New PathStructureClass.Path(PathStruct, GetUNCPath(args(2)))
-                  For Each fold As XmlElement In myXML.SelectNodes("//Folder")
+                  For Each fold As XmlElement In c.PathStructure.SelectNodes("//Folder")
                     If Not fold.Attributes("name").Value.Contains("{") And Not fold.Attributes("name").Value.Contains("}") Then
                       If Not IO.Directory.Exists(PathStruct.ReplaceVariables(PathStruct.GetURIfromXPath(FindXPath(fold)), c.UNCPath)) Then 'c.ReplaceVariables(c.GetURIfromXPath(FindXPath(fold)))) Then
                         IO.Directory.CreateDirectory(PathStruct.ReplaceVariables(PathStruct.GetURIfromXPath(FindXPath(fold)), c.UNCPath)) 'c.ReplaceVariables(c.GetURIfromXPath(FindXPath(fold))))
@@ -99,13 +123,16 @@ Public Class Main
                 Dim bads As New List(Of String)
 
                 '' If audit report exists, then delete it
-                If IO.File.Exists(pt.CurrentDirectory & "\Audit Report.html") Then IO.File.Delete(pt.CurrentDirectory & "\Audit Report.html")
+                Dim arc As String = pt.FindNearestArchive()
+                Dim strTS As String = DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss tt")
+
+                If IO.File.Exists(arc & "\" & strTS & "Audit Report.html") Then IO.File.Delete(arc & "\" & strTS & "Audit Report.html")
                 Dim auditRpt As New PathStructureClass.Path.AuditVisualReport(pt)
                 auditRpt.Audit()
-                IO.File.WriteAllText(pt.CurrentDirectory & "\Audit Report.html", auditRpt.ReportMarkup)
+                IO.File.WriteAllText(arc & "\" & strTS & "Audit Report.html", auditRpt.ReportMarkup)
                 MessageBox.Show("Audit Successful!", "Audit Complete!", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                Process.Start(pt.CurrentDirectory & "\Audit Report.html")
-                pt.LogData(pt.CurrentDirectory & "\Audit Report.html", "Generic Audit")
+                Process.Start(arc & "\" & strTS & "Audit Report.html")
+                pt.LogData(arc & "\" & strTS & "Audit Report.html", "Generic Audit")
                 Application.Exit()
               Else
                 Log("Path does not match default path!" & vbCrLf & vbTab & "'" & GetUNCPath(args(2)) & "'")
@@ -173,14 +200,45 @@ Public Class Main
               fhm.Dock = DockStyle.Fill
               pnlContainer.Controls.Add(fhm)
             End If
+          Case "-permissions"
+            If args.Length >= 3 Then
+              If IO.Directory.Exists(args(2)) Then
+                If PathStruct.IsInDefaultPath(GetUNCPath(args(2))) Then ' GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) And Not GetUNCPath(opn.CurrentDirectory) = defaultPath Then
+                  Dim pt As New PathStructureClass.Path(PathStruct, GetUNCPath(args(2)))
+                  If pt.IsNameStructured() Then
+                    If pt.StructureCandidates.Count = 1 Then
+                      If pt.StructureCandidates(0).XElement.HasAttribute("permissionsgroup") Then
+                        '' If allowed, check if this path requires permissions and set the permissions if allowed to
+                        If pt.Users IsNot Nothing Then
+                          pt.Users.SetPermissionsByGroup(pt.UNCPath, pt.StructureCandidates(0).XElement.Attributes("permissionsgroup").Value)
+                          MessageBox.Show("Complete!")
+                        Else
+                          MessageBox.Show("Couldn't set permissions because no users could be read from the Path Structure settings", "No Users", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                        End If
+                      Else
+                        MessageBox.Show("The detected Path Structure (" & pt.StructureCandidates(0).StructurePath & ") did not have a permissions group attribute applied in the Path Structure settings. Talk to an administrator to see that this is resolved.", "Missing 'permissionsgroup' attribute", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                      End If
+                    Else
+                      MessageBox.Show("Too many potential Path Structures detected and couldn't determine a valid Path Structure from the following path: " & vbLf & pt.UNCPath, "Invalid Path Structure", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                    End If
+                  Else
+                    MessageBox.Show("Couldn't determine a valid Path Structure from the following path: " & vbLf & pt.UNCPath, "Invalid Path Structure", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                  End If
+                Else
+                  Log("Path does not match default path!" & vbCrLf & vbTab & "'" & GetUNCPath(args(2)) & "'")
+                  MessageBox.Show("You must be within a default path!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                End If
+              End If
+            End If
+            Application.Exit()
           Case "-archive"
             If args.Length >= 3 Then
               Dim cnt As Integer = 0
               For i = 2 To args.Length - 1 Step 1
-                Log("Archive command received '" & args(i) & "'")
+                'Log("Archive command received '" & args(i) & "'")
                 If Not String.IsNullOrEmpty(args(i)) Then
                   strTemp = GetUNCPath(args(i))
-                  Log("Going to try to archive '" & strTemp & "'")
+                  'Log("Going to try to archive '" & strTemp & "'")
                   If PathStruct.IsInDefaultPath(strTemp) Then
                     statCurrentPath.Text = strTemp
 
@@ -188,7 +246,7 @@ Public Class Main
                     Dim tmp As New PathStructureClass.Path(PathStruct, strTemp)
                     If tmp.Type = PathStructureClass.Path.PathType.File Then
                       Dim arc As String = tmp.FindNearestArchive()
-                      Log(vbTab & "Archive path '" & arc & "'")
+                      'Log(vbTab & "Archive path '" & arc & "'")
                       If Not String.IsNullOrEmpty(arc) Then
                         If Not IO.Directory.Exists(arc) Then
                           IO.Directory.CreateDirectory(arc)
@@ -218,7 +276,6 @@ Public Class Main
         End Select
       End If
     End If
-
   End Sub
 
   Private Sub mnuSettings_Click(sender As Object, e As EventArgs) Handles mnuSettings.Click
@@ -355,14 +412,16 @@ Public Class Main
         Dim pt As New PathStructureClass.Path(PathStruct, GetUNCPath(opn.FileName))
         Dim bads As New List(Of String)
 
+        Dim arc As String = pt.FindNearestArchive()
+        Dim strTS As String = DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss tt")
         '' If audit report exists, then delete it
-        If IO.File.Exists(pt.CurrentDirectory & "\Audit Report.html") Then IO.File.Delete(pt.CurrentDirectory & "\Audit Report.html")
+        If IO.File.Exists(arc & "\" & strTS & "Audit Report.html") Then IO.File.Delete(arc & "\" & strTS & "Audit Report.html")
         Dim auditRpt As New PathStructureClass.Path.AuditVisualReport(pt)
         auditRpt.Audit()
-        pt.LogData(pt.StartPath & "\Audit Report.html", "Generic Audit")
+        pt.LogData(pt.StartPath & "\" & strTS & "Audit Report.html", "Generic Audit")
         Try
-          IO.File.WriteAllText(pt.CurrentDirectory & "\Audit Report.html", auditRpt.ReportMarkup)
-          Process.Start(pt.CurrentDirectory & "\Audit Report.html")
+          IO.File.WriteAllText(arc & "\" & strTS & "Audit Report.html", auditRpt.ReportMarkup)
+          Process.Start(arc & "\" & strTS & "Audit Report.html")
         Catch ex As Exception
           MessageBox.Show("An error occurred while attempting to create the audit report: " & vbLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
@@ -391,18 +450,20 @@ Public Class Main
       If PathStruct.IsInDefaultPath(GetUNCPath(opn.CurrentDirectory)) Then ' GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) And Not GetUNCPath(opn.CurrentDirectory) = defaultPath Then
         Dim pt As New PathStructureClass.Path(PathStruct, GetUNCPath(opn.CurrentDirectory))
 
+        Dim strTS As String = DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss tt")
         '' If audit report exists, then delete it
-        If IO.File.Exists(pt.CurrentDirectory & "\Audit Report.html") Then IO.File.Delete(pt.CurrentDirectory & "\Audit Report.html")
         Dim auditRpt As New PathStructureClass.Path.AuditVisualReport(pt)
         auditRpt.Audit()
+        Dim arc As String = pt.FindNearestArchive()
+        If IO.File.Exists(arc & "\" & strTS & "Audit Report.html") Then IO.File.Delete(arc & "\" & strTS & "Audit Report.html")
         Try
-          IO.File.WriteAllText(pt.CurrentDirectory & "\Audit Report.html", auditRpt.ReportMarkup)
-          Process.Start(pt.CurrentDirectory & "\Audit Report.html")
+          IO.File.WriteAllText(arc & "\" & strTS & "Audit Report.html", auditRpt.ReportMarkup)
+          Process.Start(arc & "\" & strTS & "Audit Report.html")
         Catch ex As Exception
           MessageBox.Show("An error occurred while attempting to create the audit report: " & vbLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
-        pt.LogData(pt.CurrentDirectory & "\Audit Report.html", "Generic Audit")
+        pt.LogData(arc & "\" & strTS & "Audit Report.html", "Generic Audit")
       Else
         Log("Path does not match default path!" & vbCrLf & vbTab & "'" & GetUNCPath(opn.CurrentDirectory) & "'")
         MessageBox.Show("You must be within a default path!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
@@ -414,6 +475,7 @@ Public Class Main
   Private Sub CancelAudit_Clicked(ByVal sender As System.Object, ByVal e As EventArgs)
     cancelAudit = True
     If auditRpt IsNot Nothing Then auditRpt.Quit()
+    If bgwAudit.IsBusy Then bgwAudit.CancelAsync()
   End Sub
   'Private Sub mnuToolsAuditDefaultPath_Click(sender As Object, e As EventArgs)
   '  pnlContainer.Controls.Clear()
@@ -621,67 +683,6 @@ Public Class Main
       End If
     End If
   End Sub
-  Private Sub mnuGeneratePathStructure_Click(sender As Object, e As EventArgs) Handles mnuGeneratePathStructure.Click
-    Dim rpt As New HTMLWriter
-
-    rpt.AddBootstrapReference()
-    rpt += "<style>ul li{list-style-type: none;cursor: pointer;}.folder:before{content:'\e118';font-family:'Glyphicons Halflings';font-size:12px;float:left;margin-top:4px;margin-left:-17px;color:#222;}.file:before{content:'\e032';font-family:'Glyphicons Halflings';font-size:12px;float:left;margin-top:4px;margin-left:-17px;color:#222;}.contains:before{color: steelblue;}</style>"
-    rpt += New HTMLHeader("Path Structure", HTMLHeader.HeaderSize.H1)
-    rpt += New HTMLHeader("This document is not controlled. Created " & DateTime.Now.ToString("MM/dd/yyyy hh:mm tt"), HTMLHeader.HeaderSize.H6)
-
-    rpt += New HTMLParagraph("Folders and Files with a name enclosed in <code>{}</code> are wildcard objects, meaning that the object name can be any valid object name.", New AttributeList({"class"}, {"alert alert-info"}))
-
-    Dim lstMain As New HTMLList(HTMLList.ListType.Unordered, New AttributeList({"id"}, {"structure"}))
-
-    If IsNothing(myXML) Then
-      myXML = New XmlDocument
-      myXML.Load(My.Settings.SettingsPath)
-    End If
-
-
-    If myXML.SelectNodes("//Structure").Count > 0 Then
-      Dim structures As XmlNodeList = myXML.SelectNodes("//Structure")
-      For i = 0 To structures.Count - 1 Step 1
-        Dim struct As New HTMLList.ListItem("Structure: " & structures(i).Attributes("defaultPath").Value.ToString)
-        Dim innerList As New HTMLList(HTMLList.ListType.Unordered)
-        For Each chld As XmlElement In structures(i).SelectNodes("./*")
-          If Not chld.Name = "Variables" And Not chld.Name = "Variable" Then
-            innerList += RecursivePathStructure(chld)
-          End If
-        Next
-        struct.AddInnerHTML(innerList.Markup)
-        lstMain.AddListItem(struct)
-      Next
-    End If
-    'lstMain.SetList()
-
-    rpt += lstMain.Markup
-
-    rpt += ("<script type='text/javascript'>" & _
-            "$('#structure ul li ul').toggle();" & _
-            "$('.folder,.file').click(function() {" & _
-            "$(this).children('ul').slideToggle();" & _
-            "return false;" & _
-            "});</script>")
-
-    Dim opn As New SaveFileDialog
-    opn.Title = "Select a location to save the report..."
-    opn.Filter = "HTML|*.html"
-    opn.FileName = "Path Structure.html"
-    opn.CheckPathExists = True
-    opn.OverwritePrompt = True
-
-    opn.ShowDialog()
-
-    If Not String.IsNullOrEmpty(opn.FileName) Then
-      Try
-        IO.File.WriteAllText(opn.FileName, rpt.HTMLMarkup)
-        Process.Start(opn.FileName)
-      Catch ex As Exception
-        MessageBox.Show("An error occurred while attempting to save and open the Path Structure: " & vbLf & ex.Message & vbLf & opn.FileName, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-      End Try
-    End If
-  End Sub
   Private Function RecursivePathStructure(ByVal node As XmlElement) As HTMLList.ListItem
     Dim li As HTMLList.ListItem
     Dim cls As String = ""
@@ -702,7 +703,6 @@ Public Class Main
     End If
     Return li
   End Function
-
   Private Sub mnuToolsFolderHeatMap_Click(sender As Object, e As EventArgs) Handles mnuToolsFolderHeatMap.Click
     Dim opn As New SelectFolderDialog
     opn.Title = "Select a folder to search for preview:"
@@ -720,6 +720,49 @@ Public Class Main
       Dim fhm As New FolderHeatMap(GetUNCPath(opn.CurrentDirectory))
       fhm.Dock = DockStyle.Fill
       pnlContainer.Controls.Add(fhm)
+    End If
+  End Sub
+  Private Sub mnuToolsSetPermissions_Click(sender As Object, e As EventArgs) Handles mnuToolsSetPermissions.Click
+    Dim dialogSelect As New Select_Default_Path()
+    Dim dg As DialogResult = dialogSelect.ShowDialog
+    Dim defaultPath As String
+    If dg = Windows.Forms.DialogResult.OK And Not String.IsNullOrEmpty(dialogSelect.DefaultPath) Then
+      defaultPath = dialogSelect.DefaultPath
+    Else
+      Exit Sub
+    End If
+    Dim opn As New SelectFolderDialog
+    opn.Title = "Select a 'parts' folder to format:"
+    If IO.Directory.Exists(defaultPath) Then
+      opn.InitialDirectory = defaultPath
+    End If
+    opn.ShowDialog()
+    If IO.Directory.Exists(opn.CurrentDirectory) And opn.DialogResult = Windows.Forms.DialogResult.OK Then
+      If PathStruct.IsInDefaultPath(GetUNCPath(opn.CurrentDirectory)) Then ' GetUNCPath(opn.CurrentDirectory).StartsWith(defaultPath) And Not GetUNCPath(opn.CurrentDirectory) = defaultPath Then
+        Dim pt As New PathStructureClass.Path(PathStruct, GetUNCPath(opn.CurrentDirectory))
+        If pt.IsNameStructured() Then
+          If pt.StructureCandidates.Count = 1 Then
+            If pt.StructureCandidates(0).XElement.HasAttribute("permissionsgroup") Then
+              '' If allowed, check if this path requires permissions and set the permissions if allowed to
+              If pt.Users IsNot Nothing Then
+                pt.Users.SetPermissionsByGroup(pt.UNCPath, pt.StructureCandidates(0).XElement.Attributes("permissionsgroup").Value)
+                MessageBox.Show("Complete!")
+              Else
+                MessageBox.Show("Couldn't set permissions because no users could be read from the Path Structure settings", "No Users", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+              End If
+            Else
+              MessageBox.Show("The detected Path Structure (" & pt.StructureCandidates(0).StructurePath & ") did not have a permissions group attribute applied in the Path Structure settings. Talk to an administrator to see that this is resolved.", "Missing 'permissionsgroup' attribute", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            End If
+          Else
+            MessageBox.Show("Too many potential Path Structures detected and couldn't determine a valid Path Structure from the following path: " & vbLf & pt.UNCPath, "Invalid Path Structure", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+          End If
+        Else
+          MessageBox.Show("Couldn't determine a valid Path Structure from the following path: " & vbLf & pt.UNCPath, "Invalid Path Structure", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+        End If
+      Else
+        Log("Path does not match default path!" & vbCrLf & vbTab & "'" & GetUNCPath(opn.CurrentDirectory) & "'")
+        MessageBox.Show("You must be within a default path!", "Wrong Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+      End If
     End If
   End Sub
 
@@ -746,41 +789,36 @@ Public Class Main
     pnlContainer.Controls.Add(auditList)
 
 
-    Dim tot As Integer
-    Dim stp As New Stopwatch
-    stp.Start()
-    'Dim auditRpt As New PathStructure.AuditVisualReport(New PathStructure(defaultPath))
     auditRpt = New PathStructureClass.Path.AuditVisualReport(New PathStructureClass.Path(PathStruct, defaultPath))
     AddHandler auditRpt.ChildAudited, AddressOf AuditChildUpdate
     AddHandler auditRpt.GrandChildAudited, AddressOf AuditGrandchildUpdate
-
-    Dim curIndex As Integer = 0
-    Dim totCustomers As Integer = IO.Directory.EnumerateDirectories(defaultPath).Count
-    Dim lstTime As New List(Of Double)
-    Dim lstAverageHistory As New List(Of Double)
-    Dim stpWatch As New Stopwatch
-    Dim averageTime As Double
-
-    auditRpt.Audit()
     cancelAudit = False
 
-    stp.Stop()
-    Dim ts As New TimeSpan(0, 0, 0, 0, stp.ElapsedMilliseconds)
-    auditList.Items.Insert(0, "Audited '" & auditRpt.FileCount.ToString & "' files in '" & ts.Hours.ToString & ":" & ts.Minutes.ToString & ":" & ts.Seconds.ToString & "." & ts.Milliseconds.ToString & "'")
-    auditList.Items.Insert(0, tot.ToString & " part folders audited.")
-    'rtb.AppendText(vbLf & "Audited '" & auditRpt.FileCount.ToString & "' files in '" & ts.Hours.ToString & ":" & ts.Minutes.ToString & ":" & ts.Seconds.ToString & "." & ts.Milliseconds.ToString & "'" & vbLf)
-    'rtb.AppendText(tot.ToString & " part folders audited." & vbLf)
+    Dim totCustomers As Integer = IO.Directory.EnumerateDirectories(defaultPath).Count
+    Dim tot As Integer
+    Dim stp As New Stopwatch
+    stp.Start()
 
-    '' Remove parts progress bar
-    'StatusStrip1.Items.Remove(progParts)
+    bgwAudit.RunWorkerAsync()
 
-    MessageBox.Show("Click OK to open temporary report...", "Audit Complete!", MessageBoxButtons.OK, MessageBoxIcon.Information)
-    IO.File.WriteAllText(defaultPath & "\Audit Report.html", auditRpt.ReportMarkup)
-    Try
-      Process.Start(defaultPath & "\Audit Report.html")
-    Catch ex As Exception
-      MessageBox.Show("An error occurred while attempting to create the audit report: " & vbLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-    End Try
+    AddHandler bgwAudit.RunWorkerCompleted, Sub()
+                                              stp.Stop()
+                                              Dim ts As New TimeSpan(0, 0, 0, 0, stp.ElapsedMilliseconds)
+                                              auditList.Items.Insert(0, "Audited '" & auditRpt.FileCount.ToString & "' files in '" & ts.Hours.ToString & ":" & ts.Minutes.ToString & ":" & ts.Seconds.ToString & "." & ts.Milliseconds.ToString & "'")
+                                              auditList.Items.Insert(0, tot.ToString & " part folders audited.")
+                                              MessageBox.Show("Click OK to open temporary report...", "Audit Complete!", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                                              Dim strTS As String = DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss tt")
+                                              IO.File.WriteAllText(defaultPath & "\" & strTS & "Audit Report.html", auditRpt.ReportMarkup)
+                                              Try
+                                                Process.Start(defaultPath & "\" & strTS & "Audit Report.html")
+                                              Catch ex As Exception
+                                                MessageBox.Show("An error occurred while attempting to create the audit report: " & vbLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                              End Try
+                                            End Sub
+
+  End Sub
+  Private Sub RunAudit() Handles bgwAudit.DoWork
+    auditRpt.Audit()
   End Sub
   'Public Sub ThreadPart(ByVal params As Object)
   '  params(0).AuditVisualChildren(params(1), params(2), params(0))
@@ -818,7 +856,7 @@ Public Class Main
       Me.statProgress.Value = (e.Index / e.ParentTotal) * 100
       Me.statStatus.Text = e.Index.ToString & " / " & e.ParentTotal.ToString & " children"
       auditGrandchildCount = 0
-      Application.DoEvents()
+      'Application.DoEvents()
     End If
   End Sub
   Delegate Sub AuditGrandchildUpdateCallback(e As PathStructureClass.Path.AuditVisualReport.AuditedEventArgs)
@@ -828,11 +866,9 @@ Public Class Main
       Dim d As New AuditGrandchildUpdateCallback(AddressOf AuditGrandchildUpdate)
       Me.Invoke(d, New Object() {e})
     Else
-      'If Me.auditList.Items.Count > 100 Then Me.auditList.Items.Clear()
-      'Me.auditList.Items.Insert(0, "Child audited '" & e.Path & "'")
       auditGrandchildCount += 1
       Me.statCurrentPath.Text = auditGrandchildCount.ToString & " objects in child"
-      Application.DoEvents()
+      'Application.DoEvents()
     End If
   End Sub
 
@@ -842,6 +878,7 @@ Public Class Main
     strTemp = IO.Path.Combine(CurrentPath, PathName)
 
     Dim pt As New PathStructureClass.Path(PathStruct, CurrentPath)
+
 
     Dim folderName As String
     folderName = PathStruct.ReplaceVariables(strTemp, CurrentPath) 'pt.ReplaceVariables(strTemp)
@@ -879,118 +916,71 @@ Public Class Main
   End Function
 
   Private Sub mnuExplorerWatcher_Click(sender As Object, e As EventArgs) Handles mnuExplorerWatcher.Click
-    _exploreWatcher = New ExplorerWatcher(PathStruct, 250)
-    AddHandler _exploreWatcher.ExplorerWatcherFound, AddressOf ExplorerFound
-    AddHandler _exploreWatcher.ExplorerWatcherAborted, AddressOf ExplorerAbort
-    AddHandler ExplorerNotification.BalloonTipClicked, AddressOf ExplorerNotification_Click
-    _exploreWatcher.StartWatcher()
+    Me.SetDesktopLocation(My.Computer.Screen.WorkingArea.Width - Me.Width,
+                                          My.Computer.Screen.WorkingArea.Height - Me.Height)
+    pnlContainer.Controls.Clear()
+
+    Dim ctrlWatch As New Watcher(PathStruct)
+    ctrlWatch.Dock = DockStyle.Fill
+    pnlContainer.Controls.Add(ctrlWatch)
+
+    RegisterHotKey(Me.Handle, 100, MOD_ALT, Keys.F3) '' Register Ctrl+F3 hotkey
+
     mnuExplorerWatcher.Enabled = False
   End Sub
 
-  Public Sub ExplorerFound(ByVal sender As Object, ByVal e As ExplorerWatcher.ExplorerWatcherFoundEventArgs)
-    Dim targetList As List(Of PathStructureClass.Path)
-    Dim strCommand As String
+  <DllImport("User32.dll")> _
+  Public Shared Function RegisterHotKey(ByVal hwnd As IntPtr, _
+                                        ByVal id As Integer, ByVal fsModifiers As Integer,
+                                        ByVal vk As Integer) As Integer
+  End Function
+  <DllImport("User32.dll")> _
+  Public Shared Function UnregisterHotKey(ByVal hwnd As IntPtr, _
+                                          ByVal id As Integer) As Integer
+  End Function
 
-    If e.BadPaths.Count > 0 Then
-      targetList = e.BadPaths
-      strCommand = "Click to Conduct Audit"
-      ExplorerNotification.BalloonTipIcon = ToolTipIcon.Warning
-    Else
-      targetList = e.GoodPaths
-      strCommand = "Click to Copy to Clipboard"
-      ExplorerNotification.BalloonTipIcon = ToolTipIcon.Info
-    End If
+  Private toolExplorerSearch As Watcher
+  Public Const MOD_ALT As Integer = &H1
+  Public Const WM_HOTKEY As Integer = &H312
 
-    '' Files are all good
-    If ExplorerNotification.Tag Is Nothing Then
-      '' Tag is only initialized
-      ExplorerNotification.Tag = targetList
-    Else
-      '' Get tagged list (from last explorer check)
-      Dim lst As List(Of PathStructureClass.Path)
-      lst = ExplorerNotification.Tag
-      '' Check if same count
-      If lst.Count = targetList.Count Then
-        '' Same count, so verify any changes in actual paths
-        For i = lst.Count - 1 To 0 Step -1
-          If Not lst(i).Equals(targetList(i)) Then
-            '' If the path has changed, then replace the path in the list
-            lst(i) = targetList(i)
-          End If
-        Next
-      Else
-        '' Counts are different, so replace list with new one
-        lst = targetList
-      End If
-      '' Trim non-default path items
-      For i = lst.Count - 1 To 0 Step -1
-        If Not PathStruct.IsInDefaultPath(lst(i).UNCPath) Then
-          lst.RemoveAt(i)
-        End If
-      Next
-      '' Reset the tag with the latest list
-      ExplorerNotification.Tag = lst
-      ExplorerNotification.BalloonTipTitle = strCommand
-      Dim out As String = ""
-      For Each p As PathStructureClass.Path In lst
-        Dim cand As PathStructureClass.Path.StructureCandidate = p.StructureCandidates.GetHighestMatch()
-        If cand IsNot Nothing Then
-          Dim strTemp As String = "[" & p.UNCPath & "]" & vbCrLf & cand.PathName & ": " & cand.StructureDescription & vbCrLf & vbTab & "" & vbCrLf
-          '' Check if the current text mentions anything about the existing paths
-          If Not ExplorerNotification.BalloonTipText.Contains(strTemp) Then
-            out += strTemp
-          End If
-        Else
-          out += p.UNCPath & vbCrLf
-        End If
-      Next
-      ExplorerNotification.BalloonTipText = out
-    End If
-
-    If Not String.IsNullOrEmpty(ExplorerNotification.BalloonTipText) Then
-      ExplorerNotification.ShowBalloonTip(500)
-    End If
-  End Sub
-  Public Sub ExplorerAbort(ByVal sender As Object, ByVal e As System.UnhandledExceptionEventArgs)
-    ExplorerNotification.BalloonTipText = "Watcher has aborted due to error." & vbCrLf & e.ExceptionObject.Message
-    Log("An error occurred while watching Windows Explorer: " & e.ExceptionObject.Message)
-    ExplorerNotification.BalloonTipIcon = ToolTipIcon.Error
-    If Not String.IsNullOrEmpty(ExplorerNotification.BalloonTipText) Then
-      ExplorerNotification.ShowBalloonTip(1200)
-    End If
-    mnuExplorerWatcher.Enabled = True
-  End Sub
-
-  Private Sub ExplorerNotification_Click(ByVal sender As Object, e As EventArgs)
-    If ExplorerNotification.Tag IsNot Nothing Then
-      If ExplorerNotification.BalloonTipTitle = "Click to Copy" Then
-        Dim lst As List(Of PathStructureClass.Path) = ExplorerNotification.Tag
-        If lst.Count > 0 Then
-          If lst.Count > 1 Then
-            Dim sel As New Select_File_from_List(lst)
-            Dim dg As DialogResult = sel.ShowDialog()
-            If dg = Windows.Forms.DialogResult.OK Then
-              My.Computer.Clipboard.SetText(sel.SelectedPath)
-              Debug.WriteLine("Set '" & sel.SelectedPath & "' to clipboard")
+  Protected Overrides Sub WndProc(ByRef m As Message)
+    If m.Msg = WM_HOTKEY Then
+      Dim id As IntPtr = m.WParam
+      Select Case (id.ToString)
+        Case "100"
+          If toolExplorerSearch Is Nothing Then
+            If _exploreWatcher.CurrentFoundPaths IsNot Nothing Then
+              If _exploreWatcher.CurrentFoundPaths.FoundPaths.Count > 0 Then
+                toolExplorerSearch = New Watcher(PathStruct)
+              Else
+                toolExplorerSearch = New Watcher(PathStruct)
+              End If
+              Me.SetDesktopLocation(My.Computer.Screen.WorkingArea.Width - Me.Width,
+                                                    My.Computer.Screen.WorkingArea.Height - Me.Height)
+              toolExplorerSearch.Show()
             End If
           Else
-            My.Computer.Clipboard.SetText(lst(0).UNCPath)
-            Debug.WriteLine("Set '" & lst(0).UNCPath & "' to clipboard")
+            If toolExplorerSearch.IsDisposed Then
+              If _exploreWatcher.CurrentFoundPaths IsNot Nothing Then
+                If _exploreWatcher.CurrentFoundPaths.FoundPaths.Count > 0 Then
+                  toolExplorerSearch = New Watcher(PathStruct)
+                Else
+                  toolExplorerSearch = New Watcher(PathStruct)
+                End If
+                Me.SetDesktopLocation(My.Computer.Screen.WorkingArea.Width - Me.Width,
+                                                      My.Computer.Screen.WorkingArea.Height - Me.Height)
+                toolExplorerSearch.Show()
+              End If
+            Else
+              If toolExplorerSearch.Visible Then
+                toolExplorerSearch.Hide()
+              Else
+                toolExplorerSearch.Show()
+              End If
+            End If
           End If
-        Else
-          Debug.WriteLine("No items in Path list")
-        End If
-      ElseIf ExplorerNotification.BalloonTipTitle = "Click to Conduct Audit" Then
-        pnlContainer.Controls.Clear()
-        Dim fxAudit As New FixAudit(ExplorerNotification.Tag)
-        fxAudit.Dock = DockStyle.Fill
-        pnlContainer.Controls.Add(fxAudit)
-      Else
-        Debug.WriteLine("Unrecognized command")
-      End If
-    Else
-      Debug.WriteLine("Tag is nothing")
+      End Select
     End If
+    MyBase.WndProc(m)
   End Sub
-
 End Class

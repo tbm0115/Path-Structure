@@ -39,10 +39,12 @@ Partial Class Format_Item
     '
     'pnlFileType
     '
+    Me.pnlFileType.AutoSize = True
     Me.pnlFileType.Controls.Add(Me.cmbFiles)
     Me.pnlFileType.Controls.Add(Me.Label1)
     Me.pnlFileType.Dock = System.Windows.Forms.DockStyle.Top
     Me.pnlFileType.Location = New System.Drawing.Point(0, 0)
+    Me.pnlFileType.MinimumSize = New System.Drawing.Size(520, 44)
     Me.pnlFileType.Name = "pnlFileType"
     Me.pnlFileType.Padding = New System.Windows.Forms.Padding(5)
     Me.pnlFileType.Size = New System.Drawing.Size(520, 44)
@@ -70,11 +72,13 @@ Partial Class Format_Item
     '
     'pnlOptions
     '
+    Me.pnlOptions.AutoSize = True
     Me.pnlOptions.Controls.Add(Me.cmbOptions)
     Me.pnlOptions.Controls.Add(Me.Label2)
     Me.pnlOptions.Dock = System.Windows.Forms.DockStyle.Top
     Me.pnlOptions.Enabled = False
     Me.pnlOptions.Location = New System.Drawing.Point(0, 44)
+    Me.pnlOptions.MinimumSize = New System.Drawing.Size(520, 44)
     Me.pnlOptions.Name = "pnlOptions"
     Me.pnlOptions.Padding = New System.Windows.Forms.Padding(5)
     Me.pnlOptions.Size = New System.Drawing.Size(520, 44)
@@ -132,6 +136,7 @@ Partial Class Format_Item
     'pnlVariables
     '
     Me.pnlVariables.AutoScroll = True
+    Me.pnlVariables.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
     Me.pnlVariables.Dock = System.Windows.Forms.DockStyle.Fill
     Me.pnlVariables.Location = New System.Drawing.Point(0, 88)
     Me.pnlVariables.Name = "pnlVariables"
@@ -155,6 +160,7 @@ Partial Class Format_Item
     Me.pnlPreview.ResumeLayout(False)
     Me.pnlPreview.PerformLayout()
     Me.ResumeLayout(False)
+    Me.PerformLayout()
 
   End Sub
   Friend WithEvents pnlFileType As System.Windows.Forms.Panel
