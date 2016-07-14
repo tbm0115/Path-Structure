@@ -4,6 +4,11 @@ Public Class Watcher
   Private _pstruct As PathStructure
   Private _exploreWatcher As ExplorerWatcher
   Private _curPath As Path
+  Public ReadOnly Property ActiveWatcher As ExplorerWatcher
+    Get
+      Return _exploreWatcher
+    End Get
+  End Property
 
   Public Property CurrentPath As Path
     Get
@@ -32,11 +37,14 @@ Public Class Watcher
     statWatchLabel.Text = "Watching..."
   End Sub
 
-
   Private Sub trvFileSystem_NodeMouseDoubleClick(sender As Object, e As TreeNodeMouseClickEventArgs) Handles trvFileSystem.NodeMouseDoubleClick
     If trvFileSystem.SelectedNode IsNot Nothing Then
       If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
-        Me.CurrentPath = trvFileSystem.SelectedNode.Tag
+        If trvFileSystem.SelectedNode.Tag.Type = Path.PathType.Folder Then
+          Me.CurrentPath = trvFileSystem.SelectedNode.Tag
+        Else
+          statWatchLabel.Text = "Cannot open file as a folder!"
+        End If
       Else
         Me.CurrentPath = _curPath.Parent
       End If
@@ -61,8 +69,18 @@ Public Class Watcher
         End If
         If Path.Children(i).IsNameStructured() Then
           nd.BackColor = Color.LightGreen
+          nd.ToolTipText = Path.Children(i).StructureCandidates.GetHighestMatch().StructureDescription
         Else
           nd.BackColor = Color.PaleVioletRed
+          If Path.Children(i).StructureCandidates.Count > 0 Then
+            Debug.WriteLine(Path.Children(i).UNCPath)
+            For j = 0 To Path.Children(i).StructureCandidates.Count - 1 Step 1
+              Debug.WriteLine(vbTab & "Candidate Score: " & Path.Children(i).StructureCandidates(j).MatchPercentage.ToString & "%" & vbTab & Path.Children(i).StructureCandidates(j).PathName)
+            Next
+            If Path.Children(i).StructureCandidates.GetHighestMatch().MatchPercentage = 99 Then
+              nd.BackColor = Color.Yellow '' Set to yellow because extension was not matched
+            End If
+          End If
         End If
         nd.Tag = Path.Children(i)
         trvFileSystem.Nodes.Add(nd)
@@ -97,6 +115,11 @@ Public Class Watcher
               Else
                 Continue For
               End If
+
+              If nds(i).Attributes("description") IsNot Nothing Then
+                nd.ToolTipText = nds(i).Attributes("description").Value
+              End If
+
               '' Try to find an existing child in the current path that matches this node's XPath
               Dim strXPath As String = nds(i).FindXPath()
               If _curPath.Children IsNot Nothing Then
@@ -175,45 +198,32 @@ Public Class Watcher
 
   Delegate Sub ToolExplorerSearchCallback(ByVal sender As Object, ByVal e As ExplorerWatcher.ExplorerWatcherFoundEventArgs)
   Public Sub ExplorerFound(ByVal sender As Object, ByVal e As ExplorerWatcher.ExplorerWatcherFoundEventArgs)
-    If Me IsNot Nothing Then
-      If Me.InvokeRequired Then
-        Dim d As New ToolExplorerSearchCallback(AddressOf ExplorerFound)
-        Me.Invoke(d, New Object() {sender, e})
-      Else
-        If e.FoundPaths.Count > 0 Then
-          Me.CurrentPath = e.FoundPaths(0)
-          statWatchLabel.Text = "Watching..."
+    Try
+      If Me IsNot Nothing Then
+        If Me.InvokeRequired Then
+          Dim d As New ToolExplorerSearchCallback(AddressOf ExplorerFound)
+          Me.Invoke(d, New Object() {sender, e})
+        Else
+          If e.FoundPaths.Count > 0 Then
+            Me.CurrentPath = e.FoundPaths(0)
+            statWatchLabel.Text = "Watching..."
+          End If
         End If
       End If
-    End If
+    Catch ex As Exception
+
+    End Try
   End Sub
   Public Sub ExplorerAbort(ByVal sender As Object, ByVal e As System.UnhandledExceptionEventArgs)
-    Log("An error occurred while watching Windows Explorer: " & e.ExceptionObject.Message)
     Try
+      Log("An error occurred while watching Windows Explorer: " & e.ExceptionObject.Message)
       _exploreWatcher = New ExplorerWatcher(_pstruct, 250)
       _exploreWatcher.StartWatcher()
     Catch ex As Exception
       MessageBox.Show("An error occurred while attempting to fix a crash in the Explorer Watcher:" & vbLf & ex.Message,
                       "Failed to Restart Watcher", MessageBoxButtons.OK, MessageBoxIcon.Error)
+      Main.mnuExplorerWatcher.Enabled = True
       statWatchLabel.Text = "Aborted!"
-    End Try
-  End Sub
-
-  Private Sub mnuWatchCopy_Click(sender As Object, e As EventArgs) Handles mnuWatchCopy.Click
-    Try
-      If trvFileSystem.SelectedNode IsNot Nothing Then
-        If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
-          My.Computer.Clipboard.SetText(trvFileSystem.SelectedNode.Tag.UNCPath)
-        Else
-          My.Computer.Clipboard.SetText(_curPath.UNCPath)
-        End If
-      Else
-        My.Computer.Clipboard.SetText(_curPath.UNCPath)
-      End If
-      statWatchLabel.Text = "Copied to Clipboard!"
-    Catch ex As Exception
-      Log("{Watcher}Copy: " & ex.Message)
-      statWatchLabel.Text = "Failed copy!"
     End Try
   End Sub
 
@@ -236,6 +246,7 @@ Public Class Watcher
                 IO.Directory.CreateDirectory(lst(i))
               Next
               statWatchLabel.Text = "Created " & lst.Count.ToString & " folders"
+              Me.CurrentPath = New Path(_curPath.GetPathStructure, _curPath.UNCPath) '' "Refresh" view
             Else
               statWatchLabel.Text = "No valid paths"
             End If
@@ -278,16 +289,56 @@ Public Class Watcher
           frmt.ShowDialog()
         Next
         statWatchLabel.Text = "FSO(s) added"
+        Me.CurrentPath = New Path(_curPath.GetPathStructure, _curPath.UNCPath) '' "Refresh" view
       End If
     ElseIf e.Data.GetDataPresent("System.Windows.Forms.TreeNode") Then
       If trvPathStructure.SelectedNode IsNot Nothing Then
         Dim nd As TreeNode = e.Data.GetData("System.Windows.Forms.TreeNode")
         Dim pt As Path = nd.Tag
 
-        Dim frmt As New FormatDialog(nd.Tag.UNCPath, _pstruct, trvPathStructure.SelectedNode.Text, trvPathStructure.SelectedNode.Tag)
-        frmt.ShowDialog()
+        If mnuDisableRenameOnMove.Checked = False Then
+          Try
+            Dim archive As String = pt.FindNearestArchive()
+            If Not String.IsNullOrEmpty(archive) Then
+              If IO.Directory.Exists(archive) Then
+                IO.File.Copy(pt.UNCPath, archive & "\" & Now.ToString("yyyy-MM-dd") & "_" & pt.PathName)
+              End If
+            End If
+          Catch ex As Exception
+            Log("Failed to copy to archive")
+          End Try
 
-        statWatchLabel.Text = "File formatted"
+          Dim frmt As New FormatDialog(nd.Tag.UNCPath, _pstruct, trvPathStructure.SelectedNode.Text, trvPathStructure.SelectedNode.Tag)
+          frmt.ShowDialog()
+
+          statWatchLabel.Text = "File formatted"
+        Else '' perform move
+          Dim structPath As Path
+          If trvPathStructure.SelectedNode.Tag Is Nothing Then '' Folder doesn't exist, so create it
+            '' Try to create the folder
+            statWatchLabel.Text = "The folder needs to be created first!"
+          Else
+            structPath = trvPathStructure.SelectedNode.Tag
+          End If
+          If structPath IsNot Nothing Then
+            If structPath.Type = Path.PathType.Folder Then
+              Try
+                If pt.Type = Path.PathType.File Then
+                  IO.File.Move(pt.UNCPath, structPath.UNCPath & "\" & pt.PathName)
+                ElseIf pt.Type = Path.PathType.Folder Then
+                  IO.Directory.Move(pt.UNCPath, structPath.UNCPath & "\" & pt.PathName)
+                End If
+                statWatchLabel.Text = "Moved!"
+              Catch ex As Exception
+                statWatchLabel.Text = "Failed!"
+                Log("{Watcher} Move Failed: " & ex.Message)
+              End Try
+            Else
+              statWatchLabel.Text = "Can only move into a folder!"
+            End If
+          End If
+        End If
+        Me.CurrentPath = New Path(_curPath.GetPathStructure, _curPath.UNCPath) '' "Refresh" view
       End If
     End If
 
@@ -343,6 +394,92 @@ Public Class Watcher
     Else
       statWatchLabel.Text = "Select a file!"
       Debug.WriteLine("Real Node not selected")
+    End If
+  End Sub
+
+  Private Sub CopyFolderToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopyFolderToolStripMenuItem.Click
+    Try
+      If _curPath IsNot Nothing Then
+        My.Computer.Clipboard.SetText(_curPath.UNCPath)
+      End If
+      statWatchLabel.Text = "Copied to Clipboard!"
+    Catch ex As Exception
+      Log("{Watcher}Copy: " & ex.Message)
+      statWatchLabel.Text = "Failed copy!"
+    End Try
+  End Sub
+  Private Sub CopySelectedPathToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopySelectedPathToolStripMenuItem.Click
+    Try
+      If trvFileSystem.SelectedNode IsNot Nothing Then
+        If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
+          My.Computer.Clipboard.SetText(trvFileSystem.SelectedNode.Tag.UNCPath)
+        Else
+          My.Computer.Clipboard.SetText(_curPath.UNCPath)
+        End If
+      Else
+        My.Computer.Clipboard.SetText(_curPath.UNCPath)
+      End If
+      statWatchLabel.Text = "Copied to Clipboard!"
+    Catch ex As Exception
+      Log("{Watcher}Copy: " & ex.Message)
+      statWatchLabel.Text = "Failed copy!"
+    End Try
+  End Sub
+
+  Private Sub SendToArchiveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SendToArchiveToolStripMenuItem.Click
+    If trvFileSystem.SelectedNode IsNot Nothing Then
+      Dim tmpPath As Path = trvFileSystem.SelectedNode.Tag
+      Dim archive As String = tmpPath.FindNearestArchive()
+      Dim sendTo As String = archive & "\" & Now.ToString("yyyy-MM-dd") & "_" & tmpPath.PathName
+      If Not String.IsNullOrEmpty(archive) Then
+        If IO.Directory.Exists(archive) Then
+          Try
+            If tmpPath.Type = Path.PathType.File Then
+              IO.File.Move(tmpPath.UNCPath, sendTo)
+            ElseIf tmpPath.Type = Path.PathType.Folder Then
+              IO.Directory.Move(tmpPath.UNCPath, sendTo)
+            End If
+            statWatchLabel.Text = "Sent to archive"
+            Me.CurrentPath = New Path(tmpPath.GetPathStructure, tmpPath.UNCPath) '' "Refresh" view
+          Catch ex As Exception
+            statWatchLabel.Text = "Failed to send to archive"
+            Log("{Watcher} SendToArchive: Failed due to error " & vbCrLf & vbTab & ex.Message)
+          End Try
+        Else
+          statWatchLabel.Text = "Archive doesn't exist!"
+        End If
+      Else
+        statWatchLabel.Text = "Couldn't find nearest archive directory!"
+      End If
+    Else
+      statWatchLabel.Text = "Must select an object!"
+    End If
+  End Sub
+  Private Sub CollapseFolderToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CollapseFolderToolStripMenuItem.Click
+    If trvFileSystem.SelectedNode IsNot Nothing Then
+      If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
+        Dim tmpPath As Path = trvFileSystem.SelectedNode.Tag
+        If tmpPath.Type = Path.PathType.Folder Then
+          For i = 0 To tmpPath.Children.Count - 1 Step 1
+            Try
+              If tmpPath.Children(i).Type = Path.PathType.File Then
+                IO.File.Move(tmpPath.Children(i).UNCPath, tmpPath.ParentPath & "\" & tmpPath.Children(i).PathName)
+              ElseIf tmpPath.Children(i).Type = Path.PathType.Folder Then
+                IO.Directory.Move(tmpPath.Children(i).UNCPath, tmpPath.ParentPath & "\" & tmpPath.Children(i).PathName)
+              End If
+            Catch ex As Exception
+              Log("{Watcher} Collapse Error: " & ex.Message)
+            End Try
+          Next
+          If IO.Directory.GetFiles(tmpPath.UNCPath).Count = 0 Then
+            IO.Directory.Delete(tmpPath.UNCPath)
+            Me.CurrentPath = New Path(tmpPath.GetPathStructure, tmpPath.UNCPath) '' Refresh view
+            statWatchLabel.Text = "Collapse complete!"
+          Else
+            statWatchLabel.Text = "Couldn't delete file because files still exists"
+          End If
+        End If
+      End If
     End If
   End Sub
 

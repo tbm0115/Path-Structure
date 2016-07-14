@@ -26,7 +26,14 @@ Public Class Main
   End Sub
 
   Private Sub Main_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
-    UnregisterHotKey(Me.Handle, 100) '' Unregister Ctrl+F3 HotKey
+    Try
+      UnregisterHotKey(Me.Handle, 100) '' Unregister Ctrl+F3 HotKey
+      If toolExplorerSearch IsNot Nothing Then
+        toolExplorerSearch.ActiveWatcher.StopWatcher()
+      End If
+    Catch ex As Exception
+      Log("Error occurred while attempting to close the application: " & vbCrLf & ex.Message)
+    End Try
   End Sub
   Private Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
     My.Application.SaveMySettingsOnExit = True
@@ -920,9 +927,9 @@ Public Class Main
                                           My.Computer.Screen.WorkingArea.Height - Me.Height)
     pnlContainer.Controls.Clear()
 
-    Dim ctrlWatch As New Watcher(PathStruct)
-    ctrlWatch.Dock = DockStyle.Fill
-    pnlContainer.Controls.Add(ctrlWatch)
+    toolExplorerSearch = New Watcher(PathStruct)
+    toolExplorerSearch.Dock = DockStyle.Fill
+    pnlContainer.Controls.Add(toolExplorerSearch)
 
     RegisterHotKey(Me.Handle, 100, MOD_ALT, Keys.F3) '' Register Ctrl+F3 hotkey
 

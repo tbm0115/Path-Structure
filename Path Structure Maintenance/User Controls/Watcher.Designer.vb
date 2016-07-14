@@ -28,12 +28,16 @@ Partial Class Watcher
     Me.statPath = New System.Windows.Forms.ToolStripStatusLabel()
     Me.statWatchLabel = New System.Windows.Forms.ToolStripStatusLabel()
     Me.mnuWatcher = New System.Windows.Forms.MenuStrip()
-    Me.mnuWatchAdd = New System.Windows.Forms.ToolStripMenuItem()
-    Me.mnuWatchAddFolder = New System.Windows.Forms.ToolStripMenuItem()
-    Me.mnuWatchAddFile = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuWatchCreate = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuWatchCreateFolder = New System.Windows.Forms.ToolStripMenuItem()
-    Me.mnuWatchCopy = New System.Windows.Forms.ToolStripMenuItem()
+    Me.CopyToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.CopyFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.CopySelectedPathToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.SettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuDisableRenameOnMove = New System.Windows.Forms.ToolStripMenuItem()
+    Me.ProcessToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.SendToArchiveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.CollapseFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.lblPath = New System.Windows.Forms.Label()
     Me.trvPathStructure = New System.Windows.Forms.TreeView()
     Me.imgFSO = New System.Windows.Forms.ImageList(Me.components)
@@ -54,7 +58,7 @@ Partial Class Watcher
     Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statPath, Me.statWatchLabel})
     Me.StatusStrip1.Location = New System.Drawing.Point(0, 263)
     Me.StatusStrip1.Name = "StatusStrip1"
-    Me.StatusStrip1.Size = New System.Drawing.Size(416, 29)
+    Me.StatusStrip1.Size = New System.Drawing.Size(1074, 29)
     Me.StatusStrip1.TabIndex = 0
     Me.StatusStrip1.Text = "StatusStrip1"
     '
@@ -65,7 +69,7 @@ Partial Class Watcher
             Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
     Me.statPath.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter
     Me.statPath.Name = "statPath"
-    Me.statPath.Size = New System.Drawing.Size(338, 24)
+    Me.statPath.Size = New System.Drawing.Size(996, 24)
     Me.statPath.Spring = True
     Me.statPath.Text = "[Path]"
     Me.statPath.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
@@ -83,37 +87,12 @@ Partial Class Watcher
     'mnuWatcher
     '
     Me.mnuWatcher.ImageScalingSize = New System.Drawing.Size(20, 20)
-    Me.mnuWatcher.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuWatchAdd, Me.mnuWatchCreate, Me.mnuWatchCopy})
+    Me.mnuWatcher.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuWatchCreate, Me.CopyToolStripMenuItem, Me.ProcessToolStripMenuItem, Me.SettingsToolStripMenuItem})
     Me.mnuWatcher.Location = New System.Drawing.Point(0, 0)
     Me.mnuWatcher.Name = "mnuWatcher"
-    Me.mnuWatcher.Size = New System.Drawing.Size(416, 28)
+    Me.mnuWatcher.Size = New System.Drawing.Size(1074, 28)
     Me.mnuWatcher.TabIndex = 1
     Me.mnuWatcher.Text = "MenuStrip1"
-    '
-    'mnuWatchAdd
-    '
-    Me.mnuWatchAdd.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuWatchAddFolder, Me.mnuWatchAddFile})
-    Me.mnuWatchAdd.Name = "mnuWatchAdd"
-    Me.mnuWatchAdd.Size = New System.Drawing.Size(49, 24)
-    Me.mnuWatchAdd.Text = "Add"
-    '
-    'mnuWatchAddFolder
-    '
-    Me.mnuWatchAddFolder.Image = CType(resources.GetObject("mnuWatchAddFolder.Image"), System.Drawing.Image)
-    Me.mnuWatchAddFolder.Name = "mnuWatchAddFolder"
-    Me.mnuWatchAddFolder.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.M), System.Windows.Forms.Keys)
-    Me.mnuWatchAddFolder.Size = New System.Drawing.Size(181, 26)
-    Me.mnuWatchAddFolder.Text = "Folder"
-    Me.mnuWatchAddFolder.ToolTipText = "Adds an existing folder/sub-file-system-objects"
-    '
-    'mnuWatchAddFile
-    '
-    Me.mnuWatchAddFile.Image = CType(resources.GetObject("mnuWatchAddFile.Image"), System.Drawing.Image)
-    Me.mnuWatchAddFile.Name = "mnuWatchAddFile"
-    Me.mnuWatchAddFile.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
-    Me.mnuWatchAddFile.Size = New System.Drawing.Size(181, 26)
-    Me.mnuWatchAddFile.Text = "File"
-    Me.mnuWatchAddFile.ToolTipText = "Adds a file"
     '
     'mnuWatchCreate
     '
@@ -127,18 +106,68 @@ Partial Class Watcher
     Me.mnuWatchCreateFolder.Image = CType(resources.GetObject("mnuWatchCreateFolder.Image"), System.Drawing.Image)
     Me.mnuWatchCreateFolder.Name = "mnuWatchCreateFolder"
     Me.mnuWatchCreateFolder.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
-            Or System.Windows.Forms.Keys.M), System.Windows.Forms.Keys)
-    Me.mnuWatchCreateFolder.Size = New System.Drawing.Size(227, 26)
+            Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
+    Me.mnuWatchCreateFolder.Size = New System.Drawing.Size(225, 26)
     Me.mnuWatchCreateFolder.Text = "Folders"
     Me.mnuWatchCreateFolder.ToolTipText = "Creates the path structure folders from the current folder"
     '
-    'mnuWatchCopy
+    'CopyToolStripMenuItem
     '
-    Me.mnuWatchCopy.Name = "mnuWatchCopy"
-    Me.mnuWatchCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-    Me.mnuWatchCopy.Size = New System.Drawing.Size(55, 24)
-    Me.mnuWatchCopy.Text = "&Copy"
-    Me.mnuWatchCopy.ToolTipText = "Copy the current path"
+    Me.CopyToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CopyFolderToolStripMenuItem, Me.CopySelectedPathToolStripMenuItem})
+    Me.CopyToolStripMenuItem.Name = "CopyToolStripMenuItem"
+    Me.CopyToolStripMenuItem.Size = New System.Drawing.Size(55, 24)
+    Me.CopyToolStripMenuItem.Text = "Copy"
+    '
+    'CopyFolderToolStripMenuItem
+    '
+    Me.CopyFolderToolStripMenuItem.Name = "CopyFolderToolStripMenuItem"
+    Me.CopyFolderToolStripMenuItem.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
+            Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+    Me.CopyFolderToolStripMenuItem.Size = New System.Drawing.Size(263, 26)
+    Me.CopyFolderToolStripMenuItem.Text = "Copy Folder"
+    '
+    'CopySelectedPathToolStripMenuItem
+    '
+    Me.CopySelectedPathToolStripMenuItem.Name = "CopySelectedPathToolStripMenuItem"
+    Me.CopySelectedPathToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+    Me.CopySelectedPathToolStripMenuItem.Size = New System.Drawing.Size(263, 26)
+    Me.CopySelectedPathToolStripMenuItem.Text = "Copy Selected Path"
+    '
+    'SettingsToolStripMenuItem
+    '
+    Me.SettingsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuDisableRenameOnMove})
+    Me.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem"
+    Me.SettingsToolStripMenuItem.Size = New System.Drawing.Size(74, 24)
+    Me.SettingsToolStripMenuItem.Text = "Settings"
+    '
+    'mnuDisableRenameOnMove
+    '
+    Me.mnuDisableRenameOnMove.CheckOnClick = True
+    Me.mnuDisableRenameOnMove.Name = "mnuDisableRenameOnMove"
+    Me.mnuDisableRenameOnMove.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.M), System.Windows.Forms.Keys)
+    Me.mnuDisableRenameOnMove.Size = New System.Drawing.Size(305, 26)
+    Me.mnuDisableRenameOnMove.Text = "Disable Rename on Move"
+    '
+    'ProcessToolStripMenuItem
+    '
+    Me.ProcessToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SendToArchiveToolStripMenuItem, Me.CollapseFolderToolStripMenuItem})
+    Me.ProcessToolStripMenuItem.Name = "ProcessToolStripMenuItem"
+    Me.ProcessToolStripMenuItem.Size = New System.Drawing.Size(70, 24)
+    Me.ProcessToolStripMenuItem.Text = "Process"
+    '
+    'SendToArchiveToolStripMenuItem
+    '
+    Me.SendToArchiveToolStripMenuItem.Name = "SendToArchiveToolStripMenuItem"
+    Me.SendToArchiveToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.A), System.Windows.Forms.Keys)
+    Me.SendToArchiveToolStripMenuItem.Size = New System.Drawing.Size(239, 26)
+    Me.SendToArchiveToolStripMenuItem.Text = "Send To Archive"
+    '
+    'CollapseFolderToolStripMenuItem
+    '
+    Me.CollapseFolderToolStripMenuItem.Name = "CollapseFolderToolStripMenuItem"
+    Me.CollapseFolderToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+    Me.CollapseFolderToolStripMenuItem.Size = New System.Drawing.Size(239, 26)
+    Me.CollapseFolderToolStripMenuItem.Text = "Collapse Folder"
     '
     'lblPath
     '
@@ -162,7 +191,7 @@ Partial Class Watcher
     Me.trvPathStructure.Location = New System.Drawing.Point(3, 20)
     Me.trvPathStructure.Name = "trvPathStructure"
     Me.trvPathStructure.SelectedImageIndex = 0
-    Me.trvPathStructure.Size = New System.Drawing.Size(204, 212)
+    Me.trvPathStructure.Size = New System.Drawing.Size(545, 212)
     Me.trvPathStructure.TabIndex = 3
     '
     'imgFSO
@@ -193,7 +222,7 @@ Partial Class Watcher
     Me.trvFileSystem.Location = New System.Drawing.Point(3, 20)
     Me.trvFileSystem.Name = "trvFileSystem"
     Me.trvFileSystem.SelectedImageIndex = 0
-    Me.trvFileSystem.Size = New System.Drawing.Size(196, 212)
+    Me.trvFileSystem.Size = New System.Drawing.Size(513, 212)
     Me.trvFileSystem.TabIndex = 1
     '
     'spltWorkSpace
@@ -213,8 +242,8 @@ Partial Class Watcher
     Me.spltWorkSpace.Panel2.Controls.Add(Me.trvPathStructure)
     Me.spltWorkSpace.Panel2.Controls.Add(Me.lblPath)
     Me.spltWorkSpace.Panel2.Padding = New System.Windows.Forms.Padding(3)
-    Me.spltWorkSpace.Size = New System.Drawing.Size(416, 235)
-    Me.spltWorkSpace.SplitterDistance = 202
+    Me.spltWorkSpace.Size = New System.Drawing.Size(1074, 235)
+    Me.spltWorkSpace.SplitterDistance = 519
     Me.spltWorkSpace.TabIndex = 3
     '
     'Watcher
@@ -225,7 +254,7 @@ Partial Class Watcher
     Me.Controls.Add(Me.StatusStrip1)
     Me.Controls.Add(Me.mnuWatcher)
     Me.Name = "Watcher"
-    Me.Size = New System.Drawing.Size(416, 292)
+    Me.Size = New System.Drawing.Size(1074, 292)
     Me.StatusStrip1.ResumeLayout(False)
     Me.StatusStrip1.PerformLayout()
     Me.mnuWatcher.ResumeLayout(False)
@@ -243,18 +272,22 @@ Partial Class Watcher
   Friend WithEvents StatusStrip1 As System.Windows.Forms.StatusStrip
   Friend WithEvents statWatchLabel As System.Windows.Forms.ToolStripStatusLabel
   Friend WithEvents mnuWatcher As System.Windows.Forms.MenuStrip
-  Friend WithEvents mnuWatchAdd As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents mnuWatchAddFolder As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents mnuWatchAddFile As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuWatchCreate As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuWatchCreateFolder As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents statPath As System.Windows.Forms.ToolStripStatusLabel
-  Friend WithEvents mnuWatchCopy As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents lblPath As System.Windows.Forms.Label
   Friend WithEvents trvPathStructure As System.Windows.Forms.TreeView
   Friend WithEvents lblReal As System.Windows.Forms.Label
   Friend WithEvents trvFileSystem As System.Windows.Forms.TreeView
   Friend WithEvents spltWorkSpace As System.Windows.Forms.SplitContainer
   Friend WithEvents imgFSO As System.Windows.Forms.ImageList
+  Friend WithEvents CopyToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents SettingsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents mnuDisableRenameOnMove As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents CopyFolderToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents CopySelectedPathToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents ProcessToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents SendToArchiveToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents CollapseFolderToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 
 End Class
