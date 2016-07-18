@@ -270,6 +270,18 @@ Namespace My
                 Me("keyWatcherSearch") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("yyyy-MM-dd")>  _
+        Public Property strTimeStampFormat() As String
+            Get
+                Return CType(Me("strTimeStampFormat"),String)
+            End Get
+            Set
+                Me("strTimeStampFormat") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

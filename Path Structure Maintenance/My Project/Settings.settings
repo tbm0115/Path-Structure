@@ -56,5 +56,8 @@
     <Setting Name="keyWatcherSearch" Type="System.Windows.Forms.Keys" Scope="User">
       <Value Profile="(Default)">Ctrl+F3</Value>
     </Setting>
+    <Setting Name="strTimeStampFormat" Type="System.String" Scope="User">
+      <Value Profile="(Default)">yyyy-MM-dd</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
