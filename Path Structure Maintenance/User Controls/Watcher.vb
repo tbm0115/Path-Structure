@@ -29,12 +29,26 @@ Public Class Watcher
     ' Add any initialization after the InitializeComponent() call.
     _pstruct = PStruct
 
-    _exploreWatcher = New ExplorerWatcher(_pstruct, 250)
+    _exploreWatcher = New ExplorerWatcher(_pstruct) ', 250)
     AddHandler _exploreWatcher.ExplorerWatcherFound, AddressOf ExplorerFound
     AddHandler _exploreWatcher.ExplorerWatcherAborted, AddressOf ExplorerAbort
     _exploreWatcher.StartWatcher()
 
+    statDisableRename.Tag = "False"
+
     statWatchLabel.Text = "Watching..."
+
+    AddHandler Main.FormClosing, Sub()
+                                   _exploreWatcher.StopWatcher()
+                                 End Sub
+  End Sub
+
+  Private Sub trvFileSystem_KeyUp(sender As Object, e As KeyEventArgs) Handles trvFileSystem.KeyUp
+    If trvFileSystem.SelectedNode IsNot Nothing Then
+      If e.KeyCode = Keys.Enter Then
+        trvFileSystem_NodeMouseDoubleClick(trvFileSystem, Nothing)
+      End If
+    End If
   End Sub
 
   Private Sub trvFileSystem_NodeMouseDoubleClick(sender As Object, e As TreeNodeMouseClickEventArgs) Handles trvFileSystem.NodeMouseDoubleClick
@@ -43,7 +57,12 @@ Public Class Watcher
         If trvFileSystem.SelectedNode.Tag.Type = Path.PathType.Folder Then
           Me.CurrentPath = trvFileSystem.SelectedNode.Tag
         Else
-          statWatchLabel.Text = "Cannot open file as a folder!"
+          Try
+            Process.Start(trvFileSystem.SelectedNode.Tag.UNCPath)
+          Catch ex As Exception
+            statWatchLabel.Text = "Couldn't open file!"
+            Log("{Watcher} DoubleClick Open File failed: " & ex.Message)
+          End Try
         End If
       Else
         Me.CurrentPath = _curPath.Parent
@@ -196,34 +215,41 @@ Public Class Watcher
     End If
   End Sub
 
-  Delegate Sub ToolExplorerSearchCallback(ByVal sender As Object, ByVal e As ExplorerWatcher.ExplorerWatcherFoundEventArgs)
-  Public Sub ExplorerFound(ByVal sender As Object, ByVal e As ExplorerWatcher.ExplorerWatcherFoundEventArgs)
+  Delegate Sub ToolExplorerSearchCallback(ByVal URL As String)
+  Public Sub ExplorerFound(ByVal URL As String)
     Try
       If Me IsNot Nothing Then
         If Me.InvokeRequired Then
           Dim d As New ToolExplorerSearchCallback(AddressOf ExplorerFound)
-          Me.Invoke(d, New Object() {sender, e})
+          Me.Invoke(d, New Object() {URL})
         Else
-          If e.FoundPaths.Count > 0 Then
-            Me.CurrentPath = e.FoundPaths(0)
-            statWatchLabel.Text = "Watching..."
-          End If
+          Me.CurrentPath = New Path(_pstruct, URL)
+          statWatchLabel.Text = "Watching..."
+          GC.Collect()
         End If
       End If
     Catch ex As Exception
-
+      Log("{ExplorerFound} Failed: " & ex.Message)
     End Try
   End Sub
   Public Sub ExplorerAbort(ByVal sender As Object, ByVal e As System.UnhandledExceptionEventArgs)
+    Static prompted As Boolean = False
     Try
       Log("An error occurred while watching Windows Explorer: " & e.ExceptionObject.Message)
+      statWatchLabel.Text = "Error, attempting to restart!"
+      _exploreWatcher.StopWatcher()
+      System.Threading.Thread.Sleep(1000)
       _exploreWatcher = New ExplorerWatcher(_pstruct, 250)
       _exploreWatcher.StartWatcher()
     Catch ex As Exception
-      MessageBox.Show("An error occurred while attempting to fix a crash in the Explorer Watcher:" & vbLf & ex.Message,
-                      "Failed to Restart Watcher", MessageBoxButtons.OK, MessageBoxIcon.Error)
-      Main.mnuExplorerWatcher.Enabled = True
-      statWatchLabel.Text = "Aborted!"
+      If Not prompted Then
+        MessageBox.Show("An error occurred while attempting to fix a crash in the Explorer Watcher:" & vbLf & ex.Message,
+                        "Failed to Restart Watcher", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Main.mnuExplorerWatcher.Enabled = True
+        prompted = True
+        _exploreWatcher.StopWatcher()
+        statWatchLabel.Text = "Aborted!"
+      End If
     End Try
   End Sub
 
@@ -267,6 +293,8 @@ Public Class Watcher
   Private _dragging As Boolean = False
   Private Sub trvPathStructure_DragDrop(sender As Object, e As DragEventArgs) Handles trvPathStructure.DragDrop
     '' Process drop data
+
+    '' Get the item that is hovered
     Dim trvPoint As Point = trvPathStructure.PointToClient(New Point(e.X, e.Y))
     If trvPathStructure.Bounds.Contains(e.X, e.Y) Then
       Dim nd As TreeNode = trvPathStructure.GetNodeAt(e.X, e.Y)
@@ -282,11 +310,20 @@ Public Class Watcher
     End If
 
     If e.Data.GetDataPresent(DataFormats.FileDrop) Then
+      Dim frmt As FormatDialog
       If trvPathStructure.SelectedNode IsNot Nothing Then
-        Dim files() As String = e.Data.GetData(DataFormats.FileDrop)
-        For i = 0 To files.Length - 1 Step 1
-          Dim frmt As New FormatDialog(files(i), _pstruct, trvPathStructure.SelectedNode.Text, trvPathStructure.SelectedNode.Tag)
-          frmt.ShowDialog()
+        Dim fsos() As String = e.Data.GetData(DataFormats.FileDrop)
+        For i = 0 To fsos.Length - 1 Step 1
+          If IO.File.Exists(fsos(i)) Then
+            frmt = New FormatDialog(fsos(i), _pstruct, trvPathStructure.SelectedNode.Text, trvPathStructure.SelectedNode.Tag)
+            frmt.ShowDialog()
+          ElseIf IO.Directory.Exists(fsos(i)) Then
+            Dim files() As String = IO.Directory.GetFiles(fsos(i))
+            For j = 0 To files.Length - 1 Step 1
+              frmt = New FormatDialog(files(j), _pstruct, trvPathStructure.SelectedNode.Text, trvPathStructure.SelectedNode.Tag)
+              frmt.ShowDialog()
+            Next
+          End If
         Next
         statWatchLabel.Text = "FSO(s) added"
         Me.CurrentPath = New Path(_curPath.GetPathStructure, _curPath.UNCPath) '' "Refresh" view
@@ -296,7 +333,7 @@ Public Class Watcher
         Dim nd As TreeNode = e.Data.GetData("System.Windows.Forms.TreeNode")
         Dim pt As Path = nd.Tag
 
-        If mnuDisableRenameOnMove.Checked = False Then
+        If Convert.ToBoolean(statDisableRename.Tag) = False Then
           Try
             Dim archive As String = pt.FindNearestArchive()
             If Not String.IsNullOrEmpty(archive) Then
@@ -376,13 +413,14 @@ Public Class Watcher
           End If
         End If
       End If
+      statWatchLabel.Text = "Drop in " & snd.Text
     End If
   End Sub
   Private Sub trvFileSystem_ItemDrag(sender As Object, e As ItemDragEventArgs) Handles trvFileSystem.ItemDrag
     '' Allow the passing of Real objects to the path structure for Formatting/Moving
     If trvFileSystem.SelectedNode IsNot Nothing Then
       If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
-        If trvFileSystem.SelectedNode.Tag.Type = Path.PathType.File Then
+        If trvFileSystem.SelectedNode.Tag.Type = Path.PathType.File Or Convert.ToBoolean(statDisableRename.Tag) = True Then
           statWatchLabel.Text = "Drop into Path Structure to change format"
           trvFileSystem.DoDragDrop(New DataObject("System.Windows.Forms.TreeNode", trvFileSystem.SelectedNode), DragDropEffects.Move)
         Else
@@ -481,6 +519,80 @@ Public Class Watcher
         End If
       End If
     End If
+  End Sub
+
+  Private Sub statDisableRename_Click(sender As Object, e As EventArgs) Handles statDisableRename.Click
+    If statDisableRename.Tag Is Nothing Or String.IsNullOrEmpty(statDisableRename.Tag.ToString) Then statDisableRename.Tag = "False"
+    If Convert.ToBoolean(statDisableRename.Tag) = False Then
+      statDisableRename.BackColor = Color.Cyan
+      statDisableRename.BorderStyle = Border3DStyle.SunkenOuter
+      statDisableRename.Tag = "True"
+    Else
+      statDisableRename.BackColor = DefaultBackColor
+      statDisableRename.BorderStyle = Border3DStyle.RaisedOuter
+      statDisableRename.Tag = "False"
+    End If
+  End Sub
+
+  Private Sub mnuOpen_Click(sender As Object, e As EventArgs) Handles mnuOpen.Click
+    Dim selPath As New Select_Default_Path()
+    selPath.ShowDialog()
+
+    If selPath.DialogResult = DialogResult.OK Then
+      Dim selFolder As New SelectFolderDialog()
+      selFolder.InitialDirectory = selPath.DefaultPath
+      selFolder.ShowDialog()
+
+      If selFolder.DialogResult = DialogResult.OK Then
+        Me.CurrentPath = New Path(_pstruct, selFolder.CurrentDirectory)
+      End If
+    End If
+  End Sub
+
+  Private Sub mnuProcessExecute_Click(sender As Object, e As EventArgs) Handles mnuProcessExecute.Click
+    Try
+      If trvFileSystem.SelectedNode IsNot Nothing Then
+        If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
+          Process.Start(trvFileSystem.SelectedNode.Tag.UNCPath)
+        Else
+          statWatchLabel.Text = "No path available"
+        End If
+      ElseIf _curPath IsNot Nothing Then
+        Process.Start(_curPath.UNCPath)
+      Else
+        statWatchLabel.Text = "No path selected"
+      End If
+    Catch ex As Exception
+      statWatchLabel.Text = "Failed!"
+      Log("{Watcher} Execute Failed: " & ex.Message)
+    End Try
+  End Sub
+
+  Private Sub mnuTSPrefix_Click(sender As Object, e As EventArgs) Handles mnuTSPrefix.Click
+    If trvFileSystem.SelectedNode IsNot Nothing Then
+      If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
+        Dim tmp As Path = trvFileSystem.SelectedNode.Tag
+        If tmp.Type = Path.PathType.File Then
+          IO.File.Move(tmp.UNCPath, tmp.ParentPath & "\" & Now.ToString(My.Settings.strTimeStampFormat) & "_" & tmp.PathName)
+        ElseIf tmp.Type = Path.PathType.Folder Then
+          IO.Directory.Move(tmp.UNCPath, tmp.ParentPath & "\" & Now.ToString(My.Settings.strTimeStampFormat) & "_" & tmp.PathName)
+        End If
+      End If
+    End If
+    Me.CurrentPath = New Path(_pstruct, _curPath.UNCPath)
+  End Sub
+  Private Sub mnuTSSuffix_Click(sender As Object, e As EventArgs) Handles mnuTSSuffix.Click
+    If trvFileSystem.SelectedNode IsNot Nothing Then
+      If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
+        Dim tmp As Path = trvFileSystem.SelectedNode.Tag
+        If tmp.Type = Path.PathType.File Then
+          IO.File.Move(tmp.UNCPath, tmp.ParentPath & "\" & tmp.PathName.Replace(tmp.Extension, "") & "_" & Now.ToString(My.Settings.strTimeStampFormat) & tmp.Extension)
+        ElseIf tmp.Type = Path.PathType.Folder Then
+          IO.Directory.Move(tmp.UNCPath, tmp.ParentPath & "\" & tmp.PathName & "_" & Now.ToString(My.Settings.strTimeStampFormat))
+        End If
+      End If
+    End If
+    Me.CurrentPath = New Path(_pstruct, _curPath.UNCPath)
   End Sub
 
 End Class

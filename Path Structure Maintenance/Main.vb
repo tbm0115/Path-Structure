@@ -425,7 +425,7 @@ Public Class Main
         If IO.File.Exists(arc & "\" & strTS & "Audit Report.html") Then IO.File.Delete(arc & "\" & strTS & "Audit Report.html")
         Dim auditRpt As New PathStructureClass.Path.AuditVisualReport(pt)
         auditRpt.Audit()
-        pt.LogData(pt.StartPath & "\" & strTS & "Audit Report.html", "Generic Audit")
+        'pt.LogData(pt.StartPath & "\" & strTS & "Audit Report.html", "Generic Audit")
         Try
           IO.File.WriteAllText(arc & "\" & strTS & "Audit Report.html", auditRpt.ReportMarkup)
           Process.Start(arc & "\" & strTS & "Audit Report.html")
@@ -957,11 +957,11 @@ Public Class Main
         Case "100"
           If toolExplorerSearch Is Nothing Then
             If _exploreWatcher.CurrentFoundPaths IsNot Nothing Then
-              If _exploreWatcher.CurrentFoundPaths.FoundPaths.Count > 0 Then
-                toolExplorerSearch = New Watcher(PathStruct)
-              Else
-                toolExplorerSearch = New Watcher(PathStruct)
-              End If
+              'If _exploreWatcher.CurrentFoundPaths.FoundPaths.Count > 0 Then
+              '  toolExplorerSearch = New Watcher(PathStruct)
+              'Else
+              toolExplorerSearch = New Watcher(PathStruct)
+              'End If
               Me.SetDesktopLocation(My.Computer.Screen.WorkingArea.Width - Me.Width,
                                                     My.Computer.Screen.WorkingArea.Height - Me.Height)
               toolExplorerSearch.Show()
@@ -969,11 +969,11 @@ Public Class Main
           Else
             If toolExplorerSearch.IsDisposed Then
               If _exploreWatcher.CurrentFoundPaths IsNot Nothing Then
-                If _exploreWatcher.CurrentFoundPaths.FoundPaths.Count > 0 Then
-                  toolExplorerSearch = New Watcher(PathStruct)
-                Else
-                  toolExplorerSearch = New Watcher(PathStruct)
-                End If
+                'If _exploreWatcher.CurrentFoundPaths.FoundPaths.Count > 0 Then
+                '  toolExplorerSearch = New Watcher(PathStruct)
+                'Else
+                toolExplorerSearch = New Watcher(PathStruct)
+                'End If
                 Me.SetDesktopLocation(My.Computer.Screen.WorkingArea.Width - Me.Width,
                                                       My.Computer.Screen.WorkingArea.Height - Me.Height)
                 toolExplorerSearch.Show()

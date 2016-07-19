@@ -25,18 +25,12 @@ Partial Class Settings
     Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Settings))
     Me.TabControl1 = New System.Windows.Forms.TabControl()
     Me.TabPage1 = New System.Windows.Forms.TabPage()
+    Me.chkDeleteThumbsDb = New System.Windows.Forms.CheckBox()
     Me.btnBrowse = New System.Windows.Forms.Button()
+    Me.txtPathStructure = New System.Windows.Forms.TextBox()
     Me.Label1 = New System.Windows.Forms.Label()
     Me.TabPage2 = New System.Windows.Forms.TabPage()
     Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-    Me.btnRemoveContextMenu = New System.Windows.Forms.Button()
-    Me.btnAddContextMenu = New System.Windows.Forms.Button()
-    Me.TabPage3 = New System.Windows.Forms.TabPage()
-    Me.TabPage4 = New System.Windows.Forms.TabPage()
-    Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
-    Me.Label2 = New System.Windows.Forms.Label()
-    Me.chkDeleteThumbsDb = New System.Windows.Forms.CheckBox()
-    Me.txtPathStructure = New System.Windows.Forms.TextBox()
     Me.CheckBox12 = New System.Windows.Forms.CheckBox()
     Me.CheckBox11 = New System.Windows.Forms.CheckBox()
     Me.CheckBox10 = New System.Windows.Forms.CheckBox()
@@ -47,10 +41,18 @@ Partial Class Settings
     Me.CheckBox3 = New System.Windows.Forms.CheckBox()
     Me.CheckBox2 = New System.Windows.Forms.CheckBox()
     Me.CheckBox1 = New System.Windows.Forms.CheckBox()
+    Me.btnRemoveContextMenu = New System.Windows.Forms.Button()
+    Me.btnAddContextMenu = New System.Windows.Forms.Button()
+    Me.TabPage3 = New System.Windows.Forms.TabPage()
     Me.CheckBox9 = New System.Windows.Forms.CheckBox()
     Me.CheckBox8 = New System.Windows.Forms.CheckBox()
     Me.CheckBox7 = New System.Windows.Forms.CheckBox()
+    Me.TabPage4 = New System.Windows.Forms.TabPage()
+    Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
+    Me.Label2 = New System.Windows.Forms.Label()
     Me.txtERPConnectionString = New System.Windows.Forms.TextBox()
+    Me.txtTimeStampFormat = New System.Windows.Forms.TextBox()
+    Me.Label3 = New System.Windows.Forms.Label()
     Me.TabControl1.SuspendLayout()
     Me.TabPage1.SuspendLayout()
     Me.TabPage2.SuspendLayout()
@@ -75,6 +77,8 @@ Partial Class Settings
     '
     'TabPage1
     '
+    Me.TabPage1.Controls.Add(Me.txtTimeStampFormat)
+    Me.TabPage1.Controls.Add(Me.Label3)
     Me.TabPage1.Controls.Add(Me.chkDeleteThumbsDb)
     Me.TabPage1.Controls.Add(Me.btnBrowse)
     Me.TabPage1.Controls.Add(Me.txtPathStructure)
@@ -87,6 +91,19 @@ Partial Class Settings
     Me.TabPage1.Text = "Basic Settings"
     Me.TabPage1.UseVisualStyleBackColor = True
     '
+    'chkDeleteThumbsDb
+    '
+    Me.chkDeleteThumbsDb.AutoSize = True
+    Me.chkDeleteThumbsDb.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnDeleteThumbsDb
+    Me.chkDeleteThumbsDb.CheckState = System.Windows.Forms.CheckState.Checked
+    Me.chkDeleteThumbsDb.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnDeleteThumbsDb", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.chkDeleteThumbsDb.Location = New System.Drawing.Point(13, 77)
+    Me.chkDeleteThumbsDb.Name = "chkDeleteThumbsDb"
+    Me.chkDeleteThumbsDb.Size = New System.Drawing.Size(413, 29)
+    Me.chkDeleteThumbsDb.TabIndex = 12
+    Me.chkDeleteThumbsDb.Text = "Delete any 'Thumbs.db' files that are found?"
+    Me.chkDeleteThumbsDb.UseVisualStyleBackColor = True
+    '
     'btnBrowse
     '
     Me.btnBrowse.Location = New System.Drawing.Point(337, 31)
@@ -95,6 +112,16 @@ Partial Class Settings
     Me.btnBrowse.TabIndex = 11
     Me.btnBrowse.Text = "Browse..."
     Me.btnBrowse.UseVisualStyleBackColor = True
+    '
+    'txtPathStructure
+    '
+    Me.txtPathStructure.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.Path_Structure_Maintenance.My.MySettings.Default, "SettingsPath", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.txtPathStructure.Location = New System.Drawing.Point(7, 31)
+    Me.txtPathStructure.Name = "txtPathStructure"
+    Me.txtPathStructure.ReadOnly = True
+    Me.txtPathStructure.Size = New System.Drawing.Size(324, 30)
+    Me.txtPathStructure.TabIndex = 10
+    Me.txtPathStructure.Text = Global.Path_Structure_Maintenance.My.MySettings.Default.SettingsPath
     '
     'Label1
     '
@@ -136,97 +163,6 @@ Partial Class Settings
     Me.GroupBox1.TabIndex = 11
     Me.GroupBox1.TabStop = False
     Me.GroupBox1.Text = "Context Menu Options"
-    '
-    'btnRemoveContextMenu
-    '
-    Me.btnRemoveContextMenu.Location = New System.Drawing.Point(232, 391)
-    Me.btnRemoveContextMenu.Name = "btnRemoveContextMenu"
-    Me.btnRemoveContextMenu.Size = New System.Drawing.Size(216, 66)
-    Me.btnRemoveContextMenu.TabIndex = 10
-    Me.btnRemoveContextMenu.Text = "Remove Windows Context Menu"
-    Me.btnRemoveContextMenu.UseVisualStyleBackColor = True
-    '
-    'btnAddContextMenu
-    '
-    Me.btnAddContextMenu.Location = New System.Drawing.Point(10, 391)
-    Me.btnAddContextMenu.Name = "btnAddContextMenu"
-    Me.btnAddContextMenu.Size = New System.Drawing.Size(216, 66)
-    Me.btnAddContextMenu.TabIndex = 9
-    Me.btnAddContextMenu.Text = "Add/Update Windows Context Menu"
-    Me.btnAddContextMenu.UseVisualStyleBackColor = True
-    '
-    'TabPage3
-    '
-    Me.TabPage3.Controls.Add(Me.CheckBox9)
-    Me.TabPage3.Controls.Add(Me.CheckBox8)
-    Me.TabPage3.Controls.Add(Me.CheckBox7)
-    Me.TabPage3.Location = New System.Drawing.Point(4, 34)
-    Me.TabPage3.Name = "TabPage3"
-    Me.TabPage3.Padding = New System.Windows.Forms.Padding(3)
-    Me.TabPage3.Size = New System.Drawing.Size(457, 465)
-    Me.TabPage3.TabIndex = 2
-    Me.TabPage3.Text = "Reports"
-    Me.TabPage3.UseVisualStyleBackColor = True
-    '
-    'TabPage4
-    '
-    Me.TabPage4.Controls.Add(Me.TableLayoutPanel1)
-    Me.TabPage4.Location = New System.Drawing.Point(4, 34)
-    Me.TabPage4.Name = "TabPage4"
-    Me.TabPage4.Padding = New System.Windows.Forms.Padding(3)
-    Me.TabPage4.Size = New System.Drawing.Size(457, 465)
-    Me.TabPage4.TabIndex = 3
-    Me.TabPage4.Text = "ERP"
-    Me.TabPage4.UseVisualStyleBackColor = True
-    '
-    'TableLayoutPanel1
-    '
-    Me.TableLayoutPanel1.ColumnCount = 2
-    Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.79775!))
-    Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 58.20225!))
-    Me.TableLayoutPanel1.Controls.Add(Me.Label2, 0, 0)
-    Me.TableLayoutPanel1.Controls.Add(Me.txtERPConnectionString, 1, 0)
-    Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top
-    Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 3)
-    Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
-    Me.TableLayoutPanel1.Padding = New System.Windows.Forms.Padding(3)
-    Me.TableLayoutPanel1.RowCount = 1
-    Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-    Me.TableLayoutPanel1.Size = New System.Drawing.Size(451, 40)
-    Me.TableLayoutPanel1.TabIndex = 0
-    '
-    'Label2
-    '
-    Me.Label2.Dock = System.Windows.Forms.DockStyle.Fill
-    Me.Label2.Location = New System.Drawing.Point(6, 3)
-    Me.Label2.Name = "Label2"
-    Me.Label2.Size = New System.Drawing.Size(179, 34)
-    Me.Label2.TabIndex = 0
-    Me.Label2.Text = "Connection String"
-    Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-    '
-    'chkDeleteThumbsDb
-    '
-    Me.chkDeleteThumbsDb.AutoSize = True
-    Me.chkDeleteThumbsDb.Checked = Global.Path_Structure_Maintenance.My.MySettings.Default.blnDeleteThumbsDb
-    Me.chkDeleteThumbsDb.CheckState = System.Windows.Forms.CheckState.Checked
-    Me.chkDeleteThumbsDb.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.Path_Structure_Maintenance.My.MySettings.Default, "blnDeleteThumbsDb", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-    Me.chkDeleteThumbsDb.Location = New System.Drawing.Point(13, 68)
-    Me.chkDeleteThumbsDb.Name = "chkDeleteThumbsDb"
-    Me.chkDeleteThumbsDb.Size = New System.Drawing.Size(413, 29)
-    Me.chkDeleteThumbsDb.TabIndex = 12
-    Me.chkDeleteThumbsDb.Text = "Delete any 'Thumbs.db' files that are found?"
-    Me.chkDeleteThumbsDb.UseVisualStyleBackColor = True
-    '
-    'txtPathStructure
-    '
-    Me.txtPathStructure.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.Path_Structure_Maintenance.My.MySettings.Default, "SettingsPath", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
-    Me.txtPathStructure.Location = New System.Drawing.Point(7, 31)
-    Me.txtPathStructure.Name = "txtPathStructure"
-    Me.txtPathStructure.ReadOnly = True
-    Me.txtPathStructure.Size = New System.Drawing.Size(324, 30)
-    Me.txtPathStructure.TabIndex = 10
-    Me.txtPathStructure.Text = Global.Path_Structure_Maintenance.My.MySettings.Default.SettingsPath
     '
     'CheckBox12
     '
@@ -358,6 +294,37 @@ Partial Class Settings
     Me.CheckBox1.Text = "Add All Main Folders"
     Me.CheckBox1.UseVisualStyleBackColor = True
     '
+    'btnRemoveContextMenu
+    '
+    Me.btnRemoveContextMenu.Location = New System.Drawing.Point(232, 391)
+    Me.btnRemoveContextMenu.Name = "btnRemoveContextMenu"
+    Me.btnRemoveContextMenu.Size = New System.Drawing.Size(216, 66)
+    Me.btnRemoveContextMenu.TabIndex = 10
+    Me.btnRemoveContextMenu.Text = "Remove Windows Context Menu"
+    Me.btnRemoveContextMenu.UseVisualStyleBackColor = True
+    '
+    'btnAddContextMenu
+    '
+    Me.btnAddContextMenu.Location = New System.Drawing.Point(10, 391)
+    Me.btnAddContextMenu.Name = "btnAddContextMenu"
+    Me.btnAddContextMenu.Size = New System.Drawing.Size(216, 66)
+    Me.btnAddContextMenu.TabIndex = 9
+    Me.btnAddContextMenu.Text = "Add/Update Windows Context Menu"
+    Me.btnAddContextMenu.UseVisualStyleBackColor = True
+    '
+    'TabPage3
+    '
+    Me.TabPage3.Controls.Add(Me.CheckBox9)
+    Me.TabPage3.Controls.Add(Me.CheckBox8)
+    Me.TabPage3.Controls.Add(Me.CheckBox7)
+    Me.TabPage3.Location = New System.Drawing.Point(4, 34)
+    Me.TabPage3.Name = "TabPage3"
+    Me.TabPage3.Padding = New System.Windows.Forms.Padding(3)
+    Me.TabPage3.Size = New System.Drawing.Size(457, 465)
+    Me.TabPage3.TabIndex = 2
+    Me.TabPage3.Text = "Reports"
+    Me.TabPage3.UseVisualStyleBackColor = True
+    '
     'CheckBox9
     '
     Me.CheckBox9.AutoSize = True
@@ -397,6 +364,43 @@ Partial Class Settings
     Me.CheckBox7.Text = "Report Audit Errors Messages"
     Me.CheckBox7.UseVisualStyleBackColor = True
     '
+    'TabPage4
+    '
+    Me.TabPage4.Controls.Add(Me.TableLayoutPanel1)
+    Me.TabPage4.Location = New System.Drawing.Point(4, 34)
+    Me.TabPage4.Name = "TabPage4"
+    Me.TabPage4.Padding = New System.Windows.Forms.Padding(3)
+    Me.TabPage4.Size = New System.Drawing.Size(457, 465)
+    Me.TabPage4.TabIndex = 3
+    Me.TabPage4.Text = "ERP"
+    Me.TabPage4.UseVisualStyleBackColor = True
+    '
+    'TableLayoutPanel1
+    '
+    Me.TableLayoutPanel1.ColumnCount = 2
+    Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.79775!))
+    Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 58.20225!))
+    Me.TableLayoutPanel1.Controls.Add(Me.Label2, 0, 0)
+    Me.TableLayoutPanel1.Controls.Add(Me.txtERPConnectionString, 1, 0)
+    Me.TableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top
+    Me.TableLayoutPanel1.Location = New System.Drawing.Point(3, 3)
+    Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
+    Me.TableLayoutPanel1.Padding = New System.Windows.Forms.Padding(3)
+    Me.TableLayoutPanel1.RowCount = 1
+    Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+    Me.TableLayoutPanel1.Size = New System.Drawing.Size(451, 40)
+    Me.TableLayoutPanel1.TabIndex = 0
+    '
+    'Label2
+    '
+    Me.Label2.Dock = System.Windows.Forms.DockStyle.Fill
+    Me.Label2.Location = New System.Drawing.Point(6, 3)
+    Me.Label2.Name = "Label2"
+    Me.Label2.Size = New System.Drawing.Size(179, 34)
+    Me.Label2.TabIndex = 0
+    Me.Label2.Text = "Connection String"
+    Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+    '
     'txtERPConnectionString
     '
     Me.txtERPConnectionString.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.Path_Structure_Maintenance.My.MySettings.Default, "ERPConnection", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
@@ -406,6 +410,25 @@ Partial Class Settings
     Me.txtERPConnectionString.Size = New System.Drawing.Size(254, 30)
     Me.txtERPConnectionString.TabIndex = 1
     Me.txtERPConnectionString.Text = Global.Path_Structure_Maintenance.My.MySettings.Default.ERPConnection
+    '
+    'txtTimeStampFormat
+    '
+    Me.txtTimeStampFormat.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.Path_Structure_Maintenance.My.MySettings.Default, "strTimeStampFormat", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+    Me.txtTimeStampFormat.Location = New System.Drawing.Point(5, 151)
+    Me.txtTimeStampFormat.Name = "txtTimeStampFormat"
+    Me.txtTimeStampFormat.ReadOnly = True
+    Me.txtTimeStampFormat.Size = New System.Drawing.Size(324, 30)
+    Me.txtTimeStampFormat.TabIndex = 14
+    Me.txtTimeStampFormat.Text = Global.Path_Structure_Maintenance.My.MySettings.Default.strTimeStampFormat
+    '
+    'Label3
+    '
+    Me.Label3.AutoSize = True
+    Me.Label3.Location = New System.Drawing.Point(6, 123)
+    Me.Label3.Name = "Label3"
+    Me.Label3.Size = New System.Drawing.Size(190, 25)
+    Me.Label3.TabIndex = 13
+    Me.Label3.Text = "Time Stamp Format:"
     '
     'Settings
     '
@@ -460,4 +483,6 @@ Partial Class Settings
   Friend WithEvents chkDeleteThumbsDb As System.Windows.Forms.CheckBox
   Friend WithEvents CheckBox11 As System.Windows.Forms.CheckBox
   Friend WithEvents CheckBox12 As System.Windows.Forms.CheckBox
+  Friend WithEvents txtTimeStampFormat As System.Windows.Forms.TextBox
+  Friend WithEvents Label3 As System.Windows.Forms.Label
 End Class

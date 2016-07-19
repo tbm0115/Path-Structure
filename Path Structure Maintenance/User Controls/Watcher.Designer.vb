@@ -27,17 +27,22 @@ Partial Class Watcher
     Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
     Me.statPath = New System.Windows.Forms.ToolStripStatusLabel()
     Me.statWatchLabel = New System.Windows.Forms.ToolStripStatusLabel()
+    Me.statDisableRename = New System.Windows.Forms.ToolStripStatusLabel()
     Me.mnuWatcher = New System.Windows.Forms.MenuStrip()
+    Me.mnuOpen = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuWatchCreate = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuWatchCreateFolder = New System.Windows.Forms.ToolStripMenuItem()
     Me.CopyToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.CopyFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.CopySelectedPathToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-    Me.SettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-    Me.mnuDisableRenameOnMove = New System.Windows.Forms.ToolStripMenuItem()
     Me.ProcessToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.SendToArchiveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.CollapseFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuProcessExecute = New System.Windows.Forms.ToolStripMenuItem()
+    Me.AddTimeStampToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuTSPrefix = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuTSSuffix = New System.Windows.Forms.ToolStripMenuItem()
+    Me.SettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.lblPath = New System.Windows.Forms.Label()
     Me.trvPathStructure = New System.Windows.Forms.TreeView()
     Me.imgFSO = New System.Windows.Forms.ImageList(Me.components)
@@ -55,27 +60,29 @@ Partial Class Watcher
     'StatusStrip1
     '
     Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-    Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statPath, Me.statWatchLabel})
-    Me.StatusStrip1.Location = New System.Drawing.Point(0, 263)
+    Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statPath, Me.statWatchLabel, Me.statDisableRename})
+    Me.StatusStrip1.Location = New System.Drawing.Point(0, 342)
     Me.StatusStrip1.Name = "StatusStrip1"
-    Me.StatusStrip1.Size = New System.Drawing.Size(1074, 29)
+    Me.StatusStrip1.Size = New System.Drawing.Size(674, 29)
     Me.StatusStrip1.TabIndex = 0
     Me.StatusStrip1.Text = "StatusStrip1"
     '
     'statPath
     '
+    Me.statPath.AutoToolTip = True
     Me.statPath.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
             Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
             Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
     Me.statPath.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter
     Me.statPath.Name = "statPath"
-    Me.statPath.Size = New System.Drawing.Size(996, 24)
+    Me.statPath.Size = New System.Drawing.Size(468, 24)
     Me.statPath.Spring = True
     Me.statPath.Text = "[Path]"
     Me.statPath.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
     '
     'statWatchLabel
     '
+    Me.statWatchLabel.AutoToolTip = True
     Me.statWatchLabel.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
             Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
             Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
@@ -84,15 +91,32 @@ Partial Class Watcher
     Me.statWatchLabel.Size = New System.Drawing.Size(63, 24)
     Me.statWatchLabel.Text = "[Status]"
     '
+    'statDisableRename
+    '
+    Me.statDisableRename.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
+            Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
+            Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
+    Me.statDisableRename.BorderStyle = System.Windows.Forms.Border3DStyle.RaisedOuter
+    Me.statDisableRename.Name = "statDisableRename"
+    Me.statDisableRename.Size = New System.Drawing.Size(128, 24)
+    Me.statDisableRename.Tag = ""
+    Me.statDisableRename.Text = "Disable Rename?"
+    '
     'mnuWatcher
     '
     Me.mnuWatcher.ImageScalingSize = New System.Drawing.Size(20, 20)
-    Me.mnuWatcher.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuWatchCreate, Me.CopyToolStripMenuItem, Me.ProcessToolStripMenuItem, Me.SettingsToolStripMenuItem})
+    Me.mnuWatcher.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuOpen, Me.mnuWatchCreate, Me.CopyToolStripMenuItem, Me.ProcessToolStripMenuItem, Me.SettingsToolStripMenuItem})
     Me.mnuWatcher.Location = New System.Drawing.Point(0, 0)
     Me.mnuWatcher.Name = "mnuWatcher"
-    Me.mnuWatcher.Size = New System.Drawing.Size(1074, 28)
+    Me.mnuWatcher.Size = New System.Drawing.Size(674, 28)
     Me.mnuWatcher.TabIndex = 1
     Me.mnuWatcher.Text = "MenuStrip1"
+    '
+    'mnuOpen
+    '
+    Me.mnuOpen.Name = "mnuOpen"
+    Me.mnuOpen.Size = New System.Drawing.Size(78, 24)
+    Me.mnuOpen.Text = "Browse..."
     '
     'mnuWatchCreate
     '
@@ -133,24 +157,9 @@ Partial Class Watcher
     Me.CopySelectedPathToolStripMenuItem.Size = New System.Drawing.Size(263, 26)
     Me.CopySelectedPathToolStripMenuItem.Text = "Copy Selected Path"
     '
-    'SettingsToolStripMenuItem
-    '
-    Me.SettingsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuDisableRenameOnMove})
-    Me.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem"
-    Me.SettingsToolStripMenuItem.Size = New System.Drawing.Size(74, 24)
-    Me.SettingsToolStripMenuItem.Text = "Settings"
-    '
-    'mnuDisableRenameOnMove
-    '
-    Me.mnuDisableRenameOnMove.CheckOnClick = True
-    Me.mnuDisableRenameOnMove.Name = "mnuDisableRenameOnMove"
-    Me.mnuDisableRenameOnMove.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.M), System.Windows.Forms.Keys)
-    Me.mnuDisableRenameOnMove.Size = New System.Drawing.Size(305, 26)
-    Me.mnuDisableRenameOnMove.Text = "Disable Rename on Move"
-    '
     'ProcessToolStripMenuItem
     '
-    Me.ProcessToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SendToArchiveToolStripMenuItem, Me.CollapseFolderToolStripMenuItem})
+    Me.ProcessToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SendToArchiveToolStripMenuItem, Me.CollapseFolderToolStripMenuItem, Me.mnuProcessExecute, Me.AddTimeStampToolStripMenuItem})
     Me.ProcessToolStripMenuItem.Name = "ProcessToolStripMenuItem"
     Me.ProcessToolStripMenuItem.Size = New System.Drawing.Size(70, 24)
     Me.ProcessToolStripMenuItem.Text = "Process"
@@ -168,6 +177,39 @@ Partial Class Watcher
     Me.CollapseFolderToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
     Me.CollapseFolderToolStripMenuItem.Size = New System.Drawing.Size(239, 26)
     Me.CollapseFolderToolStripMenuItem.Text = "Collapse Folder"
+    '
+    'mnuProcessExecute
+    '
+    Me.mnuProcessExecute.Name = "mnuProcessExecute"
+    Me.mnuProcessExecute.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
+    Me.mnuProcessExecute.Size = New System.Drawing.Size(239, 26)
+    Me.mnuProcessExecute.Text = "Execute"
+    '
+    'AddTimeStampToolStripMenuItem
+    '
+    Me.AddTimeStampToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuTSPrefix, Me.mnuTSSuffix})
+    Me.AddTimeStampToolStripMenuItem.Name = "AddTimeStampToolStripMenuItem"
+    Me.AddTimeStampToolStripMenuItem.Size = New System.Drawing.Size(239, 26)
+    Me.AddTimeStampToolStripMenuItem.Text = "Add Time Stamp"
+    '
+    'mnuTSPrefix
+    '
+    Me.mnuTSPrefix.Name = "mnuTSPrefix"
+    Me.mnuTSPrefix.Size = New System.Drawing.Size(121, 26)
+    Me.mnuTSPrefix.Text = "Prefix"
+    '
+    'mnuTSSuffix
+    '
+    Me.mnuTSSuffix.Name = "mnuTSSuffix"
+    Me.mnuTSSuffix.Size = New System.Drawing.Size(121, 26)
+    Me.mnuTSSuffix.Text = "Suffix"
+    '
+    'SettingsToolStripMenuItem
+    '
+    Me.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem"
+    Me.SettingsToolStripMenuItem.Size = New System.Drawing.Size(74, 24)
+    Me.SettingsToolStripMenuItem.Text = "Settings"
+    Me.SettingsToolStripMenuItem.Visible = False
     '
     'lblPath
     '
@@ -191,7 +233,7 @@ Partial Class Watcher
     Me.trvPathStructure.Location = New System.Drawing.Point(3, 20)
     Me.trvPathStructure.Name = "trvPathStructure"
     Me.trvPathStructure.SelectedImageIndex = 0
-    Me.trvPathStructure.Size = New System.Drawing.Size(545, 212)
+    Me.trvPathStructure.Size = New System.Drawing.Size(335, 287)
     Me.trvPathStructure.TabIndex = 3
     '
     'imgFSO
@@ -222,11 +264,12 @@ Partial Class Watcher
     Me.trvFileSystem.Location = New System.Drawing.Point(3, 20)
     Me.trvFileSystem.Name = "trvFileSystem"
     Me.trvFileSystem.SelectedImageIndex = 0
-    Me.trvFileSystem.Size = New System.Drawing.Size(513, 212)
+    Me.trvFileSystem.Size = New System.Drawing.Size(315, 287)
     Me.trvFileSystem.TabIndex = 1
     '
     'spltWorkSpace
     '
+    Me.spltWorkSpace.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
     Me.spltWorkSpace.Dock = System.Windows.Forms.DockStyle.Fill
     Me.spltWorkSpace.Location = New System.Drawing.Point(0, 28)
     Me.spltWorkSpace.Name = "spltWorkSpace"
@@ -242,8 +285,8 @@ Partial Class Watcher
     Me.spltWorkSpace.Panel2.Controls.Add(Me.trvPathStructure)
     Me.spltWorkSpace.Panel2.Controls.Add(Me.lblPath)
     Me.spltWorkSpace.Panel2.Padding = New System.Windows.Forms.Padding(3)
-    Me.spltWorkSpace.Size = New System.Drawing.Size(1074, 235)
-    Me.spltWorkSpace.SplitterDistance = 519
+    Me.spltWorkSpace.Size = New System.Drawing.Size(674, 314)
+    Me.spltWorkSpace.SplitterDistance = 325
     Me.spltWorkSpace.TabIndex = 3
     '
     'Watcher
@@ -254,7 +297,7 @@ Partial Class Watcher
     Me.Controls.Add(Me.StatusStrip1)
     Me.Controls.Add(Me.mnuWatcher)
     Me.Name = "Watcher"
-    Me.Size = New System.Drawing.Size(1074, 292)
+    Me.Size = New System.Drawing.Size(674, 371)
     Me.StatusStrip1.ResumeLayout(False)
     Me.StatusStrip1.PerformLayout()
     Me.mnuWatcher.ResumeLayout(False)
@@ -283,11 +326,16 @@ Partial Class Watcher
   Friend WithEvents imgFSO As System.Windows.Forms.ImageList
   Friend WithEvents CopyToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents SettingsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents mnuDisableRenameOnMove As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents CopyFolderToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents CopySelectedPathToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents ProcessToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents SendToArchiveToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents CollapseFolderToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents statDisableRename As System.Windows.Forms.ToolStripStatusLabel
+  Friend WithEvents mnuOpen As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents mnuProcessExecute As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents AddTimeStampToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents mnuTSPrefix As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents mnuTSSuffix As System.Windows.Forms.ToolStripMenuItem
 
 End Class

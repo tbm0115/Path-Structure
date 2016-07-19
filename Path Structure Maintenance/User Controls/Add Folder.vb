@@ -90,7 +90,7 @@ Public Class Add_Folder
         parent = parent.ParentNode
       Loop
     End If
-    fileName = _CurrentPath.StartPath & fileName
+    fileName = _CurrentPath.UNCPath 'StartPath & fileName
     fileName = _CurrentPath.Variables.Replace(fileName) ' _CurrentPath.ReplaceVariables(fileName)
     If fileName.Contains("{Date}") Then fileName = fileName.Replace("{Date}", DateTime.Now.ToString("MM-dd-yyyy"))
     If fileName.Contains("{Time}") Then fileName = fileName.Replace("{Time}", DateTime.Now.ToString("hh-mm-ss tt"))
