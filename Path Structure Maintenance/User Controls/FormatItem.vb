@@ -24,7 +24,7 @@ Public Class Format_Item
     End If
 
     If _CurrentPath.Type = Path.PathType.File Then
-      Log(vbTab & "Directory: " & _overridePath.CurrentDirectory)
+      Log(vbTab & "Directory: " & _overridePath.ParentPath)
 
       For Each var As Variable In _overridePath.Variables.Items
         Log(vbTab & var.Name & ": " & var.Value)
@@ -88,7 +88,7 @@ Public Class Format_Item
     If SetStruct(FileType) Then
       If String.Equals(_struct.Name, "File", StringComparison.OrdinalIgnoreCase) Then xPath = "Option"
       For Each opt As XmlElement In _struct.SelectNodes(xPath)
-        Debug.WriteLine(_overridePath.GetPathStructure().GetURIfromXPath(opt.FindXPath()))
+        Debug.WriteLine(_overridePath.PStructure.GetURIfromXPath(opt.FindXPath()))
         slist.Add(opt.Attributes("name").Value) ', opt.Attributes("name").Value)
         'cmbOptions.Items.Add(opt.Attributes("name").Value)
       Next
@@ -196,7 +196,7 @@ Public Class Format_Item
       MessageBox.Show("You must select a file type option!", "Invalid Option", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
       Exit Sub
     End If
-    Dim strDir As String = _overridePath.CurrentDirectory
+    Dim strDir As String = _overridePath.ParentPath
     If _struct IsNot Nothing Then
       If Not _struct.Name = "Folder" Then
         Do Until String.Equals(_struct.Name, "Folder", StringComparison.OrdinalIgnoreCase) Or String.Equals(_struct.ParentNode.Name, "Structure")
@@ -205,18 +205,24 @@ Public Class Format_Item
       End If
       If String.Equals(_struct.Name, "Folder", StringComparison.OrdinalIgnoreCase) Then
         If _overridePath.IsNameStructured() Then
-          strDir = _overridePath.Variables.Replace(_overridePath.GetPathStructure().GetURIfromXPath(FindXPath(_overridePath.StructureCandidates.GetHighestMatch().XElement)))
+          Debug.WriteLine("Is name structured")
+          If _overridePath.Type = Path.PathType.File Then
+            'Debug.WriteLine("Replacing variables of parent directory")
+            strDir = _overridePath.Parent.Variables.Replace(_overridePath.PStructure.GetURIfromXPath(FindXPath(_overridePath.Parent.StructureCandidates.GetHighestMatch().XElement)))
+          ElseIf _overridePath.Type = Path.PathType.Folder Then
+            strDir = _overridePath.Variables.Replace(_overridePath.PStructure.GetURIfromXPath(FindXPath(_overridePath.StructureCandidates.GetHighestMatch().XElement)))
+          End If
         ElseIf _CurrentPath.IsNameStructured() Then
-          strDir = _overridePath.Variables.Replace(_overridePath.GetPathStructure().GetURIfromXPath(FindXPath(_CurrentPath.StructureCandidates.GetHighestMatch().XElement)))
+          strDir = _overridePath.Variables.Replace(_overridePath.PStructure.GetURIfromXPath(FindXPath(_CurrentPath.StructureCandidates.GetHighestMatch().XElement)))
         Else
-          strDir = _overridePath.Variables.Replace(_overridePath.GetPathStructure().GetURIfromXPath(FindXPath(_struct)))
+          strDir = _overridePath.Variables.Replace(_overridePath.PStructure.GetURIfromXPath(FindXPath(_struct)))
         End If
-        Log("Settings strDir: " & strDir)
         If Not IO.Directory.Exists(strDir) Then
           IO.Directory.CreateDirectory(strDir)
         End If
       End If
     End If
+    Debug.WriteLine("Settings strDir: " & strDir)
     Dim dts As String = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")
     Try
       If IO.File.Exists(strDir & txtPreview.Text) And Not String.Equals((strDir & txtPreview.Text), _CurrentPath.UNCPath, StringComparison.OrdinalIgnoreCase) Then

@@ -16,7 +16,7 @@ Public Class Add_Folder
       'Main.PathStruct.Settings.Load(My.Settings.SettingsPath)
       'Log(vbTab & "Directory: " & _CurrentPath.FolderInfo.Name)
       'Log(vbTab & "Extension: " & _CurrentPath.FolderInfo.Extension)
-      Log(vbTab & "Directory: " & _CurrentPath.CurrentDirectory)
+      Log(vbTab & "Directory: " & _CurrentPath.ParentPath)
       'For Each var As KeyValuePair(Of String, String) In _CurrentPath.Variables
       '  Log(vbTab & var.Key & ": " & var.Value)
       'Next

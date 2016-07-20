@@ -18,7 +18,7 @@ Public Class Transfer_FilesByExtension
     Next
 
     txtFileExtension.AutoCompleteCustomSource.Clear()
-    Main.statCurrentPath.Text = _CurrentPath.CurrentDirectory
+    Main.statCurrentPath.Text = _CurrentPath.ParentPath
     If _CurrentPath.Type = Path.PathType.File Then
       txtFileExtension.AutoCompleteCustomSource.Add(_CurrentPath.Extension) ' _CurrentPath.FileInfo.Extension)
       txtFileExtension.Text = _CurrentPath.Extension ' _CurrentPath.FileInfo.Extension

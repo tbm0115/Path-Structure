@@ -15,10 +15,22 @@ Public Class Watcher
       Return _curPath
     End Get
     Set(value As Path)
-      _curPath = value
-      statPath.Text = _curPath.UNCPath
-      FillRealTree(_curPath)
-      FillPathTree(_curPath)
+      If value IsNot Nothing Then
+        If value.UNCPath IsNot Nothing Then
+          _curPath = value
+          statPath.Text = _curPath.UNCPath
+          FillRealTree(_curPath)
+          FillPathTree(_curPath)
+        Else
+          trvFileSystem.Nodes.Clear()
+          trvPathStructure.Nodes.Clear()
+          statPath.Text = "No path selected!"
+        End If
+      Else
+        trvFileSystem.Nodes.Clear()
+        trvPathStructure.Nodes.Clear()
+        statPath.Text = "No path selected!"
+      End If
     End Set
   End Property
 
@@ -272,7 +284,7 @@ Public Class Watcher
                 IO.Directory.CreateDirectory(lst(i))
               Next
               statWatchLabel.Text = "Created " & lst.Count.ToString & " folders"
-              Me.CurrentPath = New Path(_curPath.GetPathStructure, _curPath.UNCPath) '' "Refresh" view
+              Me.CurrentPath = New Path(_curPath.PStructure, _curPath.UNCPath) '' "Refresh" view
             Else
               statWatchLabel.Text = "No valid paths"
             End If
@@ -326,7 +338,7 @@ Public Class Watcher
           End If
         Next
         statWatchLabel.Text = "FSO(s) added"
-        Me.CurrentPath = New Path(_curPath.GetPathStructure, _curPath.UNCPath) '' "Refresh" view
+        Me.CurrentPath = New Path(_curPath.PStructure, _curPath.UNCPath) '' "Refresh" view
       End If
     ElseIf e.Data.GetDataPresent("System.Windows.Forms.TreeNode") Then
       If trvPathStructure.SelectedNode IsNot Nothing Then
@@ -375,7 +387,7 @@ Public Class Watcher
             End If
           End If
         End If
-        Me.CurrentPath = New Path(_curPath.GetPathStructure, _curPath.UNCPath) '' "Refresh" view
+        Me.CurrentPath = New Path(_curPath.PStructure, _curPath.UNCPath) '' "Refresh" view
       End If
     End If
 
@@ -478,7 +490,7 @@ Public Class Watcher
               IO.Directory.Move(tmpPath.UNCPath, sendTo)
             End If
             statWatchLabel.Text = "Sent to archive"
-            Me.CurrentPath = New Path(tmpPath.GetPathStructure, tmpPath.UNCPath) '' "Refresh" view
+            Me.CurrentPath = New Path(tmpPath.PStructure, tmpPath.UNCPath) '' "Refresh" view
           Catch ex As Exception
             statWatchLabel.Text = "Failed to send to archive"
             Log("{Watcher} SendToArchive: Failed due to error " & vbCrLf & vbTab & ex.Message)
@@ -511,7 +523,7 @@ Public Class Watcher
           Next
           If IO.Directory.GetFiles(tmpPath.UNCPath).Count = 0 Then
             IO.Directory.Delete(tmpPath.UNCPath)
-            Me.CurrentPath = New Path(tmpPath.GetPathStructure, tmpPath.UNCPath) '' Refresh view
+            Me.CurrentPath = New Path(tmpPath.PStructure, tmpPath.UNCPath) '' Refresh view
             statWatchLabel.Text = "Collapse complete!"
           Else
             statWatchLabel.Text = "Couldn't delete file because files still exists"
