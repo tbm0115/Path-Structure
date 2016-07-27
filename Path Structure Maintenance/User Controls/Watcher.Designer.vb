@@ -49,6 +49,8 @@ Partial Class Watcher
     Me.lblReal = New System.Windows.Forms.Label()
     Me.trvFileSystem = New System.Windows.Forms.TreeView()
     Me.spltWorkSpace = New System.Windows.Forms.SplitContainer()
+    Me.tlTip = New System.Windows.Forms.ToolTip(Me.components)
+    Me.mnuPreviewWindow = New System.Windows.Forms.ToolStripMenuItem()
     Me.StatusStrip1.SuspendLayout()
     Me.mnuWatcher.SuspendLayout()
     CType(Me.spltWorkSpace, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -159,7 +161,7 @@ Partial Class Watcher
     '
     'ProcessToolStripMenuItem
     '
-    Me.ProcessToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SendToArchiveToolStripMenuItem, Me.CollapseFolderToolStripMenuItem, Me.mnuProcessExecute, Me.AddTimeStampToolStripMenuItem})
+    Me.ProcessToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SendToArchiveToolStripMenuItem, Me.CollapseFolderToolStripMenuItem, Me.mnuProcessExecute, Me.AddTimeStampToolStripMenuItem, Me.mnuPreviewWindow})
     Me.ProcessToolStripMenuItem.Name = "ProcessToolStripMenuItem"
     Me.ProcessToolStripMenuItem.Size = New System.Drawing.Size(70, 24)
     Me.ProcessToolStripMenuItem.Text = "Process"
@@ -168,40 +170,40 @@ Partial Class Watcher
     '
     Me.SendToArchiveToolStripMenuItem.Name = "SendToArchiveToolStripMenuItem"
     Me.SendToArchiveToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.A), System.Windows.Forms.Keys)
-    Me.SendToArchiveToolStripMenuItem.Size = New System.Drawing.Size(239, 26)
+    Me.SendToArchiveToolStripMenuItem.Size = New System.Drawing.Size(243, 26)
     Me.SendToArchiveToolStripMenuItem.Text = "Send To Archive"
     '
     'CollapseFolderToolStripMenuItem
     '
     Me.CollapseFolderToolStripMenuItem.Name = "CollapseFolderToolStripMenuItem"
     Me.CollapseFolderToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-    Me.CollapseFolderToolStripMenuItem.Size = New System.Drawing.Size(239, 26)
+    Me.CollapseFolderToolStripMenuItem.Size = New System.Drawing.Size(243, 26)
     Me.CollapseFolderToolStripMenuItem.Text = "Collapse Folder"
     '
     'mnuProcessExecute
     '
     Me.mnuProcessExecute.Name = "mnuProcessExecute"
     Me.mnuProcessExecute.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
-    Me.mnuProcessExecute.Size = New System.Drawing.Size(239, 26)
+    Me.mnuProcessExecute.Size = New System.Drawing.Size(243, 26)
     Me.mnuProcessExecute.Text = "Execute"
     '
     'AddTimeStampToolStripMenuItem
     '
     Me.AddTimeStampToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuTSPrefix, Me.mnuTSSuffix})
     Me.AddTimeStampToolStripMenuItem.Name = "AddTimeStampToolStripMenuItem"
-    Me.AddTimeStampToolStripMenuItem.Size = New System.Drawing.Size(239, 26)
+    Me.AddTimeStampToolStripMenuItem.Size = New System.Drawing.Size(243, 26)
     Me.AddTimeStampToolStripMenuItem.Text = "Add Time Stamp"
     '
     'mnuTSPrefix
     '
     Me.mnuTSPrefix.Name = "mnuTSPrefix"
-    Me.mnuTSPrefix.Size = New System.Drawing.Size(121, 26)
+    Me.mnuTSPrefix.Size = New System.Drawing.Size(181, 26)
     Me.mnuTSPrefix.Text = "Prefix"
     '
     'mnuTSSuffix
     '
     Me.mnuTSSuffix.Name = "mnuTSSuffix"
-    Me.mnuTSSuffix.Size = New System.Drawing.Size(121, 26)
+    Me.mnuTSSuffix.Size = New System.Drawing.Size(181, 26)
     Me.mnuTSSuffix.Text = "Suffix"
     '
     'SettingsToolStripMenuItem
@@ -289,6 +291,12 @@ Partial Class Watcher
     Me.spltWorkSpace.SplitterDistance = 325
     Me.spltWorkSpace.TabIndex = 3
     '
+    'mnuPreviewWindow
+    '
+    Me.mnuPreviewWindow.Name = "mnuPreviewWindow"
+    Me.mnuPreviewWindow.Size = New System.Drawing.Size(243, 26)
+    Me.mnuPreviewWindow.Text = "Open Preview Window..."
+    '
     'Watcher
     '
     Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -337,5 +345,7 @@ Partial Class Watcher
   Friend WithEvents AddTimeStampToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuTSPrefix As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuTSSuffix As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents tlTip As System.Windows.Forms.ToolTip
+  Friend WithEvents mnuPreviewWindow As System.Windows.Forms.ToolStripMenuItem
 
 End Class

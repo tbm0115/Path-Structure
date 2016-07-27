@@ -303,6 +303,12 @@ Public Class Watcher
   End Sub
 
   Private _dragging As Boolean = False
+
+  Private Sub trvPathStructure_DoubleClick(sender As Object, e As EventArgs) Handles trvPathStructure.DoubleClick
+    If trvPathStructure.SelectedNode IsNot Nothing Then
+      MessageBox.Show("Name: " & trvPathStructure.SelectedNode.Text & vbCrLf & "Description: " & trvPathStructure.SelectedNode.ToolTipText, "Path Structure Description", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End If
+  End Sub
   Private Sub trvPathStructure_DragDrop(sender As Object, e As DragEventArgs) Handles trvPathStructure.DragDrop
     '' Process drop data
 
@@ -318,7 +324,6 @@ Public Class Watcher
       If nd IsNot Nothing Then
         trvPathStructure.SelectedNode = nd
       End If
-
     End If
 
     If e.Data.GetDataPresent(DataFormats.FileDrop) Then
@@ -406,28 +411,31 @@ Public Class Watcher
     '' Disable flag to set "SelectedNode"
     _dragging = False
   End Sub
-  Private Sub trvPathStructure_MouseMove(sender As Object, e As MouseEventArgs) Handles trvPathStructure.MouseMove
-    '' Try to set "SelectedNode" visually
+
+  Private Sub trvPathStructure_DragOver(sender As Object, e As DragEventArgs) Handles trvPathStructure.DragOver
+    trvPathStructure.Focus()
+    Dim pnt As New Point(e.X, e.Y)
     Static snd As TreeNode
-    If _dragging Then
-      Dim trvPoint As Point = trvPathStructure.PointToClient(New Point(e.X, e.Y))
-      If trvPathStructure.Bounds.Contains(e.Location) Then
-        Dim nd As TreeNode = trvPathStructure.GetNodeAt(e.Location)
-        If nd IsNot Nothing Then
-          If snd IsNot Nothing Then
-            If Not snd.Text = nd.Text Then
-              trvPathStructure.SelectedNode = trvPathStructure.GetNodeAt(e.Location)
-              snd = nd
-            End If
-          Else
-            trvPathStructure.SelectedNode = trvPathStructure.GetNodeAt(e.Location)
+    Dim trvPoint As Point = trvPathStructure.PointToClient(pnt)
+    If trvPathStructure.Bounds.Contains(trvPoint) Then
+      Dim nd As TreeNode = trvPathStructure.GetNodeAt(trvPoint)
+      If nd IsNot Nothing Then
+        If snd IsNot Nothing Then
+          If Not snd.Text = nd.Text Then
+            trvPathStructure.SelectedNode = trvPathStructure.GetNodeAt(trvPoint)
             snd = nd
           End If
+        Else
+          trvPathStructure.SelectedNode = trvPathStructure.GetNodeAt(trvPoint)
+          snd = nd
         End If
       End If
-      statWatchLabel.Text = "Drop in " & snd.Text
+    End If
+    If trvPathStructure.SelectedNode IsNot Nothing Then
+      statWatchLabel.Text = "Drop in " & trvPathStructure.SelectedNode.Text
     End If
   End Sub
+
   Private Sub trvFileSystem_ItemDrag(sender As Object, e As ItemDragEventArgs) Handles trvFileSystem.ItemDrag
     '' Allow the passing of Real objects to the path structure for Formatting/Moving
     If trvFileSystem.SelectedNode IsNot Nothing Then
@@ -606,5 +614,15 @@ Public Class Watcher
     End If
     Me.CurrentPath = New Path(_pstruct, _curPath.UNCPath)
   End Sub
-
+  Private _prevWindow As ExplorerPreview
+  Private Sub mnuPreviewWindow_Click(sender As Object, e As EventArgs) Handles mnuPreviewWindow.Click
+    If _prevWindow Is Nothing Then
+      _prevWindow = New ExplorerPreview(_exploreWatcher, _pstruct)
+    Else
+      If _prevWindow.IsDisposed Then
+        _prevWindow = New ExplorerPreview(_exploreWatcher, _pstruct)
+      End If
+    End If
+    _prevWindow.Show()
+  End Sub
 End Class

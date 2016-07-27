@@ -48,8 +48,19 @@ Public Class Main
     AddHandler PathStructureLog, AddressOf LogWrapper
 
     '' Set application context menu dynamically
-    Settings.btnRemoveContextMenu_Click(Settings.btnRemoveContextMenu, Nothing)
-    Settings.btnAddContextMenu_Click(Settings.btnAddContextMenu, Nothing)
+    If Not Settings.CheckRegistryItems() Then
+      If Settings.RemoveAllRegistryItems() Then
+        If Settings.AddAllRegistryItems() Then
+          statStatus.Text = "Added Context Menu"
+        Else
+          statStatus.Text = "Failed to Add Context Menu. See Settings."
+        End If
+      Else
+        statStatus.Text = "Failed to Remove Context Menu. See Settings."
+      End If
+    Else
+      statStatus.Text = "Registry is valid."
+    End If
 
     Try
       Log(SurroundJoin(Environment.GetCommandLineArgs, "[", "]" & vbTab, True))
@@ -295,7 +306,19 @@ Public Class Main
         Settings.Focus()
       End If
     Else
-      MessageBox.Show("You must be an administrator to access the settings")
+      If MessageBox.Show("You must have Administrative rights to access this window. Would you like to restart the application as admin?",
+                         "Admin Only", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) = Windows.Forms.DialogResult.Yes Then
+        Dim procSI As New ProcessStartInfo
+        Dim procExe As New Process
+        With procSI
+          .UseShellExecute = True
+          .FileName = System.Reflection.Assembly.GetExecutingAssembly().Location
+          .WindowStyle = ProcessWindowStyle.Normal
+          .Verb = "runas"
+        End With
+        procExe = Process.Start(procSI)
+        Application.Exit()
+      End If
     End If
   End Sub
 

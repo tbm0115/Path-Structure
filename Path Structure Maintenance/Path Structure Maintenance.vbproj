@@ -27,7 +27,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>Path Structure Maintenance</ProductName>
     <PublisherName>Irongate Machine Inc</PublisherName>
-    <ApplicationRevision>47</ApplicationRevision>
+    <ApplicationRevision>51</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -120,6 +120,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\ExplorerPreview.Designer.vb">
+      <DependentUpon>ExplorerPreview.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ExplorerPreview.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Dialogs\FormatDialog.Designer.vb">
       <DependentUpon>FormatDialog.vb</DependentUpon>
     </Compile>
@@ -229,6 +235,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Dialogs\ExplorerPreview.resx">
+      <DependentUpon>ExplorerPreview.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FormatDialog.resx">
       <DependentUpon>FormatDialog.vb</DependentUpon>
     </EmbeddedResource>

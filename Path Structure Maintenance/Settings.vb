@@ -1,10 +1,98 @@
 ﻿Imports Microsoft.Win32
-Imports System.Xml
 Imports System.Security, System.Security.Principal, System.Security.AccessControl
 
 Public Class Settings
   Private Const regFoldMain As String = "AllFilesystemObjects\\shell\\PathStructure\\"
   Private Const regCommand As String = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CommandStore\\shell\\"
+  Private exePath As String = System.Reflection.Assembly.GetExecutingAssembly().Location
+  Private _regItems As New List(Of RegistryItem)
+
+  Public Sub Settings_Load(sender As Object, e As EventArgs) Handles Me.Load
+    CheckRegistryItems()
+  End Sub
+
+  Public Function CheckRegistryItems() As Boolean
+    _regItems.Clear()
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.Add", "Create", "", "", "PathStructure.Add.All;PathStructure.Add.Single;"))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.Add.All", "Create All main folders", "%windir%\system32\shell32.dll,278", Chr(34) & exePath & Chr(34) & " -addall " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.Add.Single", "Create a Folder...", "%windir%\system32\shell32.dll,279", Chr(34) & exePath & Chr(34) & " -add " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.Format", "Rename selected file...", "%windir%\system32\comres.dll,6", Chr(34) & exePath & Chr(34) & " -format " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.Audit", "Audit selected object...", "%windir%\system32\imageres.dll,109", Chr(34) & exePath & Chr(34) & " -audit " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.Open", "Open Path Structure Application", "%windir%\system32\shell32.dll,261", Chr(34) & exePath & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.Clipboard", "Generate Path to Clipboard...", "%windir%\system32\mmcndmgr.dll,21", Chr(34) & exePath & Chr(34) & " -clipboard " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.TransferByExtension", "Transfer Files by Extension...", "%windir%\system32\shell32.dll,132", Chr(34) & exePath & Chr(34) & " -transfer " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.Preview", "Preview Document(s)...", "%windir%\system32\ieframe.dll,66", Chr(34) & exePath & Chr(34) & " -preview " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.FolderHeatMap", "Heat Map...", "%windir%\system32\compstui.dll,51", Chr(34) & exePath & Chr(34) & " -heatmap " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.DirectArchive", "Send to Archive", "%windir%\system32\shell32.dll,280", Chr(34) & exePath & Chr(34) & " -archive " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.SetPermissions", "Set Permissions", "%windir%\system32\ieframe.dll,100", Chr(34) & exePath & Chr(34) & " -permissions " & Chr(34) & "%1" & Chr(34), ""))
+
+    Try
+      Dim cnt As Integer = 0
+      For i = 0 To _regItems.Count - 1 Step 1
+        If Not _regItems(i).Exists() And _regItems(i).ValueContains("", exePath, _regItems(i).ItemKey & "\\command") Then
+          cnt += 1
+        End If
+      Next
+      If cnt > 0 Then
+        Debug.WriteLine(cnt.ToString & " invalid registry items")
+        Return False
+      Else
+        Return True
+      End If
+    Catch ex As Exception
+      Return False
+    End Try
+  End Function
+  Public Function AddAllRegistryItems() As Boolean
+    Dim blnValid As Boolean
+    Dim regmenu As RegistryKey
+
+    Try
+      ''////////////// Add Folders \\\\\\\\\\\\\\\\\\\
+      Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+      '' Add main context menu item 'Path Structure'
+      regmenu = Registry.ClassesRoot.CreateSubKey(regFoldMain)
+      '' Add main values
+      regmenu.SetValue("MUIVerb", "Path Structure")
+      regmenu.SetValue("icon", "%windir%\system32\imageres.dll,153")
+      regmenu.SetValue("SubCommands", "PathStructure.Open;" & _
+                       IIf(My.Settings.blnAddAll Or My.Settings.blnAddSingle, "PathStructure.Add;", "") & _
+                       IIf(My.Settings.blnFormat, "PathStructure.Format;", "") & _
+                       IIf(My.Settings.blnAudit, "PathStructure.Audit;", "") & _
+                       IIf(My.Settings.blnClipboard, "PathStructure.Clipboard;", "") & _
+                       IIf(My.Settings.blnTransferByExtension, "PathStructure.TransferByExtension;", "") & _
+                       IIf(My.Settings.blnPreview, "PathStructure.Preview;", "") & _
+                       IIf(My.Settings.blnFolderHeatMap, "PathStructure.FolderHeatMap;", "") & _
+                       IIf(My.Settings.blnDirectArchive, "PathStructure.DirectArchive;", "") & _
+                       IIf(My.Settings.blnSetPermissions, "PathStructure.SetPermissions;", ""))
+
+      For i = 0 To _regItems.Count - 1 Step 1
+        If Not _regItems(i).AddToRegistry() Then
+          Debug.WriteLine(_regItems(i).ItemKey & " could not be added")
+        End If
+      Next
+      blnValid = True
+    Catch ex As Exception
+      blnValid = False
+    End Try
+
+    Return blnValid
+  End Function
+  Public Function RemoveAllRegistryItems() As Boolean
+    Dim blnValid As Boolean
+
+    Try
+      For i = 0 To _regItems.Count - 1 Step 1
+        If Not _regItems(i).RemoveFromRegistry() Then
+          Debug.WriteLine(_regItems(i).ItemKey & " could not be removed")
+        End If
+      Next
+      blnValid = True
+    Catch ex As Exception
+      blnValid = False
+    End Try
+    Return blnValid
+  End Function
 
   Private Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
     Dim opn As New OpenFileDialog
@@ -23,276 +111,157 @@ Public Class Settings
   End Sub
 
   Public Sub btnAddContextMenu_Click(sender As Object, e As EventArgs) Handles btnAddContextMenu.Click
-    Dim regmenu As RegistryKey
-    Dim regcmd As RegistryKey
-    Dim myXML As New XmlDocument
-    If IO.File.Exists(My.Settings.SettingsPath) Then
-      myXML.Load(My.Settings.SettingsPath)
-
-      Try
-        'Log("Creating registry")
-        ''////////////// Add Folders \\\\\\\\\\\\\\\\\\\
-        Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
-        '' Add main context menu item 'Path Structure'
-        regmenu = Registry.ClassesRoot.CreateSubKey(regFoldMain)
-        '' Add main values
-        regmenu.SetValue("MUIVerb", "Path Structure")
-        regmenu.SetValue("icon", "%windir%\system32\imageres.dll,153")
-        regmenu.SetValue("SubCommands", "PathStructure.Open;" & _
-                         IIf(My.Settings.blnAddAll Or My.Settings.blnAddSingle, "PathStructure.Add;", "") & _
-                         IIf(My.Settings.blnFormat, "PathStructure.Format;", "") & _
-                         IIf(My.Settings.blnAudit, "PathStructure.Audit;", "") & _
-                         IIf(My.Settings.blnClipboard, "PathStructure.Clipboard;", "") & _
-                         IIf(My.Settings.blnTransferByExtension, "PathStructure.TransferByExtension;", "") & _
-                         IIf(My.Settings.blnPreview, "PathStructure.Preview;", "") & _
-                         IIf(My.Settings.blnFolderHeatMap, "PathStructure.FolderHeatMap;", "") & _
-                         IIf(My.Settings.blnDirectArchive, "PathStructure.DirectArchive;", "") & _
-                         IIf(My.Settings.blnSetPermissions, "PathStructure.SetPermissions;", ""))
-
-
-        ''Create 'Add' submenu
-        If My.Settings.blnAddAll Or My.Settings.blnAddSingle Then
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.Add")
-          regmenu.SetValue("MUIVerb", "Create")
-          regmenu.SetValue("SubCommands", "PathStructure.Add.All;PathStructure.Add.Single;")
-        End If
-
-        If My.Settings.blnAddAll Then
-          'Log(vbTab & "Adding 'Add All'")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.Add.All")
-          regmenu.SetValue("MUIVerb", "Create All main folders")
-          regmenu.SetValue("icon", "%windir%\system32\shell32.dll,278")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.Add.All\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -addall " & Chr(34) & "%1" & Chr(34))
-        End If
-
-        If My.Settings.blnAddSingle Then
-          'Log(vbTab & "Adding 'Add Single'")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.Add.Single")
-          regmenu.SetValue("MUIVerb", "Create a Folder...")
-          regmenu.SetValue("icon", "%windir%\system32\shell32.dll,279")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.Add.Single\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -add " & Chr(34) & "%1" & Chr(34))
-        End If
-
-        If My.Settings.blnFormat Then
-          'Log(vbTab & "Adding 'Format' commands")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.Format")
-          regmenu.SetValue("MUIVerb", "Rename selected file...")
-          regmenu.SetValue("icon", "%windir%\system32\comres.dll,6")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.Format\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -format " & Chr(34) & "%1" & Chr(34))
-        End If
-
-        If My.Settings.blnAudit Then
-          'Log(vbTab & "Adding 'Audit' commands")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.Audit")
-          regmenu.SetValue("MUIVerb", "Audit selected object...")
-          regmenu.SetValue("icon", "%windir%\system32\imageres.dll,109")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.Audit\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -audit " & Chr(34) & "%1" & Chr(34))
-        End If
-
-        'Log(vbTab & "Adding 'Open' commands")
-        regmenu = view32.CreateSubKey(regCommand & "PathStructure.Open")
-        regmenu.SetValue("MUIVerb", "Open Path Structure Application")
-        regmenu.SetValue("icon", "%windir%\system32\shell32.dll,261")
-        regcmd = view32.CreateSubKey(regCommand & "PathStructure.Open\\command")
-        regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34))
-
-        If My.Settings.blnClipboard Then
-          'Log(vbTab & "Adding 'Clipboard' commands")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.Clipboard")
-          regmenu.SetValue("MUIVerb", "Generate Path to Clipboard...")
-          regmenu.SetValue("icon", "%windir%\system32\mmcndmgr.dll,21")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.Clipboard\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -clipboard " & Chr(34) & "%1" & Chr(34))
-        End If
-
-        If My.Settings.blnTransferByExtension Then
-          'Log(vbTab & "Adding 'TransferByFileExtension' commands")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.TransferByExtension")
-          regmenu.SetValue("MUIVerb", "Transfer Files by Extension...")
-          regmenu.SetValue("icon", "%windir%\system32\shell32.dll,132")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.TransferByExtension\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -transfer " & Chr(34) & "%1" & Chr(34))
-        End If
-
-        If My.Settings.blnPreview Then
-          'Log(vbTab & "Adding 'Preview' commands")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.Preview")
-          regmenu.SetValue("MUIVerb", "Preview Document(s)...")
-          regmenu.SetValue("icon", "%windir%\system32\ieframe.dll,66")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.Preview\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -preview " & Chr(34) & "%1" & Chr(34))
-        End If
-
-        If My.Settings.blnFolderHeatMap Then
-          'Log(vbTab & "Adding 'Folder Heat Map' commands")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.FolderHeatMap")
-          regmenu.SetValue("MUIVerb", "Heat Map...")
-          regmenu.SetValue("icon", "%windir%\system32\compstui.dll,51")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.FolderHeatMap\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -heatmap " & Chr(34) & "%1" & Chr(34))
-        End If
-
-        If My.Settings.blnDirectArchive Then
-          'Log(vbTab & "Adding 'Archive' commands")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.DirectArchive")
-          regmenu.SetValue("MUIVerb", "Send to Archive")
-          regmenu.SetValue("icon", "%windir%\system32\shell32.dll,280")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.DirectArchive\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -archive " & Chr(34) & "%1" & Chr(34))
-        End If
-
-        If My.Settings.blnSetPermissions Then
-          'Log(vbTab & "Adding 'Permissions' commands")
-          regmenu = view32.CreateSubKey(regCommand & "PathStructure.SetPermissions")
-          regmenu.SetValue("MUIVerb", "Set Permissions")
-          regmenu.SetValue("icon", "%windir%\system32\ieframe.dll,100")
-          regcmd = view32.CreateSubKey(regCommand & "PathStructure.SetPermissions\\command")
-          regcmd.SetValue("", Chr(34) & Application.ExecutablePath & Chr(34) & " -permissions " & Chr(34) & "%1" & Chr(34))
-        End If
-
-      Catch ex As Exception
-        'Log("An error occurred..." & vbLf & vbTab & ex.Message)
-      End Try
+    If AddAllRegistryItems() Then
+      Main.statStatus.Text = "Added Context Menu"
     Else
-      'Log("Couldn't find Settings File: '" & My.Settings.SettingsPath & "'")
+      Main.statStatus.Text = "Failed to Add Context Menu"
     End If
-    Main.statStatus.Text = "Added Context Menu"
   End Sub
   Public Sub btnRemoveContextMenu_Click(sender As Object, e As EventArgs) Handles btnRemoveContextMenu.Click
-    Dim myXML As New XmlDocument
-    Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
-    If IO.File.Exists(My.Settings.SettingsPath) Then
-      myXML.Load(My.Settings.SettingsPath)
-
-      Try
-        'Log("Deleting registry")
-        Dim reg = Registry.ClassesRoot.OpenSubKey(regFoldMain)
-        If Not IsNothing(reg) Then
-          reg.Close()
-          Registry.ClassesRoot.DeleteSubKey(regFoldMain)
-          'Log("Deleted main 'PathStructure' registry entry")
-        Else
-          'Log("Could not open main 'PathStructure' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.Add")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKey(regCommand & "PathStructure.Add")
-          'Log("Deleted 'Add' registry entry")
-        Else
-          'Log("Could not open main 'Add' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.Add.All")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.Add.All")
-          'Log("Deleted 'Add All' registry entry")
-        Else
-          'Log("Could not open main 'Add All' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.Add.Single")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.Add.Single")
-          'Log("Deleted 'Add Single' registry entry")
-        Else
-          'Log("Could not open main 'Add Single' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.Format")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.Format")
-          'Log("Deleted 'Format' registry entry")
-        Else
-          'Log("Could not open main 'Format' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.Audit")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.Audit")
-          'Log("Deleted 'Audit' registry entry")
-        Else
-          'Log("Could not open main 'Audit' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.Open")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.Open")
-          'Log("Deleted 'Open' registry entry")
-        Else
-          'Log("Could not open main 'Open' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.Clipboard")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.Clipboard")
-          'Log("Deleted 'Clipboard' registry entry")
-        Else
-          'Log("Could not open main 'Clipboard' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.TransferByExtension")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.TransferByExtension")
-          'Log("Deleted 'TransferByExtension' registry entry")
-        Else
-          'Log("Could not open main 'TransferByExtension' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.Preview")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.Preview")
-          'Log("Deleted 'Preview' registry entry")
-        Else
-          'Log("Could not open main 'Preview' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.FolderHeatMap")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.FolderHeatMap")
-          'Log("Deleted 'FolderHeatMap' registry entry")
-        Else
-          'Log("Could not open main 'FolderHeatMap' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.DirectArchive")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.DirectArchive")
-          'Log("Deleted 'DirectArchive' registry entry")
-        Else
-          'Log("Could not open main 'DirectArchive' registry entry")
-        End If
-
-        reg = view32.OpenSubKey(regCommand & "PathStructure.SetPermissions")
-        If Not IsNothing(reg) Then
-          reg.Close()
-          view32.DeleteSubKeyTree(regCommand & "PathStructure.SetPermissions")
-          'Log("Deleted 'SetPermissions' registry entry")
-        Else
-          'Log("Could not open main 'SetPermissions' registry entry")
-        End If
-      Catch ex As Exception
-        'Log("An error occurred..." & vbLf & vbTab & ex.Message)
-      End Try
+    If RemoveAllRegistryItems() Then
+      Main.statStatus.Text = "Removed Context Menu"
     Else
-      'Log("Couldn't find Settings File: '" & My.Settings.SettingsPath & "'")
+      Main.statStatus.Text = "Failed to Remove Context Menu"
     End If
-    Main.statStatus.Text = "Removed Context Menu"
   End Sub
+
+  Public Class RegistryItem
+    Private _key, _label, _icon, _cmd, _subcmd As String
+
+    Public ReadOnly Property ItemKey As String
+      Get
+        Return _key
+      End Get
+    End Property
+    Public ReadOnly Property ItemLabel As String
+      Get
+        Return _label
+      End Get
+    End Property
+    Public ReadOnly Property ItemIcon As String
+      Get
+        Return _icon
+      End Get
+    End Property
+    Public ReadOnly Property ItemCommand As String
+      Get
+        Return _cmd
+      End Get
+    End Property
+    Public ReadOnly Property ItemSubCommands As String
+      Get
+        Return _subcmd
+      End Get
+    End Property
+
+    Public Sub New(ByVal Key As String, ByVal Label As String, ByVal IconPath As String, ByVal Command As String, Optional ByVal SubCommands As String = "")
+      _key = Key
+      _label = Label
+      _icon = IconPath
+      _cmd = Command
+      _subcmd = SubCommands
+    End Sub
+
+    Public Function AddToRegistry() As Boolean
+      Try
+        Dim regmenu As RegistryKey
+        Dim regcmd As RegistryKey
+        Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+        regmenu = view32.CreateSubKey(_key)
+        regmenu.SetValue("MUIVerb", _label)
+        If Not String.IsNullOrEmpty(_icon) Then
+          regmenu.SetValue("icon", _icon)
+        End If
+        If Not String.IsNullOrEmpty(_cmd) Then
+          regcmd = view32.CreateSubKey(_key & "\\command")
+          regcmd.SetValue("", _cmd)
+        End If
+        If Not String.IsNullOrEmpty(_subcmd) Then
+          regmenu.SetValue("SubCommands", _subcmd)
+        End If
+        view32.Close()
+        Return True
+      Catch ex As Exception
+        Return False
+      End Try
+    End Function
+
+    Public Function RemoveFromRegistry() As Boolean
+      Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+      Dim reg = view32.OpenSubKey(_key, True)
+      If Not IsNothing(reg) Then
+        If Not reg.SubKeyCount > 0 Then
+          reg.Close()
+          view32.DeleteSubKey(_key)
+        Else
+          reg.Close()
+          view32.DeleteSubKeyTree(_key)
+        End If
+        Return True
+      Else
+        Return False
+      End If
+    End Function
+
+    Public Function ValueEquals(ByVal PropertyName As String, ByVal Value As String, Optional ByVal OverrideKey As String = "") As Boolean
+      Dim strKey As String
+      If String.IsNullOrEmpty(OverrideKey) Then
+        strKey = _key
+      Else
+        strKey = OverrideKey
+      End If
+      Dim blnValid As Boolean
+      Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+      Dim reg = view32.OpenSubKey(strKey, True)
+      If Not IsNothing(reg) Then
+        If String.Equals(reg.GetValue(PropertyName).ToString, Value, StringComparison.OrdinalIgnoreCase) Then
+          blnValid = True
+        Else
+          blnValid = False
+        End If
+        reg.Close()
+        view32.Close()
+      Else
+        blnValid = False
+      End If
+      Return blnValid
+    End Function
+    Public Function ValueContains(ByVal PropertyName As String, ByVal Value As String, Optional ByVal OverrideKey As String = "") As Boolean
+      Dim strKey As String
+      If String.IsNullOrEmpty(OverrideKey) Then
+        strKey = _key
+      Else
+        strKey = OverrideKey
+      End If
+      Dim blnValid As Boolean
+      Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+      Dim reg = view32.OpenSubKey(strKey, True)
+      If Not IsNothing(reg) Then
+        If reg.GetValue(PropertyName).ToString.IndexOf(Value, StringComparison.OrdinalIgnoreCase) >= 0 Then
+          blnValid = True
+        Else
+          blnValid = False
+        End If
+        reg.Close()
+        view32.Close()
+      Else
+        blnValid = False
+      End If
+      Return blnValid
+    End Function
+
+    Public Function Exists() As Boolean
+      Dim view32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
+      Dim reg = view32.OpenSubKey(_key, True)
+      If Not IsNothing(reg) Then
+        reg.Close()
+        view32.Close()
+        Return True
+      Else
+        Debug.WriteLine(_key & " is nothing")
+        Return False
+      End If
+    End Function
+  End Class
 
 End Class

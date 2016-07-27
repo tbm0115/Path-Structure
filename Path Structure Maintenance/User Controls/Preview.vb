@@ -145,6 +145,9 @@ Public Class Preview
     'If (cntFileOpened Mod 10) = 0 Then
     '  KillAdobe()
     'End If
+    For i = 0 To pnlPreview.Controls.Count - 1 Step 1
+      pnlPreview.Controls(i).Dispose()
+    Next
     pnlPreview.Controls.Clear()
 
     '' Begin loading controls
@@ -198,7 +201,7 @@ Public Class Preview
         End If
       End If
     End If
-    Application.DoEvents()
+
     lstFiles.Focus() 'Me.TableLayoutPanel1.Controls("lstFiles").Focus()
     Application.DoEvents()
   End Sub
