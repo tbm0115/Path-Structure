@@ -30,19 +30,14 @@ Partial Class Watcher
     Me.statDisableRename = New System.Windows.Forms.ToolStripStatusLabel()
     Me.mnuWatcher = New System.Windows.Forms.MenuStrip()
     Me.mnuOpen = New System.Windows.Forms.ToolStripMenuItem()
-    Me.mnuWatchCreate = New System.Windows.Forms.ToolStripMenuItem()
-    Me.mnuWatchCreateFolder = New System.Windows.Forms.ToolStripMenuItem()
-    Me.CopyToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-    Me.CopyFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-    Me.CopySelectedPathToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.ProcessToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-    Me.SendToArchiveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-    Me.CollapseFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-    Me.mnuProcessExecute = New System.Windows.Forms.ToolStripMenuItem()
     Me.AddTimeStampToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuTSPrefix = New System.Windows.Forms.ToolStripMenuItem()
     Me.mnuTSSuffix = New System.Windows.Forms.ToolStripMenuItem()
-    Me.SettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuPreviewWindow = New System.Windows.Forms.ToolStripMenuItem()
+    Me.ViewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuAlwaysOnTop = New System.Windows.Forms.ToolStripMenuItem()
+    Me.mnuPlugins = New System.Windows.Forms.ToolStripMenuItem()
     Me.lblPath = New System.Windows.Forms.Label()
     Me.trvPathStructure = New System.Windows.Forms.TreeView()
     Me.imgFSO = New System.Windows.Forms.ImageList(Me.components)
@@ -50,7 +45,6 @@ Partial Class Watcher
     Me.trvFileSystem = New System.Windows.Forms.TreeView()
     Me.spltWorkSpace = New System.Windows.Forms.SplitContainer()
     Me.tlTip = New System.Windows.Forms.ToolTip(Me.components)
-    Me.mnuPreviewWindow = New System.Windows.Forms.ToolStripMenuItem()
     Me.StatusStrip1.SuspendLayout()
     Me.mnuWatcher.SuspendLayout()
     CType(Me.spltWorkSpace, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -107,7 +101,7 @@ Partial Class Watcher
     'mnuWatcher
     '
     Me.mnuWatcher.ImageScalingSize = New System.Drawing.Size(20, 20)
-    Me.mnuWatcher.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuOpen, Me.mnuWatchCreate, Me.CopyToolStripMenuItem, Me.ProcessToolStripMenuItem, Me.SettingsToolStripMenuItem})
+    Me.mnuWatcher.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuOpen, Me.ProcessToolStripMenuItem, Me.ViewToolStripMenuItem, Me.mnuPlugins})
     Me.mnuWatcher.Location = New System.Drawing.Point(0, 0)
     Me.mnuWatcher.Name = "mnuWatcher"
     Me.mnuWatcher.Size = New System.Drawing.Size(674, 28)
@@ -120,72 +114,12 @@ Partial Class Watcher
     Me.mnuOpen.Size = New System.Drawing.Size(78, 24)
     Me.mnuOpen.Text = "Browse..."
     '
-    'mnuWatchCreate
-    '
-    Me.mnuWatchCreate.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuWatchCreateFolder})
-    Me.mnuWatchCreate.Name = "mnuWatchCreate"
-    Me.mnuWatchCreate.Size = New System.Drawing.Size(64, 24)
-    Me.mnuWatchCreate.Text = "Create"
-    '
-    'mnuWatchCreateFolder
-    '
-    Me.mnuWatchCreateFolder.Image = CType(resources.GetObject("mnuWatchCreateFolder.Image"), System.Drawing.Image)
-    Me.mnuWatchCreateFolder.Name = "mnuWatchCreateFolder"
-    Me.mnuWatchCreateFolder.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
-            Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
-    Me.mnuWatchCreateFolder.Size = New System.Drawing.Size(225, 26)
-    Me.mnuWatchCreateFolder.Text = "Folders"
-    Me.mnuWatchCreateFolder.ToolTipText = "Creates the path structure folders from the current folder"
-    '
-    'CopyToolStripMenuItem
-    '
-    Me.CopyToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CopyFolderToolStripMenuItem, Me.CopySelectedPathToolStripMenuItem})
-    Me.CopyToolStripMenuItem.Name = "CopyToolStripMenuItem"
-    Me.CopyToolStripMenuItem.Size = New System.Drawing.Size(55, 24)
-    Me.CopyToolStripMenuItem.Text = "Copy"
-    '
-    'CopyFolderToolStripMenuItem
-    '
-    Me.CopyFolderToolStripMenuItem.Name = "CopyFolderToolStripMenuItem"
-    Me.CopyFolderToolStripMenuItem.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
-            Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-    Me.CopyFolderToolStripMenuItem.Size = New System.Drawing.Size(263, 26)
-    Me.CopyFolderToolStripMenuItem.Text = "Copy Folder"
-    '
-    'CopySelectedPathToolStripMenuItem
-    '
-    Me.CopySelectedPathToolStripMenuItem.Name = "CopySelectedPathToolStripMenuItem"
-    Me.CopySelectedPathToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-    Me.CopySelectedPathToolStripMenuItem.Size = New System.Drawing.Size(263, 26)
-    Me.CopySelectedPathToolStripMenuItem.Text = "Copy Selected Path"
-    '
     'ProcessToolStripMenuItem
     '
-    Me.ProcessToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SendToArchiveToolStripMenuItem, Me.CollapseFolderToolStripMenuItem, Me.mnuProcessExecute, Me.AddTimeStampToolStripMenuItem, Me.mnuPreviewWindow})
+    Me.ProcessToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AddTimeStampToolStripMenuItem, Me.mnuPreviewWindow})
     Me.ProcessToolStripMenuItem.Name = "ProcessToolStripMenuItem"
     Me.ProcessToolStripMenuItem.Size = New System.Drawing.Size(70, 24)
     Me.ProcessToolStripMenuItem.Text = "Process"
-    '
-    'SendToArchiveToolStripMenuItem
-    '
-    Me.SendToArchiveToolStripMenuItem.Name = "SendToArchiveToolStripMenuItem"
-    Me.SendToArchiveToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.A), System.Windows.Forms.Keys)
-    Me.SendToArchiveToolStripMenuItem.Size = New System.Drawing.Size(243, 26)
-    Me.SendToArchiveToolStripMenuItem.Text = "Send To Archive"
-    '
-    'CollapseFolderToolStripMenuItem
-    '
-    Me.CollapseFolderToolStripMenuItem.Name = "CollapseFolderToolStripMenuItem"
-    Me.CollapseFolderToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-    Me.CollapseFolderToolStripMenuItem.Size = New System.Drawing.Size(243, 26)
-    Me.CollapseFolderToolStripMenuItem.Text = "Collapse Folder"
-    '
-    'mnuProcessExecute
-    '
-    Me.mnuProcessExecute.Name = "mnuProcessExecute"
-    Me.mnuProcessExecute.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
-    Me.mnuProcessExecute.Size = New System.Drawing.Size(243, 26)
-    Me.mnuProcessExecute.Text = "Execute"
     '
     'AddTimeStampToolStripMenuItem
     '
@@ -206,12 +140,32 @@ Partial Class Watcher
     Me.mnuTSSuffix.Size = New System.Drawing.Size(181, 26)
     Me.mnuTSSuffix.Text = "Suffix"
     '
-    'SettingsToolStripMenuItem
+    'mnuPreviewWindow
     '
-    Me.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem"
-    Me.SettingsToolStripMenuItem.Size = New System.Drawing.Size(74, 24)
-    Me.SettingsToolStripMenuItem.Text = "Settings"
-    Me.SettingsToolStripMenuItem.Visible = False
+    Me.mnuPreviewWindow.Name = "mnuPreviewWindow"
+    Me.mnuPreviewWindow.Size = New System.Drawing.Size(243, 26)
+    Me.mnuPreviewWindow.Text = "Open Preview Window..."
+    '
+    'ViewToolStripMenuItem
+    '
+    Me.ViewToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAlwaysOnTop})
+    Me.ViewToolStripMenuItem.Name = "ViewToolStripMenuItem"
+    Me.ViewToolStripMenuItem.Size = New System.Drawing.Size(53, 24)
+    Me.ViewToolStripMenuItem.Text = "View"
+    '
+    'mnuAlwaysOnTop
+    '
+    Me.mnuAlwaysOnTop.CheckOnClick = True
+    Me.mnuAlwaysOnTop.Name = "mnuAlwaysOnTop"
+    Me.mnuAlwaysOnTop.Size = New System.Drawing.Size(183, 26)
+    Me.mnuAlwaysOnTop.Text = "Always On Top"
+    '
+    'mnuPlugins
+    '
+    Me.mnuPlugins.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+    Me.mnuPlugins.Name = "mnuPlugins"
+    Me.mnuPlugins.Size = New System.Drawing.Size(68, 24)
+    Me.mnuPlugins.Text = "Plugins"
     '
     'lblPath
     '
@@ -291,12 +245,6 @@ Partial Class Watcher
     Me.spltWorkSpace.SplitterDistance = 325
     Me.spltWorkSpace.TabIndex = 3
     '
-    'mnuPreviewWindow
-    '
-    Me.mnuPreviewWindow.Name = "mnuPreviewWindow"
-    Me.mnuPreviewWindow.Size = New System.Drawing.Size(243, 26)
-    Me.mnuPreviewWindow.Text = "Open Preview Window..."
-    '
     'Watcher
     '
     Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -323,8 +271,6 @@ Partial Class Watcher
   Friend WithEvents StatusStrip1 As System.Windows.Forms.StatusStrip
   Friend WithEvents statWatchLabel As System.Windows.Forms.ToolStripStatusLabel
   Friend WithEvents mnuWatcher As System.Windows.Forms.MenuStrip
-  Friend WithEvents mnuWatchCreate As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents mnuWatchCreateFolder As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents statPath As System.Windows.Forms.ToolStripStatusLabel
   Friend WithEvents lblPath As System.Windows.Forms.Label
   Friend WithEvents trvPathStructure As System.Windows.Forms.TreeView
@@ -332,20 +278,16 @@ Partial Class Watcher
   Friend WithEvents trvFileSystem As System.Windows.Forms.TreeView
   Friend WithEvents spltWorkSpace As System.Windows.Forms.SplitContainer
   Friend WithEvents imgFSO As System.Windows.Forms.ImageList
-  Friend WithEvents CopyToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents SettingsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents CopyFolderToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents CopySelectedPathToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents ProcessToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents SendToArchiveToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents CollapseFolderToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents statDisableRename As System.Windows.Forms.ToolStripStatusLabel
   Friend WithEvents mnuOpen As System.Windows.Forms.ToolStripMenuItem
-  Friend WithEvents mnuProcessExecute As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents AddTimeStampToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuTSPrefix As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents mnuTSSuffix As System.Windows.Forms.ToolStripMenuItem
   Friend WithEvents tlTip As System.Windows.Forms.ToolTip
   Friend WithEvents mnuPreviewWindow As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents ViewToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents mnuAlwaysOnTop As System.Windows.Forms.ToolStripMenuItem
+  Friend WithEvents mnuPlugins As System.Windows.Forms.ToolStripMenuItem
 
 End Class

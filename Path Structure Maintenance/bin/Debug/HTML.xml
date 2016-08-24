@@ -430,6 +430,11 @@ HTML
  Represents an instance of an HTML Span
  </summary>
 	<remarks></remarks>
+</member><member name="T:HTML.HTMLWriter.HTMLObject">
+	<summary>
+ Represents an instance of an HTML Object
+ </summary>
+	<remarks></remarks>
 </member><member name="M:HTML.SharedFunctions.ReplaceBadChars(System.String)">
 	<summary>
  Searches for reserved words for HTML and replaces the carrots with appropriate meta characters.

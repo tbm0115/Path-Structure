@@ -15,6 +15,8 @@ Public Class ExplorerPreview
     exp.StartWatcher()
   End Sub
 
+  Declare Function SetActiveWindow Lib "user32.dll" (ByVal hwnd As Integer) As Integer
+
   Delegate Sub ExplorerSearchCallback(ByVal URL As String)
   Private Sub FoundPath(ByVal URL As String)
     Try
@@ -23,33 +25,42 @@ Public Class ExplorerPreview
           Dim d As New ExplorerSearchCallback(AddressOf FoundPath)
           Me.Invoke(d, New Object() {URL})
           Exit Sub
-          'Else
-          '  Me.CurrentPath = New Path(_pstruct, URL)
-          '  statWatchLabel.Text = "Watching..."
-          '  GC.Collect()
         End If
       End If
     Catch ex As Exception
-      Log("{ExplorerFound} Failed: " & ex.Message)
+      Log("{ExplorerPreview}(FoundPath)  Failed: " & ex.Message)
     End Try
 
-    For i = 0 To Me.Controls.Count - 1 Step 1
-      Me.Controls(i).Dispose()
-    Next
+    Try
+      For i = 0 To Me.Controls.Count - 1 Step 1
+        Me.Controls(i).Dispose()
+      Next
+    Catch ex As Exception
+      Log("{ExplorerPreview}(FoundPath) Panel Clear Failed: " & ex.Message)
+    End Try
     Me.Controls.Clear()
 
+    RecursivePreview(New Path(pstruct, URL))
+
     Application.DoEvents()
+    Try
+      SetActiveWindow(exp.CurrentFoundPaths(0).WindowHandle)
+    Catch ex As Exception
+      Log("{ExplorerPreview}(FoundPath) Set focus failed: " & ex.Message)
+    End Try
   End Sub
   Private Function RecursivePreview(ByVal focus As Path) As Boolean
     Debug.WriteLine(focus.UNCPath)
     Dim added As Boolean = True
-    If focus.IsNameStructured Then
+    If focus.IsNameStructured And focus.Type = Path.PathType.Folder Then
       Dim lstCandidateXPaths As New List(Of String)
       For Each cand As StructureCandidate In focus.StructureCandidates.Items
         '' Verify the xmlelement has the 'preview' attribute
         If cand.XElement.HasAttribute("preview") Then
           '' Iterate through each 'preview' xpath result
-          lstCandidateXPaths.Add(cand.XElement.SelectSingleNode(cand.XElement.Attributes("preview").Value).FindXPath)
+          For Each nod As XmlNode In cand.XElement.SelectNodes(cand.XElement.Attributes("preview").Value)
+            lstCandidateXPaths.Add(nod.FindXPath())
+          Next
         End If
       Next
 
@@ -60,43 +71,7 @@ Public Class ExplorerPreview
           If pt.IsNameStructured Then
             If pt.Type = Path.PathType.File And lstCandidateXPaths.Contains(pt.StructureCandidates.GetHighestMatch().XPath) Then
               If Not IsNothing(pt.Extension) Then
-                Select Case pt.Extension.ToLower
-                  Case ".pdf"
-                    Dim pdf As New WebBrowser
-                    pdf.Dock = DockStyle.Fill
-                    Me.Controls.Add(pdf)
-                    pdf.Navigate("file:///" & pt.UNCPath & "#page=1&view=Fit")
-                  Case ".txt"
-                    Dim txt As New RichTextBox
-                    txt.Dock = DockStyle.Fill
-                    Me.Controls.Add(txt)
-                    txt.LoadFile(pt.UNCPath)
-                  Case ".gcode"
-                    Dim txt As New RichTextBox
-                    txt.Dock = DockStyle.Fill
-                    Me.Controls.Add(txt)
-                    txt.LoadFile(pt.UNCPath)
-                  Case ".eia"
-                    Dim txt As New RichTextBox
-                    txt.Dock = DockStyle.Fill
-                    Me.Controls.Add(txt)
-                    txt.LoadFile(pt.UNCPath)
-                  Case ".rtf"
-                    Dim txt As New RichTextBox
-                    txt.Dock = DockStyle.Fill
-                    Me.Controls.Add(txt)
-                    txt.LoadFile(pt.UNCPath)
-                  Case ".html"
-                    Dim html As New WebBrowser
-                    html.Dock = DockStyle.Fill
-                    Me.Controls.Add(html)
-                    html.Navigate(pt.UNCPath)
-                  Case ".htm"
-                    Dim html As New WebBrowser
-                    html.Dock = DockStyle.Fill
-                    Me.Controls.Add(html)
-                    html.Navigate(pt.UNCPath)
-                End Select
+                CheckAddByExtension(pt)
                 If Me.Controls.Count > 0 Then
                   added = True
                 End If
@@ -112,6 +87,8 @@ Public Class ExplorerPreview
       Else
         Debug.WriteLine(vbTab & "No candidates with preview")
       End If
+    ElseIf focus.Type = Path.PathType.File Then
+      CheckAddByExtension(focus)
     Else
       Debug.WriteLine(vbTab & "Not name structured")
     End If
@@ -127,6 +104,100 @@ Public Class ExplorerPreview
     End If
     Return False
   End Function
+  
+  Private Sub CheckAddByExtension(ByVal Pt As Path)
+    Select Case Pt.Extension.ToLower
+      Case ".pdf"
+        Try
+          Dim axAcro As New AxAcroPDFLib.AxAcroPDF
+          Me.Controls.Add(axAcro)
+          axAcro.Dock = DockStyle.Fill
+          axAcro.LoadFile(Pt.UNCPath)
+          axAcro.src = Pt.UNCPath
+          axAcro.setShowToolbar(False)
+          axAcro.setView("Fit")
+          axAcro.setLayoutMode("SinglePage")
+          axAcro.Show()
+        Catch ex As Exception
+          Log("{ExplorerPreview}(AddControls) Failed to load Adobe PDF reader: " & ex.Message)
+        Finally
+          Dim pdf As New WebBrowser
+          pdf.Dock = DockStyle.Fill
+          Me.Controls.Add(pdf)
+          pdf.Navigate("file:///" & Pt.UNCPath & "#page=1&view=Fit")
+        End Try
+      Case ".txt"
+        Dim txt As New RichTextBox
+        txt.Dock = DockStyle.Fill
+        Me.Controls.Add(txt)
+        txt.LoadFile(Pt.UNCPath)
+      Case ".gcode"
+        Dim txt As New RichTextBox
+        txt.Dock = DockStyle.Fill
+        Me.Controls.Add(txt)
+        txt.LoadFile(Pt.UNCPath)
+      Case ".eia"
+        Dim txt As New RichTextBox
+        txt.Dock = DockStyle.Fill
+        Me.Controls.Add(txt)
+        txt.LoadFile(Pt.UNCPath)
+      Case ".rtf"
+        Dim txt As New RichTextBox
+        txt.Dock = DockStyle.Fill
+        Me.Controls.Add(txt)
+        txt.LoadFile(Pt.UNCPath)
+      Case ".html"
+        Dim html As New WebBrowser
+        html.ScriptErrorsSuppressed = True
+        html.Dock = DockStyle.Fill
+        Me.Controls.Add(html)
+        html.Navigate(Pt.UNCPath)
+      Case ".htm"
+        Dim html As New WebBrowser
+        html.ScriptErrorsSuppressed = True
+        html.Dock = DockStyle.Fill
+        Me.Controls.Add(html)
+        html.Navigate(Pt.UNCPath)
+      Case ".url"
+        Dim html As New WebBrowser
+        html.ScriptErrorsSuppressed = True
+        html.Dock = DockStyle.Fill
+        Me.Controls.Add(html)
+        Dim url As String
+        For Each ln As String In IO.File.ReadAllLines(Pt.UNCPath)
+          If ln.IndexOf("URL", System.StringComparison.OrdinalIgnoreCase) >= 0 Then
+            url = ln.Remove(0, ln.IndexOf("=") + 1)
+          End If
+        Next
+        If Not String.IsNullOrEmpty(url) Then
+          html.Navigate(url)
+        End If
+      Case ".jpg"
+        Dim pic As New PictureBox
+        pic.Dock = DockStyle.Fill
+        pic.Image = Image.FromFile(Pt.UNCPath)
+        pic.SizeMode = PictureBoxSizeMode.CenterImage
+        Me.Controls.Add(pic)
+      Case ".jpeg"
+        Dim pic As New PictureBox
+        pic.Dock = DockStyle.Fill
+        pic.Image = Image.FromFile(Pt.UNCPath)
+        pic.SizeMode = PictureBoxSizeMode.CenterImage
+        Me.Controls.Add(pic)
+      Case ".png"
+        Dim pic As New PictureBox
+        pic.Dock = DockStyle.Fill
+        pic.Image = Image.FromFile(Pt.UNCPath)
+        pic.SizeMode = PictureBoxSizeMode.CenterImage
+        Me.Controls.Add(pic)
+      Case ".bmp"
+        Dim pic As New PictureBox
+        pic.Dock = DockStyle.Fill
+        pic.Image = Image.FromFile(Pt.UNCPath)
+        pic.SizeMode = PictureBoxSizeMode.CenterImage
+        Me.Controls.Add(pic)
+    End Select
+  End Sub
 
   Private Sub PreviewWindow_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
     RemoveHandler exp.ExplorerWatcherFound, AddressOf FoundPath

@@ -64,6 +64,10 @@ PathStructureMaintenance
         content: "\e117";
      [rest of string was truncated]";.
 </summary>
+</member><member name="P:Path_Structure_Maintenance.My.Resources.Resources.ITAR_Folder">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+</summary>
 </member><member name="P:Path_Structure_Maintenance.My.Resources.Resources.Optical_Object_Recognition">
 	<summary>
   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).

@@ -1,4 +1,5 @@
 ﻿Imports PathStructureClass
+Imports Pather_Structure_Interface
 
 Public Class Watcher
   Private _pstruct As PathStructure
@@ -15,12 +16,16 @@ Public Class Watcher
       Return _curPath
     End Get
     Set(value As Path)
-      If value IsNot Nothing Then
+      If Not value.IsNull() Then ' value.IsNull() = False Then
+        If value.Type = Path.PathType.File Then value = value.Parent
         If value.UNCPath IsNot Nothing Then
           _curPath = value
           statPath.Text = _curPath.UNCPath
           FillRealTree(_curPath)
           FillPathTree(_curPath)
+
+          '' Update plugins
+          Plugins_ChangedCurrentPath(_curPath)
         Else
           trvFileSystem.Nodes.Clear()
           trvPathStructure.Nodes.Clear()
@@ -53,6 +58,16 @@ Public Class Watcher
     AddHandler Main.FormClosing, Sub()
                                    _exploreWatcher.StopWatcher()
                                  End Sub
+
+    AddHandler Main.ResizeEnd, Sub()
+                                 If Main.Width <= (Main.Height / 2) Then
+                                   spltWorkSpace.Orientation = Orientation.Horizontal
+                                 Else
+                                   spltWorkSpace.Orientation = Orientation.Vertical
+                                 End If
+                               End Sub
+
+    PopulatePluginList()
   End Sub
 
   Private Sub trvFileSystem_KeyUp(sender As Object, e As KeyEventArgs) Handles trvFileSystem.KeyUp
@@ -73,7 +88,7 @@ Public Class Watcher
             Process.Start(trvFileSystem.SelectedNode.Tag.UNCPath)
           Catch ex As Exception
             statWatchLabel.Text = "Couldn't open file!"
-            Log("{Watcher} DoubleClick Open File failed: " & ex.Message)
+            Log("{Watcher}(FileSystem_Clicked) DoubleClick Open File failed: " & ex.Message)
           End Try
         End If
       Else
@@ -88,7 +103,7 @@ Public Class Watcher
     If Not _pstruct.defaultPaths.Contains(Path.UNCPath) Then
       trvFileSystem.Nodes.Add(".. [" & Path.PathName & "]")
     End If
-    If Not IsNothing(Path.Children) Then
+    If Path.Children IsNot Nothing Then
       For i = 0 To Path.Children.Count - 1 Step 1
         Dim nd As TreeNode
         If Path.Children(i).Type = PathStructureClass.Path.PathType.Folder Then
@@ -241,18 +256,20 @@ Public Class Watcher
         End If
       End If
     Catch ex As Exception
-      Log("{ExplorerFound} Failed: " & ex.Message)
+      Log("{Watcher}(ExplorerFound) Failed: " & ex.Message)
     End Try
   End Sub
   Public Sub ExplorerAbort(ByVal sender As Object, ByVal e As System.UnhandledExceptionEventArgs)
     Static prompted As Boolean = False
     Try
-      Log("An error occurred while watching Windows Explorer: " & e.ExceptionObject.Message)
+      Log("{Watcher}(ExplorerAbort) An error occurred while watching Windows Explorer: " & e.ExceptionObject.Message)
       statWatchLabel.Text = "Error, attempting to restart!"
       _exploreWatcher.StopWatcher()
+      Application.DoEvents()
       System.Threading.Thread.Sleep(1000)
-      _exploreWatcher = New ExplorerWatcher(_pstruct, 250)
+      '_exploreWatcher = New ExplorerWatcher(_pstruct, 250)
       _exploreWatcher.StartWatcher()
+      statWatchLabel.Text = "Attempted to restart watcher!"
     Catch ex As Exception
       If Not prompted Then
         MessageBox.Show("An error occurred while attempting to fix a crash in the Explorer Watcher:" & vbLf & ex.Message,
@@ -263,43 +280,6 @@ Public Class Watcher
         statWatchLabel.Text = "Aborted!"
       End If
     End Try
-  End Sub
-
-  Private Sub mnuWatchCreateFolder_Click(sender As Object, e As EventArgs) Handles mnuWatchCreateFolder.Click
-    If _curPath IsNot Nothing Then
-      If _curPath.IsNameStructured() Then
-        Dim nds As Xml.XmlNodeList = _curPath.StructureCandidates.GetHighestMatch().XElement.SelectNodes("Folder")
-        If nds IsNot Nothing Then
-          If nds.Count > 0 Then
-            Dim lst As New List(Of String)
-            For i = 0 To nds.Count - 1 Step 1
-              Dim strTemp As String = _curPath.Variables.Replace(_pstruct.GetURIfromXPath(nds(i).FindXPath()))
-              If (Not strTemp.Contains("{") And Not strTemp.Contains("}")) And Not IO.Directory.Exists(strTemp) Then
-                lst.Add(strTemp)
-              End If
-            Next
-            If lst.Count > 0 Then
-              For i = 0 To lst.Count - 1 Step 1
-                Log("{Watcher}Create Folder: Creating '" & lst(i) & "'")
-                IO.Directory.CreateDirectory(lst(i))
-              Next
-              statWatchLabel.Text = "Created " & lst.Count.ToString & " folders"
-              Me.CurrentPath = New Path(_curPath.PStructure, _curPath.UNCPath) '' "Refresh" view
-            Else
-              statWatchLabel.Text = "No valid paths"
-            End If
-          Else
-            statWatchLabel.Text = "No folders"
-          End If
-        Else
-          statWatchLabel.Text = "No Folders"
-        End If
-      Else
-        statWatchLabel.Text = "Invalid path"
-      End If
-    Else
-      statWatchLabel.Text = "Invalid path"
-    End If
   End Sub
 
   Private _dragging As Boolean = False
@@ -359,7 +339,7 @@ Public Class Watcher
               End If
             End If
           Catch ex As Exception
-            Log("Failed to copy to archive")
+            Log("{Watcher}(PathStructure_Drop) Failed to copy to archive")
           End Try
 
           Dim frmt As New FormatDialog(nd.Tag.UNCPath, _pstruct, trvPathStructure.SelectedNode.Text, trvPathStructure.SelectedNode.Tag)
@@ -385,7 +365,7 @@ Public Class Watcher
                 statWatchLabel.Text = "Moved!"
               Catch ex As Exception
                 statWatchLabel.Text = "Failed!"
-                Log("{Watcher} Move Failed: " & ex.Message)
+                Log("{Watcher}(PathStructure_Drop) Move Failed: " & ex.Message)
               End Try
             Else
               statWatchLabel.Text = "Can only move into a folder!"
@@ -455,92 +435,6 @@ Public Class Watcher
     End If
   End Sub
 
-  Private Sub CopyFolderToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopyFolderToolStripMenuItem.Click
-    Try
-      If _curPath IsNot Nothing Then
-        My.Computer.Clipboard.SetText(_curPath.UNCPath)
-      End If
-      statWatchLabel.Text = "Copied to Clipboard!"
-    Catch ex As Exception
-      Log("{Watcher}Copy: " & ex.Message)
-      statWatchLabel.Text = "Failed copy!"
-    End Try
-  End Sub
-  Private Sub CopySelectedPathToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopySelectedPathToolStripMenuItem.Click
-    Try
-      If trvFileSystem.SelectedNode IsNot Nothing Then
-        If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
-          My.Computer.Clipboard.SetText(trvFileSystem.SelectedNode.Tag.UNCPath)
-        Else
-          My.Computer.Clipboard.SetText(_curPath.UNCPath)
-        End If
-      Else
-        My.Computer.Clipboard.SetText(_curPath.UNCPath)
-      End If
-      statWatchLabel.Text = "Copied to Clipboard!"
-    Catch ex As Exception
-      Log("{Watcher}Copy: " & ex.Message)
-      statWatchLabel.Text = "Failed copy!"
-    End Try
-  End Sub
-
-  Private Sub SendToArchiveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SendToArchiveToolStripMenuItem.Click
-    If trvFileSystem.SelectedNode IsNot Nothing Then
-      Dim tmpPath As Path = trvFileSystem.SelectedNode.Tag
-      Dim archive As String = tmpPath.FindNearestArchive()
-      Dim sendTo As String = archive & "\" & Now.ToString("yyyy-MM-dd") & "_" & tmpPath.PathName
-      If Not String.IsNullOrEmpty(archive) Then
-        If IO.Directory.Exists(archive) Then
-          Try
-            If tmpPath.Type = Path.PathType.File Then
-              IO.File.Move(tmpPath.UNCPath, sendTo)
-            ElseIf tmpPath.Type = Path.PathType.Folder Then
-              IO.Directory.Move(tmpPath.UNCPath, sendTo)
-            End If
-            statWatchLabel.Text = "Sent to archive"
-            Me.CurrentPath = New Path(tmpPath.PStructure, tmpPath.UNCPath) '' "Refresh" view
-          Catch ex As Exception
-            statWatchLabel.Text = "Failed to send to archive"
-            Log("{Watcher} SendToArchive: Failed due to error " & vbCrLf & vbTab & ex.Message)
-          End Try
-        Else
-          statWatchLabel.Text = "Archive doesn't exist!"
-        End If
-      Else
-        statWatchLabel.Text = "Couldn't find nearest archive directory!"
-      End If
-    Else
-      statWatchLabel.Text = "Must select an object!"
-    End If
-  End Sub
-  Private Sub CollapseFolderToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CollapseFolderToolStripMenuItem.Click
-    If trvFileSystem.SelectedNode IsNot Nothing Then
-      If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
-        Dim tmpPath As Path = trvFileSystem.SelectedNode.Tag
-        If tmpPath.Type = Path.PathType.Folder Then
-          For i = 0 To tmpPath.Children.Count - 1 Step 1
-            Try
-              If tmpPath.Children(i).Type = Path.PathType.File Then
-                IO.File.Move(tmpPath.Children(i).UNCPath, tmpPath.ParentPath & "\" & tmpPath.Children(i).PathName)
-              ElseIf tmpPath.Children(i).Type = Path.PathType.Folder Then
-                IO.Directory.Move(tmpPath.Children(i).UNCPath, tmpPath.ParentPath & "\" & tmpPath.Children(i).PathName)
-              End If
-            Catch ex As Exception
-              Log("{Watcher} Collapse Error: " & ex.Message)
-            End Try
-          Next
-          If IO.Directory.GetFiles(tmpPath.UNCPath).Count = 0 Then
-            IO.Directory.Delete(tmpPath.UNCPath)
-            Me.CurrentPath = New Path(tmpPath.PStructure, tmpPath.UNCPath) '' Refresh view
-            statWatchLabel.Text = "Collapse complete!"
-          Else
-            statWatchLabel.Text = "Couldn't delete file because files still exists"
-          End If
-        End If
-      End If
-    End If
-  End Sub
-
   Private Sub statDisableRename_Click(sender As Object, e As EventArgs) Handles statDisableRename.Click
     If statDisableRename.Tag Is Nothing Or String.IsNullOrEmpty(statDisableRename.Tag.ToString) Then statDisableRename.Tag = "False"
     If Convert.ToBoolean(statDisableRename.Tag) = False Then
@@ -567,25 +461,6 @@ Public Class Watcher
         Me.CurrentPath = New Path(_pstruct, selFolder.CurrentDirectory)
       End If
     End If
-  End Sub
-
-  Private Sub mnuProcessExecute_Click(sender As Object, e As EventArgs) Handles mnuProcessExecute.Click
-    Try
-      If trvFileSystem.SelectedNode IsNot Nothing Then
-        If trvFileSystem.SelectedNode.Tag IsNot Nothing Then
-          Process.Start(trvFileSystem.SelectedNode.Tag.UNCPath)
-        Else
-          statWatchLabel.Text = "No path available"
-        End If
-      ElseIf _curPath IsNot Nothing Then
-        Process.Start(_curPath.UNCPath)
-      Else
-        statWatchLabel.Text = "No path selected"
-      End If
-    Catch ex As Exception
-      statWatchLabel.Text = "Failed!"
-      Log("{Watcher} Execute Failed: " & ex.Message)
-    End Try
   End Sub
 
   Private Sub mnuTSPrefix_Click(sender As Object, e As EventArgs) Handles mnuTSPrefix.Click
@@ -625,4 +500,94 @@ Public Class Watcher
     End If
     _prevWindow.Show()
   End Sub
+
+  Private Sub mnuAlwaysOnTop_Click(sender As Object, e As EventArgs) Handles mnuAlwaysOnTop.Click
+    Main.TopMost = mnuAlwaysOnTop.Checked
+  End Sub
+
+  Private _plugins As List(Of IWatcherPlugin)
+  Private Sub PopulatePluginList()
+    Dim objPlugin As IWatcherPlugin
+    Dim plugins() As PluginServices.AvailablePlugin = PluginServices.FindPlugins(My.Settings.strPluginDirectory, "IWatcherPlugin")
+
+    If Not IsNothing(plugins) Then
+      '' Clear all plugins from main
+      mnuPlugins.DropDownItems.Clear()
+      _plugins = New List(Of IWatcherPlugin)
+      Dim lstShortcutKeys As New List(Of System.Windows.Forms.Keys)
+      For Each plugin As Object In plugins
+        objPlugin = DirectCast(PluginServices.CreateInstance(plugin), IWatcherPlugin)
+        objPlugin.ReferenceStructure = _pstruct
+        Dim tsi As ToolStripMenuItem = Nothing
+        If Not String.IsNullOrEmpty(objPlugin.Suite) Then
+          If Not mnuPlugins.Has(objPlugin.Suite) Then
+            mnuPlugins.DropDownItems.Add(objPlugin.Suite)
+            'Else
+            '  Debug.WriteLine("Plugin '" & objPlugin.Name & "' has no Suite reference '" & objPlugin.Suite & "'")
+          End If
+          tsi = mnuPlugins.Find(objPlugin.Suite).DropDownItems.Add(objPlugin.Name)
+        Else
+          Debug.WriteLine("Plugin '" & objPlugin.Name & "' has no Suite reference '" & objPlugin.Suite & "'")
+        End If
+        If tsi Is Nothing Then
+          tsi = mnuPlugins.DropDownItems.Add(objPlugin.Name)
+        End If
+        tsi.ToolTipText = objPlugin.Description
+        If Not objPlugin.ShortcutKeys = Keys.None And Not lstShortcutKeys.Contains(objPlugin.ShortcutKeys) Then
+          tsi.ShortcutKeys = objPlugin.ShortcutKeys '' Apply shortcut keys from plugin
+          tsi.ShowShortcutKeys = True '' Show the shortcut key string
+          lstShortcutKeys.Add(objPlugin.ShortcutKeys) '' Prevent duplicate shortcut key combos
+        End If
+        AddHandler tsi.Click, AddressOf objPlugin.Run
+        AddHandler objPlugin.Set_CurrentPath, Sub(FSPath As String)
+                                                CurrentPath = New Path(_pstruct, FSPath)
+                                              End Sub
+        AddHandler objPlugin.Get_CurrentPath, Sub(ByRef CurPath As Path)
+                                                CurPath = CurrentPath
+                                              End Sub
+        AddHandler objPlugin.Get_SelectedPath, Sub(ByRef SelPath As Path)
+                                                 If trvFileSystem.SelectedNode IsNot Nothing Then
+                                                   SelPath = trvFileSystem.SelectedNode.Tag
+                                                 End If
+                                               End Sub
+        _plugins.Add(objPlugin) '' Add plugin to list for later processing
+
+
+      Next
+    End If
+  End Sub
+  Private Sub Plugins_ChangedCurrentPath(ByVal CurPath As Path)
+    If _plugins IsNot Nothing Then
+      If _plugins.Count > 0 Then
+        For Each plugin As IWatcherPlugin In _plugins
+          plugin.Changed_CurrentPath(CurPath)
+        Next
+      End If
+    End If
+  End Sub
+
 End Class
+Public Module Watcher_Helper
+  <System.Runtime.CompilerServices.Extension()> _
+  Public Function Find(ByVal mnuItem As ToolStripMenuItem, ByVal Text As String) As ToolStripMenuItem
+    If mnuItem.HasDropDownItems Then
+      For i = 0 To mnuItem.DropDownItems.Count - 1 Step 1
+        If mnuItem.DropDownItems(i).Text = Text Then
+          Return mnuItem.DropDownItems(i)
+        End If
+      Next
+    End If
+    Return Nothing
+  End Function
+  <System.Runtime.CompilerServices.Extension()> _
+  Public Function Has(ByVal mnuItem As ToolStripMenuItem, ByVal Text As String) As Boolean
+    If mnuItem.HasDropDownItems Then
+      For i = 0 To mnuItem.DropDownItems.Count - 1 Step 1
+        If mnuItem.DropDownItems(i).Text = Text Then
+          Return True
+        End If
+      Next
+    End If
+    Return False
+  End Function
+End Module

@@ -25,6 +25,7 @@ Public Class Settings
     _regItems.Add(New RegistryItem(regCommand & "PathStructure.FolderHeatMap", "Heat Map...", "%windir%\system32\compstui.dll,51", Chr(34) & exePath & Chr(34) & " -heatmap " & Chr(34) & "%1" & Chr(34), ""))
     _regItems.Add(New RegistryItem(regCommand & "PathStructure.DirectArchive", "Send to Archive", "%windir%\system32\shell32.dll,280", Chr(34) & exePath & Chr(34) & " -archive " & Chr(34) & "%1" & Chr(34), ""))
     _regItems.Add(New RegistryItem(regCommand & "PathStructure.SetPermissions", "Set Permissions", "%windir%\system32\ieframe.dll,100", Chr(34) & exePath & Chr(34) & " -permissions " & Chr(34) & "%1" & Chr(34), ""))
+    _regItems.Add(New RegistryItem(regCommand & "PathStructure.StartWatcher", "StartWatcher", "%windir%\system32\shell32.dll,261", Chr(34) & exePath & Chr(34) & " -watcher"))
 
     Try
       Dim cnt As Integer = 0

@@ -59,5 +59,8 @@
     <Setting Name="strTimeStampFormat" Type="System.String" Scope="User">
       <Value Profile="(Default)">yyyy-MM-dd</Value>
     </Setting>
+    <Setting Name="strPluginDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\server\clientapps\in-house\Path Structure\Plugins</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

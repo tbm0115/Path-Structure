@@ -5,7 +5,7 @@
     </StartArguments>
   </PropertyGroup>
   <PropertyGroup>
-    <PublishUrlHistory />
+    <PublishUrlHistory>\\server\clientapps\In-House\Path Structure\Publish\|\\server\clientapps\Path Structure\Publish\|publish\</PublishUrlHistory>
     <InstallUrlHistory />
     <SupportUrlHistory />
     <UpdateUrlHistory />
