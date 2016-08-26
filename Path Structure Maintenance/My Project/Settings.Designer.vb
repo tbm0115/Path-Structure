@@ -285,7 +285,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("\\server\clientapps\in-house\Path Structure\Plugins")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("\\server\clientapps\In-House\Path Structure\Plugins")>  _
         Public Property strPluginDirectory() As String
             Get
                 Return CType(Me("strPluginDirectory"),String)
